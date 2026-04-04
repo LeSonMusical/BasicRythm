@@ -6,111 +6,158 @@
 <title>Basic Rhythm</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:system-ui,-apple-system,sans-serif;font-size:12px;background:#f5f4f0;color:#1a1a18;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:1.5rem}
+body{font-family:system-ui,-apple-system,sans-serif;font-size:12px;background:#f5f4f0;color:#1a1a18;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:1rem}
+.frame{border:1px solid #d0cec7;border-radius:12px;padding:.75rem .85rem;background:#fff;width:100%;max-width:860px}
+.app-title{font-size:15px;font-weight:500;letter-spacing:.04em;margin-bottom:.6rem;color:#1a1a18;text-align:center}
 
-.frame{border:1px solid #d0cec7;border-radius:12px;padding:.85rem 1rem;background:#fff;width:100%;max-width:780px}
-.app-title{font-size:15px;font-weight:500;letter-spacing:.04em;margin-bottom:.65rem;color:#1a1a18}
-
-.transport{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;margin-bottom:.55rem}
-.t-left{display:flex;align-items:center}
-.t-center{display:flex;align-items:center;gap:6px;white-space:nowrap}
-.t-right{display:flex;align-items:center;justify-content:flex-end;gap:6px}
-
+.transport{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:.5rem;flex-wrap:wrap}
 .btn{padding:4px 12px;cursor:pointer;font-size:12px;font-weight:500;background:#fff;border:1px solid #b0aea7;border-radius:6px;color:#1a1a18}
 .btn:hover{background:#f0ede8}
 .btn.active{background:#ddeeff;border-color:#5599cc;color:#1155aa}
 .btn-tog{padding:3px 7px;cursor:pointer;font-size:11px;background:#fff;border:1px solid #b0aea7;border-radius:6px;color:#666}
 .btn-tog:hover{background:#f0ede8}
 .btn-tog.on{background:#ddeeff;border-color:#5599cc;color:#1155aa}
-
 .t-group{display:flex;align-items:center;gap:5px;font-size:11px;color:#666}
-.t-group input[type=range]{width:75px;accent-color:#666}
+.t-group input[type=range]{width:80px;accent-color:#666}
 .t-group .val{font-weight:500;color:#1a1a18;min-width:28px}
+.hdivider{height:1px;background:#e0ddd8;margin:.5rem 0}
 
-.hdivider{height:1px;background:#e0ddd8;margin-bottom:.55rem}
+/* COLOR VARS per layer */
+.c-low  {--cc:#378ADD;--cb:#185FA5;--cl:#378ADD0D;--cs:#378ADD55;--ct:#ddeeff}
+.c-high {--cc:#D85A30;--cb:#993C1D;--cl:#D85A300D;--cs:#D85A3055;--ct:#ffeedd}
+.c-noise{--cc:#1D9E75;--cb:#0F6E56;--cl:#1D9E750D;--cs:#1D9E7555;--ct:#ddfff4}
 
-.layer-row{display:grid;grid-template-columns:130px 1px 1fr 1px 112px;gap:0;align-items:stretch;margin-bottom:3px;min-height:48px}
-.vbar{background:#d0cec7;width:1px;align-self:stretch}
+/* RHYTHM LAYERS */
+.rhythm-section{display:flex;flex-direction:column;gap:4px}
 
-.col-l{display:flex;flex-direction:column;gap:2px;padding-right:6px;justify-content:center}
-.sel-row{display:flex;align-items:center;gap:2px}
-.sel-row select{font-size:9px;flex:1;padding:1px 2px;border:1px solid #ccc;border-radius:4px;background:#fff;color:#1a1a18}
-.ico-save{cursor:pointer;font-size:11px;background:none;border:none;padding:0 1px;line-height:1;opacity:.6;flex-shrink:0}
+.layer{
+  display:flex;align-items:stretch;
+  border-radius:5px;overflow:hidden;
+  border-left:3px solid var(--cc);
+  background:var(--cl);
+  min-height:30px;
+}
+
+/* DESKTOP: menu left, steps right */
+.layer-menu{
+  display:flex;align-items:center;gap:3px;
+  width:160px;flex-shrink:0;
+  padding:4px 6px 4px 5px;
+  border-right:1px solid var(--cs);
+}
+.layer-menu select{font-size:9px;flex:1;min-width:0;padding:1px 2px;border:1px solid #ccc;border-radius:4px;background:#fff;color:#1a1a18}
+.ico-save{cursor:pointer;font-size:11px;background:none;border:none;padding:0;line-height:1;opacity:.55;flex-shrink:0}
 .ico-save:hover{opacity:1}
-.ctrl-row{display:flex;align-items:center;gap:2px}
-.ico{padding:1px 3px;cursor:pointer;font-size:10px;background:none;border:1px solid #d0cec7;border-radius:2px;color:#666;line-height:1.3;display:inline-flex;align-items:center}
-.ico:hover{background:#f0ede8}
-.confirm-row{display:flex;align-items:center;gap:2px;font-size:9px;color:#666}
-.confirm-row span{flex:1}
+.ico{padding:1px 3px;cursor:pointer;font-size:10px;background:none;border:1px solid #d0cec7;border-radius:2px;color:#666;line-height:1.3;display:inline-flex;align-items:center;flex-shrink:0}
+.ico:hover{background:rgba(0,0,0,.06)}
+.confirm-row{display:flex;align-items:center;gap:2px;font-size:9px;color:#666;flex-shrink:0}
+.confirm-row span{font-size:9px}
 
-.col-c{display:flex;align-items:center;padding:0 5px;gap:4px}
-.steps{display:flex;gap:2px;flex-wrap:nowrap;align-items:center;flex:1}
-.step{width:18px;height:18px;border-radius:3px;border:1px solid #d0cec7;background:#f0ede8;flex-shrink:0;cursor:pointer;transition:background .05s}
+.layer-steps-wrap{flex:1;display:flex;align-items:center;gap:4px;padding:4px 5px 4px 6px;min-width:0}
+.steps{display:flex;gap:2px;align-items:flex-start;flex-wrap:wrap;flex:1;min-width:0}
+
+.step{
+  width:20px;height:20px;border-radius:3px;
+  border:1px solid #d0cec7;background:#f0ede8;
+  flex-shrink:0;cursor:pointer;transition:background .05s
+}
 .step:hover{border-color:#aaa}
-.step.on.low  {background:#378ADD33;border-color:#378ADD99}
-.step.on.high {background:#D85A3033;border-color:#D85A3099}
-.step.on.noise{background:#1D9E7533;border-color:#1D9E7599}
-.step.on.low.cur  {background:#378ADD;border-color:#185FA5}
-.step.on.high.cur {background:#D85A30;border-color:#993C1D}
-.step.on.noise.cur{background:#1D9E75;border-color:#0F6E56}
-.step.off.cur{background:#ddd;border-color:#aaa}
+.step.on {background:var(--cs);border-color:var(--cc)}
+.step.cur{background:var(--cc) !important;border-color:var(--cb) !important}
+.step.off.cur{background:#bbb !important;border-color:#888 !important}
 
 .shift-ctrl{display:flex;align-items:center;gap:1px;flex-shrink:0}
 .shift-btn{padding:1px 4px;cursor:pointer;font-size:11px;background:none;border:1px solid #d0cec7;border-radius:2px;color:#666;line-height:1.3}
-.shift-btn:hover{background:#f0ede8}
-.shift-num{min-width:13px;text-align:center;font-size:10px;color:#666}
+.shift-btn:hover{background:rgba(0,0,0,.06)}
+.shift-num{min-width:14px;text-align:center;font-size:10px;color:#666}
 
-.col-r{display:flex;flex-direction:column;gap:3px;padding-left:7px;justify-content:center}
-.snd-name{font-size:11px;font-weight:500;text-align:center;color:#1a1a18}
-.sl-row{display:flex;align-items:center;gap:3px}
-.sl-row label{font-size:9px;color:#888;width:28px;flex-shrink:0}
-.sl-row input[type=range]{flex:1;padding:0;accent-color:#888}
-.sl-row .sv{font-size:9px;color:#666;min-width:28px;text-align:right}
+/* SOUND SECTION */
+.collapsible-btn{display:flex;align-items:center;gap:4px;background:none;border:none;cursor:pointer;font-size:10px;color:#999;padding:3px 0;width:100%;text-align:left}
+.collapsible-btn:hover{color:#555}
+.collapsible-btn .arr{font-size:8px;transition:transform .15s;display:inline-block}
+.collapsible-btn.open .arr{transform:rotate(90deg)}
+.collapsible-content{overflow:hidden;transition:max-height .25s ease}
+.collapsible-content.closed{max-height:0}
+.collapsible-content.opened{max-height:600px}
 
-.layer-sep{height:1px;background:#e8e6e2;margin:3px 0}
+.sound-layers{display:flex;flex-direction:column;gap:3px;padding-bottom:4px}
+.sound-layer{
+  display:flex;align-items:stretch;border-radius:5px;overflow:hidden;
+  border-left:3px solid var(--cc);
+  background:var(--cl);
+  border:1px solid var(--cs);
+  border-left:3px solid var(--cc);
+}
+.sound-lbl{width:46px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;background:var(--ct);color:var(--cb);border-right:1px solid var(--cs)}
+.sound-ctrls{flex:1;display:flex;flex-direction:column;gap:2px;padding:4px 8px;background:transparent}
+.sl-row{display:flex;align-items:center;gap:4px}
+.sl-row label{font-size:9px;color:#888;width:30px;flex-shrink:0}
+.sl-row input[type=range]{flex:1;padding:0;accent-color:var(--cc)}
+.sl-row .sv{font-size:9px;color:#666;min-width:34px;text-align:right}
 
+.params-inner{padding:4px 0 2px;display:flex;flex-direction:column;gap:4px}
+
+/* MODAL */
 .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:100;align-items:center;justify-content:center}
 .modal-bg.open{display:flex}
-.modal{background:#fff;border:1px solid #c0bdb7;border-radius:12px;padding:1rem 1.25rem;min-width:210px;box-shadow:0 4px 24px rgba(0,0,0,.12)}
+.modal{background:#fff;border:1px solid #c0bdb7;border-radius:12px;padding:1rem 1.25rem;min-width:220px;box-shadow:0 4px 24px rgba(0,0,0,.12)}
 .modal h3{font-size:13px;font-weight:500;margin-bottom:.75rem}
 .modal input[type=text]{width:100%;font-size:12px;padding:4px 7px;border:1px solid #c0bdb7;border-radius:6px;background:#f5f4f0;color:#1a1a18;margin-bottom:.75rem}
 .modal input[type=text]:focus{outline:none;border-color:#5599cc}
 .modal-btns{display:flex;gap:8px;justify-content:flex-end}
 
-@media(max-width:600px){
-  .layer-row{grid-template-columns:100px 1px 1fr 1px 95px}
-  .transport{grid-template-columns:1fr}
-  .t-right,.t-left{display:none}
-  .t-center{justify-content:center;flex-wrap:wrap}
+/* MOBILE < 600px */
+@media(max-width:599px){
+  body{padding:.4rem}
+  .frame{padding:.55rem .6rem;border-radius:8px}
+  .t-group input[type=range]{width:90px}
+  .layer{flex-direction:column}
+  .layer-menu{
+    width:100%;padding:3px 5px;
+    border-right:none;border-bottom:1px solid var(--cs);
+  }
+  .layer-menu select{font-size:10px}
+  .layer-steps-wrap{padding:4px 5px}
+  .step{width:22px;height:22px}
 }
 </style>
 </head>
 <body>
-
 <div class="frame">
   <div class="app-title">Basic Rhythm</div>
+
   <div class="transport">
-    <div class="t-left"></div>
-    <div class="t-center">
-      <button class="btn" id="btn-play">Play</button>
-      <div class="t-group">
-        <span>BPM</span>
-        <input type="range" id="bpm" min="60" max="180" value="100" step="1">
-        <span class="val" id="bpm-val">100</span>
-      </div>
-      <button class="btn-tog" id="btn-half">/2</button>
-      <button class="btn-tog" id="btn-double">×2</button>
+    <button class="btn" id="btn-play">Play</button>
+    <div class="t-group">
+      <span>BPM</span>
+      <input type="range" id="bpm" min="60" max="180" value="100" step="1">
+      <span class="val" id="bpm-val">100</span>
     </div>
-    <div class="t-right">
-      <div class="t-group">
-        <span>Latence</span>
-        <input type="range" id="latency" min="-200" max="200" value="0" step="5">
-        <span class="val" id="lat-val">0ms</span>
+    <button class="btn-tog" id="btn-half">/2</button>
+    <button class="btn-tog" id="btn-double">×2</button>
+  </div>
+
+  <div class="hdivider"></div>
+  <div class="rhythm-section" id="layers"></div>
+  <div class="hdivider"></div>
+
+  <div class="sound-section">
+    <button class="collapsible-btn open" id="sons-btn"><span class="arr">▶</span><span>Sons</span></button>
+    <div class="collapsible-content opened" id="sons-content">
+      <div class="sound-layers" id="sounds"></div>
+    </div>
+  </div>
+
+  <button class="collapsible-btn" id="params-btn"><span class="arr">▶</span><span>Paramètres</span></button>
+  <div class="collapsible-content closed" id="params-content">
+    <div class="params-inner">
+      <div class="sl-row">
+        <label style="width:50px;font-size:9px;color:#888">Latence</label>
+        <input type="range" id="latency" min="-200" max="200" value="0" step="5" style="flex:1;accent-color:#888">
+        <span class="sv" id="lat-val">0ms</span>
       </div>
     </div>
   </div>
-  <div class="hdivider"></div>
-  <div id="layers"></div>
 </div>
 
 <div class="modal-bg" id="modal-bg">
@@ -125,69 +172,132 @@ body{font-family:system-ui,-apple-system,sans-serif;font-size:12px;background:#f
 </div>
 
 <script>
-const BASE=[
-  {id:"pulse1", name:"Pulse (1)",      length:1,  pattern:"X",                custom:false},
-  {id:"pulse2", name:"Pulse (2)",      length:2,  pattern:"X.",               custom:false},
-  {id:"fl3",    name:"3 on the floor", length:3,  pattern:"X..",              custom:false},
-  {id:"fl4",    name:"4 on the floor", length:4,  pattern:"X...",             custom:false},
-  {id:"pulse4", name:"Pulse (4)",      length:4,  pattern:"XXXX",             custom:false},
-  {id:"tres",   name:"Tresillo",       length:8,  pattern:"X..X..X.",         custom:false},
-  {id:"hab",    name:"Habanera",       length:8,  pattern:"X..XX...",         custom:false},
-  {id:"son32",  name:"Son 3:2",        length:16, pattern:"X..X..X...X.X...", custom:false},
-  {id:"son23",  name:"Son 2:3",        length:16, pattern:"X.X....X..X..X..", custom:false},
-  {id:"rum32",  name:"Rumba 3:2",      length:16, pattern:"X..X...X..X.X...", custom:false},
-  {id:"shiko",  name:"Shiko",          length:16, pattern:"X...X...X...X.X.", custom:false},
-  {id:"souk",   name:"Soukous",        length:16, pattern:"X..X...X.X..X...", custom:false},
-  {id:"bossa",  name:"Bossa Nova",     length:16, pattern:"X..X..X...X..X..", custom:false},
-  {id:"gahu",   name:"Gahu",           length:16, pattern:"X...X.X...X.X...", custom:false},
-  {id:"fume",   name:"Fume-fume",      length:12, pattern:"X.X.X..X.X.X.",    custom:false},
-  {id:"bembe",  name:"Bembé",          length:12, pattern:"X.X.XX.X.X.X.",    custom:false},
-  {id:"samba",  name:"Samba",          length:16, pattern:"X.X.X...X.X.X...", custom:false},
+const DICT=[
+  {id:"pulse1",name:"Pulse (1)",     length:1,  pattern:"X"},
+  {id:"bin2",  name:"Bin (2)",       length:2,  pattern:"X."},
+  {id:"ter3",  name:"Ter (3)",       length:3,  pattern:"X.."},
+  {id:"fl4",   name:"4 on the floor",length:4,  pattern:"X..."},
+  {id:"pulse4",name:"Pulse (4)",     length:4,  pattern:"XXXX"},
+  {id:"tres",  name:"Tresillo",      length:8,  pattern:"X..X..X."},
+  {id:"hab",   name:"Habanera",      length:8,  pattern:"X..XX.X."},
+  {id:"son32", name:"Son 3:2",       length:16, pattern:"X..X..X...X.X..."},
+  {id:"son",   name:"Son",           length:16, pattern:"..X.X...X..X..X."},
+  {id:"rum32", name:"Rumba 3:2",     length:16, pattern:"X..X...X..X.X..."},
+  {id:"shiko", name:"Shiko",         length:16, pattern:"X...X.X...X.X..."},
+  {id:"souk",  name:"Soukous",       length:16, pattern:"X..X..X...XX...."},
+  {id:"bossa", name:"Bossa Nova",    length:16, pattern:"X..X..X...X..X.."},
+  {id:"gahu",  name:"Gahu",          length:16, pattern:"X..X..X...X...X."},
+  {id:"samba", name:"Samba",         length:16, pattern:"X..X.X.X..X.X.X."},
+  {id:"fume",  name:"Fume-fume",     length:12, pattern:"X.X.X..X.X.."},
+  {id:"bembe", name:"Bembé",         length:12, pattern:"X.X.XX.X.X.X"},
 ];
-let dict=BASE.map(r=>({...r}));
+let dict=DICT.map(r=>({...r,custom:false}));
+
+// half-split index for wrap
+function halfAt(len){
+  if(len<=4) return null;
+  return Math.ceil(len/2); // 3,4,6,8 for 6,8,12,16
+}
+
+const DECAY_MIN=0.01,DECAY_MAX=0.35;
+function decayToT(v){return Math.log(v/DECAY_MIN)/Math.log(DECAY_MAX/DECAY_MIN);}
+function tToDecay(t){return DECAY_MIN*Math.pow(DECAY_MAX/DECAY_MIN,t);}
 
 const LAYERS=[
-  {id:"low",  label:"LOW",  defId:"fl4",   param:"pitch",pMin:40,  pMax:400, pVal:100, pStep:1,    volVal:0.5, fmt:v=>Math.round(v)+'Hz'},
-  {id:"high", label:"HIGH", defId:"son32", param:"pitch",pMin:200, pMax:2000,pVal:440, pStep:1,    volVal:0.5, fmt:v=>Math.round(v)+'Hz'},
-  {id:"noise",label:"NOISE",defId:"pulse1",param:"decay",pMin:0.02,pMax:0.6, pVal:0.3, pStep:0.01, volVal:0.25,fmt:v=>parseFloat(v).toFixed(2)+'s'},
+  {id:"low",  label:"Low",  defId:"fl4",   cls:"c-low",  param:"pitch",pMin:40,  pMax:400, pVal:100,pStep:1,    volVal:0.5, fmt:v=>Math.round(v)+'Hz'},
+  {id:"high", label:"High", defId:"son32", cls:"c-high", param:"pitch",pMin:200, pMax:2000,pVal:440,pStep:1,    volVal:0.5, fmt:v=>Math.round(v)+'Hz'},
+  {id:"noise",label:"Noise",defId:"pulse1",cls:"c-noise",param:"decay",pMin:0.01,pMax:0.35,pVal:0.02,pStep:0.001,volVal:0.25,fmt:v=>parseFloat(v).toFixed(3)+'s'},
 ];
 
 let state=LAYERS.map(l=>({
   dictIdx:dict.findIndex(r=>r.id===l.defId),
   pattern:dict.find(r=>r.id===l.defId).pattern.split(''),
-  shift:0,paramVal:l.pVal,volVal:l.volVal,stepPos:0,confirming:false
+  shift:0,paramVal:l.pVal,volVal:l.volVal,stepPos:0,confirming:false,
+  wrapped:false
 }));
 
 let playing=false,timerID=null,ac=null,savingLi=null,latencyMs=0;
 let halfOn=false,doubleOn=false;
+const STEP_W=22; // px per step including gap
 
 function getSpeedMult(){return doubleOn?2:halfOn?0.5:1;}
 function getAC(){if(!ac)ac=new(window.AudioContext||window.webkitAudioContext)();return ac;}
 function sched(fn,ms){setTimeout(fn,Math.max(0,ms));}
 
-function playLow(pitch,vol,lat){sched(()=>{const a=getAC(),n=a.currentTime,o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);o.frequency.value=pitch;o.type='sine';g.gain.setValueAtTime(vol,n);g.gain.exponentialRampToValueAtTime(0.001,n+0.18);o.start(n);o.stop(n+0.19);},lat);}
-function playHigh(pitch,vol,lat){sched(()=>{const a=getAC(),n=a.currentTime,o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);o.frequency.value=pitch;o.type='triangle';g.gain.setValueAtTime(vol,n);g.gain.exponentialRampToValueAtTime(0.001,n+0.07);o.start(n);o.stop(n+0.08);},lat);}
-function playNoise(decay,vol,lat){sched(()=>{const a=getAC(),n=a.currentTime,len=Math.max(0.02,decay);const buf=a.createBuffer(1,Math.ceil(a.sampleRate*len),a.sampleRate);const d=buf.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,3);const src=a.createBufferSource(),g=a.createGain();src.buffer=buf;g.gain.value=vol;src.connect(g);g.connect(a.destination);src.start(n);},lat);}
+function playLow(pitch,vol,lat){sched(()=>{
+  const a=getAC(),n=a.currentTime,o=a.createOscillator(),g=a.createGain();
+  o.connect(g);g.connect(a.destination);o.frequency.value=pitch;o.type='sine';
+  g.gain.setValueAtTime(vol,n);g.gain.exponentialRampToValueAtTime(0.001,n+0.18);o.start(n);o.stop(n+0.19);
+},lat);}
+function playHigh(pitch,vol,lat){sched(()=>{
+  const a=getAC(),n=a.currentTime,o=a.createOscillator(),g=a.createGain();
+  o.connect(g);g.connect(a.destination);o.frequency.value=pitch;o.type='triangle';
+  g.gain.setValueAtTime(vol,n);g.gain.exponentialRampToValueAtTime(0.001,n+0.07);o.start(n);o.stop(n+0.08);
+},lat);}
+function playNoise(decay,vol,lat){sched(()=>{
+  const a=getAC(),n=a.currentTime,len=Math.max(0.01,decay);
+  const buf=a.createBuffer(1,Math.ceil(a.sampleRate*len),a.sampleRate);
+  const d=buf.getChannelData(0);
+  for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,3);
+  const src=a.createBufferSource(),g=a.createGain();
+  src.buffer=buf;g.gain.value=vol;src.connect(g);g.connect(a.destination);src.start(n);
+},lat);}
 
 function rotate(arr,n){const l=arr.length;if(!l)return arr;const k=((n%l)+l)%l;return[...arr.slice(k),...arr.slice(0,k)];}
 
-function buildStepsDiv(li){
-  const div=document.getElementById('steps-'+LAYERS[li].id);if(!div)return;div.innerHTML='';
-  state[li].pattern.forEach((p,si)=>{
+// Build steps DOM — wrap param controls whether flex-break spacer is inserted
+function buildStepsDOM(li,wrap){
+  const container=document.getElementById('steps-'+LAYERS[li].id);
+  if(!container)return;
+  container.innerHTML='';
+  const pat=state[li].pattern;
+  const ha=wrap?halfAt(pat.length):null;
+  pat.forEach((p,si)=>{
+    if(ha&&si===ha){
+      const br=document.createElement('div');
+      br.style.cssText='width:100%;height:0;flex-basis:100%;flex-shrink:0';
+      container.appendChild(br);
+    }
     const s=document.createElement('div');
-    s.className='step '+(p==='X'?'on':'off')+' '+LAYERS[li].id;
+    s.className='step '+(p==='X'?'on':'off');
     s.addEventListener('click',()=>{
       state[li].pattern[si]=state[li].pattern[si]==='X'?'.':'X';
-      s.className='step '+(state[li].pattern[si]==='X'?'on':'off')+' '+LAYERS[li].id+(state[li].stepPos===si?' cur':'');
+      s.className='step '+(state[li].pattern[si]==='X'?'on':'off')+(state[li].stepPos===si?' cur':'');
     });
-    div.appendChild(s);
+    container.appendChild(s);
   });
+  state[li].wrapped=wrap;
+}
+
+// Check if steps fit in one line, rebuild if wrap state changes
+function checkWrap(li){
+  const wrap=document.getElementById('steps-'+LAYERS[li].id);
+  if(!wrap)return;
+  const avail=wrap.parentElement.clientWidth - 60; // subtract shift-ctrl width
+  const len=state[li].pattern.length;
+  const needed=len*STEP_W;
+  const shouldWrap=needed>avail;
+  if(shouldWrap!==state[li].wrapped) buildStepsDOM(li,shouldWrap);
+}
+
+// ResizeObserver per layer
+const observers=[];
+function attachObserver(li){
+  const wrap=document.getElementById('steps-'+LAYERS[li].id);
+  if(!wrap)return;
+  const obs=new ResizeObserver(()=>checkWrap(li));
+  obs.observe(wrap.parentElement);
+  observers.push(obs);
 }
 
 function rebuildSelect(li){
   const sel=document.getElementById('sel-'+LAYERS[li].id);if(!sel)return;
   const cur=state[li].dictIdx;sel.innerHTML='';
-  dict.forEach((r,i)=>{const o=document.createElement('option');o.value=i;o.textContent=r.name+' ('+r.length+')';if(i===cur)o.selected=true;sel.appendChild(o);});
+  dict.forEach((r,i)=>{
+    const o=document.createElement('option');o.value=i;
+    o.textContent=r.name+' ('+r.length+')';
+    if(i===cur)o.selected=true;sel.appendChild(o);
+  });
 }
 
 function updateCtrlBtns(li){
@@ -199,35 +309,63 @@ function updateCtrlBtns(li){
   state[li].confirming=false;
 }
 
-function buildUI(){
-  const cont=document.getElementById('layers');cont.innerHTML='';
-  LAYERS.forEach((layer,li)=>{
-    if(li>0){const sep=document.createElement('div');sep.className='layer-sep';cont.appendChild(sep);}
-    const row=document.createElement('div');row.className='layer-row';
+function mkSl(lbl,slMin,slMax,initVal,slStep,fmt,cb,isExp){
+  const row=document.createElement('div');row.className='sl-row';
+  const lb=document.createElement('label');lb.textContent=lbl;
+  const sl=document.createElement('input');sl.type='range';
+  const sv=document.createElement('span');sv.className='sv';
+  if(isExp){
+    sl.min=0;sl.max=1000;sl.step=1;
+    sl.value=Math.round(decayToT(initVal)*1000);
+    sv.textContent=fmt(initVal);
+    sl.addEventListener('input',function(){
+      const v=tToDecay(parseInt(this.value)/1000);sv.textContent=fmt(v);cb(v);
+    });
+  } else {
+    sl.min=slMin;sl.max=slMax;sl.value=initVal;sl.step=slStep;
+    sv.textContent=fmt(initVal);
+    sl.addEventListener('input',function(){sv.textContent=fmt(this.value);cb(parseFloat(this.value));});
+  }
+  row.appendChild(lb);row.appendChild(sl);row.appendChild(sv);return row;
+}
 
-    const cL=document.createElement('div');cL.className='col-l';
-    const selRow=document.createElement('div');selRow.className='sel-row';
+function buildRhythmLayers(){
+  observers.forEach(o=>o.disconnect());observers.length=0;
+  const cont=document.getElementById('layers');cont.innerHTML='';
+
+  LAYERS.forEach((layer,li)=>{
+    const layerDiv=document.createElement('div');
+    layerDiv.className='layer '+layer.cls;
+
+    // MENU
+    const menu=document.createElement('div');menu.className='layer-menu';
     const sel=document.createElement('select');sel.id='sel-'+layer.id;
-    dict.forEach((r,i)=>{const o=document.createElement('option');o.value=i;o.textContent=r.name+' ('+r.length+')';if(i===state[li].dictIdx)o.selected=true;sel.appendChild(o);});
+    dict.forEach((r,i)=>{
+      const o=document.createElement('option');o.value=i;
+      o.textContent=r.name+' ('+r.length+')';
+      if(i===state[li].dictIdx)o.selected=true;sel.appendChild(o);
+    });
     sel.addEventListener('change',function(){
       const idx=parseInt(this.value);state[li].dictIdx=idx;
       state[li].pattern=rotate(dict[idx].pattern.split(''),state[li].shift);
-      state[li].stepPos=0;buildStepsDiv(li);updateCtrlBtns(li);
+      state[li].stepPos=0;
+      state[li].wrapped=false;
+      buildStepsDOM(li,false);
+      setTimeout(()=>checkWrap(li),0);
+      updateCtrlBtns(li);
     });
+
     const saveIco=document.createElement('button');saveIco.className='ico-save';saveIco.title='Sauvegarder';saveIco.textContent='💾';
     saveIco.addEventListener('click',()=>openModal(li));
-    selRow.appendChild(sel);selRow.appendChild(saveIco);
 
-    const ctrlRow=document.createElement('div');ctrlRow.className='ctrl-row';
     const trashBtn=document.createElement('button');trashBtn.className='ico';trashBtn.id='trash-'+layer.id;trashBtn.innerHTML='🗑';trashBtn.style.display='none';
     trashBtn.addEventListener('click',()=>{
       if(state[li].confirming)return;state[li].confirming=true;
       document.getElementById('conf-'+layer.id).style.display='flex';
     });
-    ctrlRow.appendChild(trashBtn);
 
     const confRow=document.createElement('div');confRow.className='confirm-row';confRow.id='conf-'+layer.id;confRow.style.display='none';
-    const confTxt=document.createElement('span');confTxt.textContent='Supprimer ?';
+    const confTxt=document.createElement('span');confTxt.textContent='Suppr.?';
     const okB=document.createElement('button');okB.className='ico';okB.innerHTML='✓';okB.style.color='#cc3333';
     okB.addEventListener('click',()=>{
       const idx=state[li].dictIdx;dict.splice(idx,1);
@@ -235,17 +373,14 @@ function buildUI(){
       state[li].pattern=dict[state[li].dictIdx].pattern.split('');
       state[li].shift=0;
       const sn=document.getElementById('shift-num-'+layer.id);if(sn)sn.textContent='0';
-      LAYERS.forEach((_,i)=>rebuildSelect(i));buildStepsDiv(li);updateCtrlBtns(li);
+      LAYERS.forEach((_,i)=>rebuildSelect(i));
+      buildStepsDOM(li,false);setTimeout(()=>checkWrap(li),0);
+      updateCtrlBtns(li);
     });
     const noB=document.createElement('button');noB.className='ico';noB.innerHTML='✕';
     noB.addEventListener('click',()=>{state[li].confirming=false;confRow.style.display='none';});
     confRow.appendChild(confTxt);confRow.appendChild(okB);confRow.appendChild(noB);
-    cL.appendChild(selRow);cL.appendChild(ctrlRow);cL.appendChild(confRow);
 
-    const vb1=document.createElement('div');vb1.className='vbar';
-
-    const cC=document.createElement('div');cC.className='col-c';
-    const stepsDiv=document.createElement('div');stepsDiv.className='steps';stepsDiv.id='steps-'+layer.id;
     const shiftCtrl=document.createElement('div');shiftCtrl.className='shift-ctrl';
     const btnM=document.createElement('button');btnM.className='shift-btn';btnM.textContent='−';
     const shiftNum=document.createElement('span');shiftNum.className='shift-num';shiftNum.id='shift-num-'+layer.id;shiftNum.textContent='0';
@@ -253,43 +388,54 @@ function buildUI(){
     btnM.addEventListener('click',()=>{
       state[li].shift=((state[li].shift-1+state[li].pattern.length)%state[li].pattern.length);
       shiftNum.textContent=state[li].shift;
-      state[li].pattern=rotate(dict[state[li].dictIdx].pattern.split(''),state[li].shift);buildStepsDiv(li);
+      state[li].pattern=rotate(dict[state[li].dictIdx].pattern.split(''),state[li].shift);
+      buildStepsDOM(li,state[li].wrapped);
     });
     btnP.addEventListener('click',()=>{
       state[li].shift=(state[li].shift+1)%state[li].pattern.length;
       shiftNum.textContent=state[li].shift;
-      state[li].pattern=rotate(dict[state[li].dictIdx].pattern.split(''),state[li].shift);buildStepsDiv(li);
+      state[li].pattern=rotate(dict[state[li].dictIdx].pattern.split(''),state[li].shift);
+      buildStepsDOM(li,state[li].wrapped);
     });
     shiftCtrl.appendChild(btnM);shiftCtrl.appendChild(shiftNum);shiftCtrl.appendChild(btnP);
-    cC.appendChild(stepsDiv);cC.appendChild(shiftCtrl);
 
-    const vb2=document.createElement('div');vb2.className='vbar';
+    menu.appendChild(sel);menu.appendChild(saveIco);menu.appendChild(trashBtn);menu.appendChild(confRow);
 
-    const cR=document.createElement('div');cR.className='col-r';
-    const sndName=document.createElement('div');sndName.className='snd-name';sndName.textContent=layer.label;
-    function mkSl(lbl,min,max,val,step,fmt,cb){
-      const r=document.createElement('div');r.className='sl-row';
-      const lb=document.createElement('label');lb.textContent=lbl;
-      const sl=document.createElement('input');sl.type='range';sl.min=min;sl.max=max;sl.value=val;sl.step=step;
-      const sv=document.createElement('span');sv.className='sv';sv.textContent=fmt(val);
-      sl.addEventListener('input',function(){sv.textContent=fmt(this.value);cb(parseFloat(this.value));});
-      r.appendChild(lb);r.appendChild(sl);r.appendChild(sv);return r;
-    }
-    const L=LAYERS[li];
-    cR.appendChild(sndName);
-    cR.appendChild(mkSl(L.param==='pitch'?'Pitch':'Decay',L.pMin,L.pMax,L.pVal,L.pStep,L.fmt,v=>state[li].paramVal=v));
-    cR.appendChild(mkSl('Vol',0,1,L.volVal,0.01,v=>parseFloat(v).toFixed(2),v=>state[li].volVal=v));
+    // STEPS WRAP
+    const stepsWrap=document.createElement('div');stepsWrap.className='layer-steps-wrap';
+    const stepsDiv=document.createElement('div');stepsDiv.className='steps';stepsDiv.id='steps-'+layer.id;
+    stepsWrap.appendChild(stepsDiv);
+    stepsWrap.appendChild(shiftCtrl);
 
-    row.appendChild(cL);row.appendChild(vb1);row.appendChild(cC);row.appendChild(vb2);row.appendChild(cR);
-    cont.appendChild(row);
-    buildStepsDiv(li);updateCtrlBtns(li);
+    layerDiv.appendChild(menu);
+    layerDiv.appendChild(stepsWrap);
+    cont.appendChild(layerDiv);
+
+    buildStepsDOM(li,false);
+    setTimeout(()=>{checkWrap(li);attachObserver(li);},0);
+    updateCtrlBtns(li);
+  });
+}
+
+function buildSoundLayers(){
+  const cont=document.getElementById('sounds');cont.innerHTML='';
+  LAYERS.forEach((layer,li)=>{
+    const row=document.createElement('div');row.className='sound-layer '+layer.cls;
+    const lbl=document.createElement('div');lbl.className='sound-lbl';lbl.textContent=layer.label;
+    const ctrls=document.createElement('div');ctrls.className='sound-ctrls';
+    const L=LAYERS[li],isNoise=layer.id==='noise';
+    ctrls.appendChild(mkSl(L.param==='pitch'?'Pitch':'Decay',L.pMin,L.pMax,L.pVal,L.pStep,L.fmt,v=>state[li].paramVal=v,isNoise));
+    ctrls.appendChild(mkSl('Vol',0,1,L.volVal,0.01,v=>parseFloat(v).toFixed(2),v=>state[li].volVal=v,false));
+    row.appendChild(lbl);row.appendChild(ctrls);cont.appendChild(row);
   });
 }
 
 function highlightAll(){
   LAYERS.forEach((layer,li)=>{
     const div=document.getElementById('steps-'+layer.id);if(!div)return;
-    div.querySelectorAll('.step').forEach((s,si)=>s.classList.toggle('cur',si===state[li].stepPos));
+    div.querySelectorAll('.step').forEach((s,si)=>{
+      s.classList.toggle('cur',si===state[li].stepPos);
+    });
   });
 }
 
@@ -297,7 +443,7 @@ function tick(){
   const bpm=parseInt(document.getElementById('bpm').value);
   const interval=(60/bpm/2)*1000/getSpeedMult();
   LAYERS.forEach((layer,li)=>{
-    const pat=state[li].pattern;const s=state[li].stepPos%pat.length;
+    const pat=state[li].pattern,s=state[li].stepPos%pat.length;
     if(pat[s]==='X'){
       if(layer.id==='low')  playLow(state[li].paramVal,state[li].volVal,latencyMs);
       else if(layer.id==='high') playHigh(state[li].paramVal,state[li].volVal,latencyMs);
@@ -319,7 +465,10 @@ function togglePlay(){
     playing=false;clearTimeout(timerID);
     document.getElementById('btn-play').textContent='Play';
     document.getElementById('btn-play').classList.remove('active');
-    LAYERS.forEach(l=>{const d=document.getElementById('steps-'+l.id);if(d)d.querySelectorAll('.step').forEach(s=>s.classList.remove('cur'));});
+    LAYERS.forEach(l=>{
+      const d=document.getElementById('steps-'+l.id);
+      if(d)d.querySelectorAll('.step').forEach(s=>s.classList.remove('cur'));
+    });
   }
 }
 
@@ -328,6 +477,20 @@ function openModal(li){
   document.getElementById('modal-bg').classList.add('open');
   setTimeout(()=>document.getElementById('modal-input').focus(),50);
 }
+
+function makeCollapsible(btnId,contentId,startOpen){
+  const btn=document.getElementById(btnId),content=document.getElementById(contentId);
+  if(startOpen){content.classList.replace('closed','opened');btn.classList.add('open');}
+  btn.addEventListener('click',()=>{
+    const open=content.classList.contains('opened');
+    content.classList.toggle('opened',!open);
+    content.classList.toggle('closed',open);
+    btn.classList.toggle('open',!open);
+  });
+}
+
+makeCollapsible('sons-btn','sons-content',true);
+makeCollapsible('params-btn','params-content',false);
 
 document.getElementById('btn-half').addEventListener('click',()=>{
   if(halfOn){halfOn=false;}else{halfOn=true;doubleOn=false;document.getElementById('btn-double').classList.remove('on');}
@@ -338,9 +501,13 @@ document.getElementById('btn-double').addEventListener('click',()=>{
   document.getElementById('btn-double').classList.toggle('on',doubleOn);
 });
 document.getElementById('btn-play').addEventListener('click',togglePlay);
-document.addEventListener('keydown',e=>{if(e.code==='Space'&&e.target.tagName!=='INPUT'){e.preventDefault();togglePlay();}});
+document.addEventListener('keydown',e=>{
+  if(e.code==='Space'&&e.target.tagName!=='INPUT'){e.preventDefault();togglePlay();}
+});
 document.getElementById('bpm').addEventListener('input',function(){document.getElementById('bpm-val').textContent=this.value;});
-document.getElementById('latency').addEventListener('input',function(){latencyMs=parseInt(this.value);document.getElementById('lat-val').textContent=this.value+'ms';});
+document.getElementById('latency').addEventListener('input',function(){
+  latencyMs=parseInt(this.value);document.getElementById('lat-val').textContent=this.value+'ms';
+});
 document.getElementById('modal-cancel').addEventListener('click',()=>document.getElementById('modal-bg').classList.remove('open'));
 document.getElementById('modal-ok').addEventListener('click',()=>{
   const name=document.getElementById('modal-input').value.trim();if(!name||savingLi===null)return;
@@ -355,7 +522,8 @@ document.getElementById('modal-input').addEventListener('keydown',e=>{
   if(e.key==='Escape')document.getElementById('modal-cancel').click();
 });
 
-buildUI();
+buildRhythmLayers();
+buildSoundLayers();
 </script>
 </body>
 </html>
