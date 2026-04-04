@@ -54,9 +54,13 @@ body{font-family:system-ui,-apple-system,sans-serif;font-size:12px;background:#f
 .muted .step.cur{background:#aaa !important;border-color:#888 !important}
 
 /* LAYER MENU — wider, holds edit controls below select row */
-.layer-menu{display:flex;flex-direction:column;gap:2px;width:180px;flex-shrink:0;padding:4px 6px 4px 5px;border-right:1px solid var(--cs)}
+.layer-menu{display:flex;flex-direction:column;gap:2px;width:170px;flex-shrink:0;padding:4px 6px 4px 5px;border-right:1px solid var(--cs)}
 .edit-rows{display:flex;flex-direction:column;gap:2px;margin-top:2px}
-.edit-row{display:flex;align-items:center;gap:2px}
+.edit-row{display:flex;align-items:center;gap:2px;flex-wrap:wrap}
+.layer-menu select{font-size:9px;flex:1;min-width:0;padding:1px 2px;border:1px solid #ccc;border-radius:4px;background:#fff;color:#1a1a18}
+.ico-save{cursor:pointer;font-size:15px;background:none;border:none;padding:2px 3px;line-height:1;opacity:.55;flex-shrink:0}
+.ico-mute{cursor:pointer;font-size:15px;background:none;border:none;padding:2px 3px;line-height:1;opacity:.55;flex-shrink:0}
+.ico-mute.active{opacity:1}
 .edit-btn{padding:1px 4px;cursor:pointer;font-size:11px;background:none;border:1px solid #d0cec7;border-radius:2px;color:#666;line-height:1.3;flex-shrink:0}
 .edit-btn:hover{background:rgba(0,0,0,.06)}
 .edit-btn.on{background:var(--cs);border-color:var(--cc);color:var(--cb);font-weight:500}
@@ -113,7 +117,7 @@ body{font-family:system-ui,-apple-system,sans-serif;font-size:12px;background:#f
   .layer-menu select{font-size:10px}
   .layer-menu{width:100%;padding:3px 5px;border-right:none;border-bottom:1px solid var(--cs)}
   .edit-rows{flex-direction:row;flex-wrap:wrap;gap:4px 8px}
-  .edit-row{gap:3px}
+  .edit-row{gap:3px;flex-wrap:nowrap}
   .layer-steps-wrap{padding:4px 5px}
   .step{width:22px;height:22px}
   .encyclo-bullets li .bval{padding-left:8px}
@@ -127,10 +131,10 @@ body{font-family:system-ui,-apple-system,sans-serif;font-size:12px;background:#f
     <button class="btn" id="btn-play">Play</button>
     <button class="btn" id="btn-resync" title="Resynchroniser">⟳</button>
     <div class="t-group">
-      <input type="range" id="bpm" min="60" max="360" value="200" step="1">
-      <span class="val" id="bpm-val">200 spm</span>
+      <input type="range" id="bpm" min="60" max="360" value="220" step="1">
+      <span class="val" id="bpm-val">220 spm</span>
     </div>
-    <span class="t-equiv" id="bpm-equiv">♩=100&ensp;♩.=67</span>
+    <span class="t-equiv" id="bpm-equiv">♩=110&ensp;♩.=73</span>
   </div>
   <div class="hdivider"></div>
   <div class="rhythm-section" id="layers"></div>
@@ -178,7 +182,7 @@ body{font-family:system-ui,-apple-system,sans-serif;font-size:12px;background:#f
 const GROUPS=[
   {label:"Référentiels", ids:["pulse1","bin2","ter3","fl4","pulse4","sync4","silence"]},
   {label:"8 pas",        ids:["tres","cinq","hab","afoxe","reggae"]},
-  {label:"16 pas — E(5,16)", ids:["son32","son","rum32","shiko","bossa","gahu"]},
+  {label:"16 pas — E(5,16)", ids:["son","rum32","shiko","bossa","gahu"]},
   {label:"16 pas — autres",  ids:["souk","samba","cascara","tumbao"]},
   {label:"12 pas",       ids:["fume","bembe","solea"]},
 ];
@@ -195,8 +199,7 @@ const DICT=[
   {id:"hab",    name:"Habanera",            length:8,  pattern:"X..XX.X.",           encyclo:"hab"},
   {id:"afoxe",  name:"Afoxê",              length:8,  pattern:"X..X.X..",           encyclo:"afoxe"},
   {id:"reggae", name:"Clave Reggae",        length:8,  pattern:"....X.X.",           encyclo:"reggae"},
-  {id:"son32",  name:"Son 3:2",             length:16, pattern:"X..X..X...X.X...",   encyclo:"son32"},
-  {id:"son",    name:"Son",                 length:16, pattern:"..X.X...X..X..X.",   encyclo:"son"},
+  {id:"son",    name:"Son 2:3",              length:16, pattern:"..X.X...X..X..X.",   encyclo:"son"},
   {id:"rum32",  name:"Rumba 3:2",           length:16, pattern:"X..X...X..X.X...",   encyclo:"rum32"},
   {id:"shiko",  name:"Shiko",              length:16, pattern:"X...X.X...X.X...",   encyclo:"shiko"},
   {id:"bossa",  name:"Bossa Nova",          length:16, pattern:"X..X..X...X..X..",   encyclo:"bossa"},
@@ -240,7 +243,7 @@ function tToDecay(t){return DECAY_MIN*Math.pow(DECAY_MAX/DECAY_MIN,t);}
 
 const LAYERS=[
   {id:"low",  label:"Low",  defId:"fl4",   cls:"c-low",  param:"pitch",pMin:40,  pMax:400, pVal:100,pStep:1,    volVal:0.5, fmt:v=>Math.round(v)+'Hz'},
-  {id:"high", label:"High", defId:"son32", cls:"c-high", param:"pitch",pMin:200, pMax:2000,pVal:440,pStep:1,    volVal:0.5, fmt:v=>Math.round(v)+'Hz'},
+  {id:"high", label:"High", defId:"son", cls:"c-high", param:"pitch",pMin:200, pMax:2000,pVal:440,pStep:1,    volVal:0.5, fmt:v=>Math.round(v)+'Hz'},
   {id:"noise",label:"Noise",defId:"pulse1",cls:"c-noise",param:"decay",pMin:0.01,pMax:0.35,pVal:0.02,pStep:0.001,volVal:0.25,fmt:v=>parseFloat(v).toFixed(3)+'s'},
 ];
 
@@ -261,7 +264,10 @@ const STEP_W=22;
 const LOOKAHEAD=0.1;   // seconds to schedule ahead
 const SCHED_MS=25;     // scheduler poll interval ms
 
-function getAC(){if(!ac)ac=new(window.AudioContext||window.webkitAudioContext)();return ac;}
+function getAC(){
+  if(!ac){ac=new(window.AudioContext||window.webkitAudioContext)();}
+  return ac;
+}
 
 function getBeatSec(li){
   const spm=parseInt(document.getElementById('bpm').value);
@@ -489,11 +495,10 @@ function buildRhythmLayers(){
     stepsWrap.appendChild(stepsDiv);
 
     // MUTE button (in sel-row)
-    const btnMute=document.createElement('button');btnMute.className='ico-save';btnMute.id='mute-'+layer.id;btnMute.title='Muter';btnMute.textContent='🔇';btnMute.style.opacity='.55';
+    const btnMute=document.createElement('button');btnMute.className='ico-mute';btnMute.id='mute-'+layer.id;btnMute.title='Muter';btnMute.textContent='🔇';
     btnMute.addEventListener('click',()=>{
       state[li].muted=!state[li].muted;
-      btnMute.style.opacity=state[li].muted?'1':'.55';
-      btnMute.style.filter=state[li].muted?'none':'';
+      btnMute.classList.toggle('active',state[li].muted);
       stepsDiv.classList.toggle('muted',state[li].muted);
     });
 
@@ -519,8 +524,7 @@ function buildRhythmLayers(){
     });
     shiftRow.appendChild(btnL);shiftRow.appendChild(shiftNum);shiftRow.appendChild(btnR);
 
-    // Row 2: speed
-    const speedRow=document.createElement('div');speedRow.className='edit-row';
+    // Row 2 & 3 merged into shiftRow
     const btnHalf=document.createElement('button');btnHalf.className='edit-btn';btnHalf.id='half-'+layer.id;btnHalf.textContent='/2';
     const btnDbl=document.createElement('button');btnDbl.className='edit-btn';btnDbl.id='dbl-'+layer.id;btnDbl.textContent='×2';
     btnHalf.addEventListener('click',()=>{
@@ -545,10 +549,8 @@ function buildRhythmLayers(){
       btnDbl.classList.toggle('on',state[li].pendingDouble);
       btnHalf.classList.remove('on');
     });
-    speedRow.appendChild(btnHalf);speedRow.appendChild(btnDbl);
-
-    // Row 3: complement + swap
-    const compSwapRow=document.createElement('div');compSwapRow.className='edit-row';
+    // speed buttons added to shiftRow below
+    // complement + swap (appended directly to shiftRow)
     const btnComp=document.createElement('button');btnComp.className='edit-btn';btnComp.title='Complémentaire';btnComp.textContent='⊙';btnComp.style.fontSize='13px';
     btnComp.addEventListener('click',()=>{
       state[li].pattern=state[li].pattern.map(p=>p==='X'?'.':'X');
@@ -570,11 +572,16 @@ function buildRhythmLayers(){
       state[li].pattern=[...p.slice(half),...p.slice(0,half)];
       buildStepsDOM(li,state[li].wrapped);setDirty(li,false);
     });
-    compSwapRow.appendChild(btnComp);compSwapRow.appendChild(btnSwap);
+    // btnComp and btnSwap appended directly to shiftRow in editrows block below
 
+    // separate with small spacer between groups
+    const sp1=document.createElement('span');sp1.style.cssText='display:inline-block;width:4px';
+    const sp2=document.createElement('span');sp2.style.cssText='display:inline-block;width:4px';
+    shiftRow.appendChild(sp1);
+    shiftRow.appendChild(btnHalf);shiftRow.appendChild(btnDbl);
+    shiftRow.appendChild(sp2);
+    shiftRow.appendChild(btnComp);shiftRow.appendChild(btnSwap);
     editRows.appendChild(shiftRow);
-    editRows.appendChild(speedRow);
-    editRows.appendChild(compSwapRow);
 
     // add mute to selRow, editRows to menu
     selRow.appendChild(btnMute);
@@ -595,8 +602,8 @@ function mkSl(lbl,slMin,slMax,initVal,slStep,fmt,cb,isExp){
   const lb=document.createElement('label');lb.textContent=lbl;
   const sl=document.createElement('input');sl.type='range';
   const sv=document.createElement('span');sv.className='sv';
-  if(isExp){sl.min=0;sl.max=1000;sl.step=1;sl.value=Math.round(decayToT(initVal)*1000);sv.textContent=fmt(initVal);sl.addEventListener('input',function(){const v=tToDecay(parseInt(this.value)/1000);sv.textContent=fmt(v);cb(v);});}
-  else{sl.min=slMin;sl.max=slMax;sl.value=initVal;sl.step=slStep;sv.textContent=fmt(initVal);sl.addEventListener('input',function(){sv.textContent=fmt(this.value);cb(parseFloat(this.value));});}
+  if(isExp){sl.min=0;sl.max=1000;sl.step=1;sl.value=String(Math.round(decayToT(initVal)*1000));sv.textContent=fmt(initVal);sl.addEventListener('input',function(){const v=tToDecay(parseInt(this.value)/1000);sv.textContent=fmt(v);cb(v);});}
+  else{sl.min=String(slMin);sl.max=String(slMax);sl.step=String(slStep);sl.value=String(initVal);sv.textContent=fmt(initVal);sl.addEventListener('input',function(){sv.textContent=fmt(this.value);cb(parseFloat(this.value));});}
   row.appendChild(lb);row.appendChild(sl);row.appendChild(sv);return row;
 }
 
@@ -708,9 +715,17 @@ function stopPlay(){
 
 function togglePlay(){
   if(!playing){
+    // iOS requires AudioContext creation + resume synchronously in user gesture
+    if(!ac){ac=new(window.AudioContext||window.webkitAudioContext)();}
     document.getElementById('btn-play').textContent='Stop';
     document.getElementById('btn-play').classList.add('active');
-    getAC().resume().then(startPlay);
+    // resume then start — needed for iOS suspended state
+    const resumePromise=ac.resume();
+    if(resumePromise&&resumePromise.then){
+      resumePromise.then(startPlay);
+    } else {
+      startPlay();
+    }
   } else {
     stopPlay();
     document.getElementById('btn-play').textContent='Play';
