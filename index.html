@@ -16,8 +16,8 @@ body{font-family:system-ui,-apple-system,sans-serif;font-size:12px;background:#f
 .btn.active{background:#ddeeff;border-color:#5599cc;color:#1155aa}
 .t-group{display:flex;align-items:center;gap:5px;font-size:11px;color:#666}
 .t-group input[type=range]{width:80px;accent-color:#666}
-.t-group .val{font-weight:500;color:#1a1a18;min-width:52px}
-.t-equiv{font-size:10px;color:#888;white-space:nowrap}
+.t-group .val{font-weight:400;font-size:11px;color:#999;min-width:52px}
+.t-equiv{font-size:13px;font-weight:500;color:#1a1a18;white-space:nowrap;letter-spacing:.01em}
 .hdivider{height:1px;background:#e0ddd8;margin:.5rem 0}
 
 .c-low  {--cc:#378ADD;--cb:#185FA5;--cl:#378ADD0D;--cs:#378ADD55;--ct:#ddeeff}
@@ -50,15 +50,17 @@ body{font-family:system-ui,-apple-system,sans-serif;font-size:12px;background:#f
 .step.on{background:var(--cs);border-color:var(--cc)}
 .step.cur{background:var(--cc) !important;border-color:var(--cb) !important}
 .step.off.cur{background:#bbb !important;border-color:#888 !important}
+.muted .step.on{background:#d0cec755 !important;border-color:#b0aea7 !important}
+.muted .step.cur{background:#aaa !important;border-color:#888 !important}
 
-/* EDIT CONTROLS — right of steps desktop */
-.layer-edit{display:flex;flex-direction:column;justify-content:center;gap:3px;padding:3px 5px;border-left:1px solid var(--cs);flex-shrink:0;width:80px}
-.edit-row{display:flex;align-items:center;gap:2px;justify-content:center}
+/* LAYER MENU — wider, holds edit controls below select row */
+.layer-menu{display:flex;flex-direction:column;gap:2px;width:180px;flex-shrink:0;padding:4px 6px 4px 5px;border-right:1px solid var(--cs)}
+.edit-rows{display:flex;flex-direction:column;gap:2px;margin-top:2px}
+.edit-row{display:flex;align-items:center;gap:2px}
 .edit-btn{padding:1px 4px;cursor:pointer;font-size:11px;background:none;border:1px solid #d0cec7;border-radius:2px;color:#666;line-height:1.3;flex-shrink:0}
 .edit-btn:hover{background:rgba(0,0,0,.06)}
 .edit-btn.on{background:var(--cs);border-color:var(--cc);color:var(--cb);font-weight:500}
 .shift-num{min-width:16px;text-align:center;font-size:10px;color:#666}
-.edit-label{font-size:8px;color:#aaa;text-align:center;letter-spacing:.03em}
 
 /* COLLAPSIBLES */
 .collapsible-btn{display:flex;align-items:center;gap:4px;background:none;border:none;cursor:pointer;font-size:10px;color:#999;padding:3px 0;width:100%;text-align:left}
@@ -108,16 +110,10 @@ body{font-family:system-ui,-apple-system,sans-serif;font-size:12px;background:#f
   .frame{padding:.55rem .6rem;border-radius:8px}
   .t-group input[type=range]{width:90px}
   .layer{flex-direction:column}
-  .layer-menu{width:100%;padding:3px 5px;border-right:none;border-bottom:1px solid var(--cs)}
   .layer-menu select{font-size:10px}
-  /* edit controls: horizontal bar between menu and steps */
-  .layer-edit{
-    width:100%;flex-direction:row;justify-content:flex-start;
-    gap:8px;padding:3px 5px;
-    border-left:none;border-top:1px solid var(--cs);border-bottom:1px solid var(--cs);
-  }
+  .layer-menu{width:100%;padding:3px 5px;border-right:none;border-bottom:1px solid var(--cs)}
+  .edit-rows{flex-direction:row;flex-wrap:wrap;gap:4px 8px}
   .edit-row{gap:3px}
-  .edit-label{display:none}
   .layer-steps-wrap{padding:4px 5px}
   .step{width:22px;height:22px}
   .encyclo-bullets li .bval{padding-left:8px}
@@ -131,11 +127,10 @@ body{font-family:system-ui,-apple-system,sans-serif;font-size:12px;background:#f
     <button class="btn" id="btn-play">Play</button>
     <button class="btn" id="btn-resync" title="Resynchroniser">⟳</button>
     <div class="t-group">
-      <span style="font-weight:500;color:#1a1a18">TEMPO</span>
       <input type="range" id="bpm" min="60" max="360" value="200" step="1">
       <span class="val" id="bpm-val">200 spm</span>
     </div>
-    <span class="t-equiv" id="bpm-equiv">♩=100 &nbsp; ♩.=67</span>
+    <span class="t-equiv" id="bpm-equiv">♩=100&ensp;♩.=67</span>
   </div>
   <div class="hdivider"></div>
   <div class="rhythm-section" id="layers"></div>
@@ -181,7 +176,7 @@ body{font-family:system-ui,-apple-system,sans-serif;font-size:12px;background:#f
 
 <script>
 const GROUPS=[
-  {label:"Référentiels", ids:["pulse1","bin2","ter3","fl4","pulse4","sync4"]},
+  {label:"Référentiels", ids:["pulse1","bin2","ter3","fl4","pulse4","sync4","silence"]},
   {label:"8 pas",        ids:["tres","cinq","hab","afoxe","reggae"]},
   {label:"16 pas — E(5,16)", ids:["son32","son","rum32","shiko","bossa","gahu"]},
   {label:"16 pas — autres",  ids:["souk","samba","cascara","tumbao"]},
@@ -194,6 +189,7 @@ const DICT=[
   {id:"fl4",    name:"4 on the floor",      length:4,  pattern:"X...",               encyclo:"fl4"},
   {id:"pulse4", name:"Pulse×4",           length:4,  pattern:"XXXX",               encyclo:false},
   {id:"sync4",  name:"Syncope double",  length:4,  pattern:"..XX",               encyclo:false},
+  {id:"silence",name:"Silence",          length:4,  pattern:"....",               encyclo:false},
   {id:"tres",   name:"Tresillo",            length:8,  pattern:"X..X..X.",           encyclo:"tres"},
   {id:"cinq",   name:"Cinquillo",           length:8,  pattern:"X.XX.XX.",           encyclo:"cinq"},
   {id:"hab",    name:"Habanera",            length:8,  pattern:"X..XX.X.",           encyclo:"hab"},
@@ -254,7 +250,7 @@ let state=LAYERS.map(l=>({
   shift:0, dirty:false, handEdited:false,
   halfOn:false, doubleOn:false,
   pendingHalf:false, pendingDouble:false, pendingClear:false,
-  nextStepTime:0, startTime:0,
+  nextStepTime:0, startTime:0, muted:false,
   paramVal:l.pVal, volVal:l.volVal,
   stepPos:0, wrapped:false
 }));
@@ -317,7 +313,7 @@ function scheduler(){
           if(bd)bd.classList.toggle('on',state[liCopy].doubleOn);
         });
       }
-      if(state[li].pattern[si]==='X') scheduleNote(li,state[li].nextStepTime);
+      if(state[li].pattern[si]==='X'&&!state[li].muted) scheduleNote(li,state[li].nextStepTime);
       state[li].nextStepTime+=getBeatSec(li);
       state[li].stepPos=(si+1)%state[li].pattern.length;
     }
@@ -492,15 +488,23 @@ function buildRhythmLayers(){
     const stepsDiv=document.createElement('div');stepsDiv.className='steps';stepsDiv.id='steps-'+layer.id;
     stepsWrap.appendChild(stepsDiv);
 
-    // COL R : edit controls
-    const editCol=document.createElement('div');editCol.className='layer-edit';
+    // MUTE button (in sel-row)
+    const btnMute=document.createElement('button');btnMute.className='ico-save';btnMute.id='mute-'+layer.id;btnMute.title='Muter';btnMute.textContent='🔇';btnMute.style.opacity='.55';
+    btnMute.addEventListener('click',()=>{
+      state[li].muted=!state[li].muted;
+      btnMute.style.opacity=state[li].muted?'1':'.55';
+      btnMute.style.filter=state[li].muted?'none':'';
+      stepsDiv.classList.toggle('muted',state[li].muted);
+    });
 
-    // shift row
+    // EDIT ROWS inside menu
+    const editRows=document.createElement('div');editRows.className='edit-rows';
+
+    // Row 1: shift
     const shiftRow=document.createElement('div');shiftRow.className='edit-row';
     const btnL=document.createElement('button');btnL.className='edit-btn';btnL.title='Décaler gauche';btnL.textContent='◀';
     const shiftNum=document.createElement('span');shiftNum.className='shift-num';shiftNum.id='shift-num-'+layer.id;shiftNum.textContent='0';
     const btnR=document.createElement('button');btnR.className='edit-btn';btnR.title='Décaler droite';btnR.textContent='▶';
-
     btnL.addEventListener('click',()=>{
       state[li].shiftCount=((state[li].shiftCount||0)-1+state[li].pattern.length)%state[li].pattern.length;
       shiftNum.textContent=state[li].shiftCount;
@@ -514,18 +518,15 @@ function buildRhythmLayers(){
       buildStepsDOM(li,state[li].wrapped);setDirty(li,false);
     });
     shiftRow.appendChild(btnL);shiftRow.appendChild(shiftNum);shiftRow.appendChild(btnR);
-    const shiftLabel=document.createElement('div');shiftLabel.className='edit-label';shiftLabel.textContent='décalage';
 
-    // speed row
+    // Row 2: speed
     const speedRow=document.createElement('div');speedRow.className='edit-row';
     const btnHalf=document.createElement('button');btnHalf.className='edit-btn';btnHalf.id='half-'+layer.id;btnHalf.textContent='/2';
     const btnDbl=document.createElement('button');btnDbl.className='edit-btn';btnDbl.id='dbl-'+layer.id;btnDbl.textContent='×2';
     btnHalf.addEventListener('click',()=>{
       if(state[li].halfOn||state[li].pendingHalf){
-        // already on → toggle off
         state[li].pendingHalf=false;state[li].pendingDouble=false;state[li].pendingClear=true;
       } else if(state[li].doubleOn||state[li].pendingDouble){
-        // other is on → both off
         state[li].pendingHalf=false;state[li].pendingDouble=false;state[li].pendingClear=true;
       } else {
         state[li].pendingHalf=true;state[li].pendingDouble=false;state[li].pendingClear=false;
@@ -545,20 +546,14 @@ function buildRhythmLayers(){
       btnHalf.classList.remove('on');
     });
     speedRow.appendChild(btnHalf);speedRow.appendChild(btnDbl);
-    const speedLabel=document.createElement('div');speedLabel.className='edit-label';speedLabel.textContent='vitesse';
 
-    // complement button
-    const compRow=document.createElement('div');compRow.className='edit-row';
-    const btnComp=document.createElement('button');btnComp.className='edit-btn';btnComp.title='Rythme complémentaire';btnComp.textContent='⊙';btnComp.style.fontSize='13px';
+    // Row 3: complement + swap
+    const compSwapRow=document.createElement('div');compSwapRow.className='edit-row';
+    const btnComp=document.createElement('button');btnComp.className='edit-btn';btnComp.title='Complémentaire';btnComp.textContent='⊙';btnComp.style.fontSize='13px';
     btnComp.addEventListener('click',()=>{
       state[li].pattern=state[li].pattern.map(p=>p==='X'?'.':'X');
       buildStepsDOM(li,state[li].wrapped);setDirty(li,false);
     });
-    compRow.appendChild(btnComp);
-    const compLabel=document.createElement('div');compLabel.className='edit-label';compLabel.textContent='complément';
-
-    // intervertir button
-    const swapRow=document.createElement('div');swapRow.className='edit-row';
     const btnSwap=document.createElement('button');btnSwap.className='edit-btn';btnSwap.title='Intervertir les deux moitiés';btnSwap.textContent='⇄';btnSwap.style.fontSize='13px';
     function updateSwapBtn(){
       const l=state[li].pattern.length;
@@ -568,8 +563,6 @@ function buildRhythmLayers(){
       btnSwap.style.cursor=ok?'pointer':'not-allowed';
     }
     updateSwapBtn();
-    // re-check after select change
-    const origSelChange=sel.onchange;
     sel.addEventListener('change',()=>setTimeout(updateSwapBtn,0));
     btnSwap.addEventListener('click',()=>{
       const p=state[li].pattern;
@@ -577,15 +570,17 @@ function buildRhythmLayers(){
       state[li].pattern=[...p.slice(half),...p.slice(0,half)];
       buildStepsDOM(li,state[li].wrapped);setDirty(li,false);
     });
-    swapRow.appendChild(btnSwap);
-    const swapLabel=document.createElement('div');swapLabel.className='edit-label';swapLabel.textContent='intervertir';
+    compSwapRow.appendChild(btnComp);compSwapRow.appendChild(btnSwap);
 
-    editCol.appendChild(shiftRow);editCol.appendChild(shiftLabel);
-    editCol.appendChild(speedRow);editCol.appendChild(speedLabel);
-    editCol.appendChild(compRow);editCol.appendChild(compLabel);
-    editCol.appendChild(swapRow);editCol.appendChild(swapLabel);
+    editRows.appendChild(shiftRow);
+    editRows.appendChild(speedRow);
+    editRows.appendChild(compSwapRow);
 
-    layerDiv.appendChild(menu);layerDiv.appendChild(stepsWrap);layerDiv.appendChild(editCol);
+    // add mute to selRow, editRows to menu
+    selRow.appendChild(btnMute);
+    menu.appendChild(editRows);
+
+    layerDiv.appendChild(menu);layerDiv.appendChild(stepsWrap);
     cont.appendChild(layerDiv);
 
     buildStepsDOM(li,false);
@@ -625,7 +620,7 @@ function buildRhythmSelect(selEl,includeCustom){
     if(gi>0){
       // separator line — disabled option with no text
       const sep=document.createElement('option');
-      sep.disabled=true;sep.textContent='──────────────';
+      sep.disabled=true;sep.textContent='─ ─ ─ ─ ─';
       sep.style.color='#ccc';selEl.appendChild(sep);
     }
     g.ids.forEach(id=>{
@@ -638,7 +633,7 @@ function buildRhythmSelect(selEl,includeCustom){
   if(includeCustom){
     const customs=dict.filter(r=>r.custom);
     if(customs.length){
-      const sep=document.createElement('option');sep.disabled=true;sep.textContent='──────────────';sep.style.color='#ccc';selEl.appendChild(sep);
+      const sep=document.createElement('option');sep.disabled=true;sep.textContent='─ ─ ─ ─ ─';sep.style.color='#ccc';selEl.appendChild(sep);
       customs.forEach(r=>{const o=document.createElement('option');o.value=r.id;o.textContent=r.name+' ('+r.length+')';selEl.appendChild(o);});
     }
   }
@@ -651,7 +646,7 @@ function buildEncycloSelect(){
   GROUPS.forEach(g=>{
     const items=g.ids.filter(id=>{const r=dict.find(d=>d.id===id);return r&&r.encyclo;});
     if(!items.length)return;
-    if(!first){const sep=document.createElement('option');sep.disabled=true;sep.textContent='──────────────';sep.style.color='#ccc';sel.appendChild(sep);}
+    if(!first){const sep=document.createElement('option');sep.disabled=true;sep.textContent='─ ─ ─ ─ ─';sep.style.color='#ccc';sel.appendChild(sep);}
     first=false;
     items.forEach(id=>{
       const r=dict.find(d=>d.id===id);
