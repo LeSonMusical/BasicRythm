@@ -22,47 +22,25 @@ body{font-family:system-ui,-apple-system,sans-serif;font-size:12px;background:#f
 .t-group .val{font-weight:500;color:#1a1a18;min-width:28px}
 .hdivider{height:1px;background:#e0ddd8;margin:.5rem 0}
 
-/* COLOR VARS per layer */
 .c-low  {--cc:#378ADD;--cb:#185FA5;--cl:#378ADD0D;--cs:#378ADD55;--ct:#ddeeff}
 .c-high {--cc:#D85A30;--cb:#993C1D;--cl:#D85A300D;--cs:#D85A3055;--ct:#ffeedd}
 .c-noise{--cc:#1D9E75;--cb:#0F6E56;--cl:#1D9E750D;--cs:#1D9E7555;--ct:#ddfff4}
 
-/* RHYTHM LAYERS */
 .rhythm-section{display:flex;flex-direction:column;gap:4px}
-
-.layer{
-  display:flex;align-items:stretch;
-  border-radius:5px;overflow:hidden;
-  border-left:3px solid var(--cc);
-  background:var(--cl);
-  min-height:30px;
-}
-
-/* DESKTOP: menu left, steps right */
-.layer-menu{
-  display:flex;align-items:center;gap:3px;
-  width:160px;flex-shrink:0;
-  padding:4px 6px 4px 5px;
-  border-right:1px solid var(--cs);
-}
+.layer{display:flex;align-items:stretch;border-radius:5px;overflow:hidden;border-left:3px solid var(--cc);background:var(--cl);min-height:30px}
+.layer-menu{display:flex;align-items:center;gap:3px;width:160px;flex-shrink:0;padding:4px 6px 4px 5px;border-right:1px solid var(--cs)}
 .layer-menu select{font-size:9px;flex:1;min-width:0;padding:1px 2px;border:1px solid #ccc;border-radius:4px;background:#fff;color:#1a1a18}
 .ico-save{cursor:pointer;font-size:11px;background:none;border:none;padding:0;line-height:1;opacity:.55;flex-shrink:0}
 .ico-save:hover{opacity:1}
 .ico{padding:1px 3px;cursor:pointer;font-size:10px;background:none;border:1px solid #d0cec7;border-radius:2px;color:#666;line-height:1.3;display:inline-flex;align-items:center;flex-shrink:0}
 .ico:hover{background:rgba(0,0,0,.06)}
 .confirm-row{display:flex;align-items:center;gap:2px;font-size:9px;color:#666;flex-shrink:0}
-.confirm-row span{font-size:9px}
 
 .layer-steps-wrap{flex:1;display:flex;align-items:center;gap:4px;padding:4px 5px 4px 6px;min-width:0}
 .steps{display:flex;gap:2px;align-items:flex-start;flex-wrap:wrap;flex:1;min-width:0}
-
-.step{
-  width:20px;height:20px;border-radius:3px;
-  border:1px solid #d0cec7;background:#f0ede8;
-  flex-shrink:0;cursor:pointer;transition:background .05s
-}
+.step{width:20px;height:20px;border-radius:3px;border:1px solid #d0cec7;background:#f0ede8;flex-shrink:0;cursor:pointer;transition:background .05s}
 .step:hover{border-color:#aaa}
-.step.on {background:var(--cs);border-color:var(--cc)}
+.step.on{background:var(--cs);border-color:var(--cc)}
 .step.cur{background:var(--cc) !important;border-color:var(--cb) !important}
 .step.off.cur{background:#bbb !important;border-color:#888 !important}
 
@@ -71,31 +49,37 @@ body{font-family:system-ui,-apple-system,sans-serif;font-size:12px;background:#f
 .shift-btn:hover{background:rgba(0,0,0,.06)}
 .shift-num{min-width:14px;text-align:center;font-size:10px;color:#666}
 
-/* SOUND SECTION */
+/* COLLAPSIBLES */
 .collapsible-btn{display:flex;align-items:center;gap:4px;background:none;border:none;cursor:pointer;font-size:10px;color:#999;padding:3px 0;width:100%;text-align:left}
 .collapsible-btn:hover{color:#555}
 .collapsible-btn .arr{font-size:8px;transition:transform .15s;display:inline-block}
 .collapsible-btn.open .arr{transform:rotate(90deg)}
 .collapsible-content{overflow:hidden;transition:max-height .25s ease}
 .collapsible-content.closed{max-height:0}
-.collapsible-content.opened{max-height:600px}
+.collapsible-content.opened{max-height:2000px}
 
+/* SOUND */
 .sound-layers{display:flex;flex-direction:column;gap:3px;padding-bottom:4px}
-.sound-layer{
-  display:flex;align-items:stretch;border-radius:5px;overflow:hidden;
-  border-left:3px solid var(--cc);
-  background:var(--cl);
-  border:1px solid var(--cs);
-  border-left:3px solid var(--cc);
-}
+.sound-layer{display:flex;align-items:stretch;border-radius:5px;overflow:hidden;border:1px solid var(--cs);border-left:3px solid var(--cc);background:var(--cl)}
 .sound-lbl{width:46px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;background:var(--ct);color:var(--cb);border-right:1px solid var(--cs)}
-.sound-ctrls{flex:1;display:flex;flex-direction:column;gap:2px;padding:4px 8px;background:transparent}
+.sound-ctrls{flex:1;display:flex;flex-direction:column;gap:2px;padding:4px 8px}
 .sl-row{display:flex;align-items:center;gap:4px}
 .sl-row label{font-size:9px;color:#888;width:30px;flex-shrink:0}
 .sl-row input[type=range]{flex:1;padding:0;accent-color:var(--cc)}
 .sl-row .sv{font-size:9px;color:#666;min-width:34px;text-align:right}
+.params-inner{padding:4px 0 2px}
 
-.params-inner{padding:4px 0 2px;display:flex;flex-direction:column;gap:4px}
+/* ENCYCLOPÉDIE */
+.encyclo-wrap{padding:6px 0 4px}
+.encyclo-select-row{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.encyclo-select-row select{font-size:11px;padding:3px 6px;border:1px solid #ccc;border-radius:5px;background:#fff;color:#1a1a18;flex:1;max-width:260px}
+.encyclo-content{}
+.encyclo-chapo{font-size:12px;line-height:1.65;color:#2a2a28;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid #e8e6e2}
+.encyclo-bullets{list-style:none;display:flex;flex-direction:column;gap:5px}
+.encyclo-bullets li{display:flex;gap:6px;font-size:11px;line-height:1.6;color:#3a3a38}
+.encyclo-bullets li .bkey{font-weight:500;color:#1a1a18;flex-shrink:0;min-width:90px}
+.encyclo-bullets li .bval{color:#444}
+.encyclo-empty{font-size:11px;color:#aaa;font-style:italic}
 
 /* MODAL */
 .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:100;align-items:center;justify-content:center}
@@ -106,26 +90,22 @@ body{font-family:system-ui,-apple-system,sans-serif;font-size:12px;background:#f
 .modal input[type=text]:focus{outline:none;border-color:#5599cc}
 .modal-btns{display:flex;gap:8px;justify-content:flex-end}
 
-/* MOBILE < 600px */
 @media(max-width:599px){
   body{padding:.4rem}
   .frame{padding:.55rem .6rem;border-radius:8px}
   .t-group input[type=range]{width:90px}
   .layer{flex-direction:column}
-  .layer-menu{
-    width:100%;padding:3px 5px;
-    border-right:none;border-bottom:1px solid var(--cs);
-  }
+  .layer-menu{width:100%;padding:3px 5px;border-right:none;border-bottom:1px solid var(--cs)}
   .layer-menu select{font-size:10px}
   .layer-steps-wrap{padding:4px 5px}
   .step{width:22px;height:22px}
+  .encyclo-bullets li .bkey{min-width:70px}
 }
 </style>
 </head>
 <body>
 <div class="frame">
   <div class="app-title">Basic Rhythm</div>
-
   <div class="transport">
     <button class="btn" id="btn-play">Play</button>
     <div class="t-group">
@@ -136,16 +116,13 @@ body{font-family:system-ui,-apple-system,sans-serif;font-size:12px;background:#f
     <button class="btn-tog" id="btn-half">/2</button>
     <button class="btn-tog" id="btn-double">×2</button>
   </div>
-
   <div class="hdivider"></div>
   <div class="rhythm-section" id="layers"></div>
   <div class="hdivider"></div>
 
-  <div class="sound-section">
-    <button class="collapsible-btn open" id="sons-btn"><span class="arr">▶</span><span>Sons</span></button>
-    <div class="collapsible-content opened" id="sons-content">
-      <div class="sound-layers" id="sounds"></div>
-    </div>
+  <button class="collapsible-btn open" id="sons-btn"><span class="arr">▶</span><span>Sons</span></button>
+  <div class="collapsible-content opened" id="sons-content">
+    <div class="sound-layers" id="sounds"></div>
   </div>
 
   <button class="collapsible-btn" id="params-btn"><span class="arr">▶</span><span>Paramètres</span></button>
@@ -156,6 +133,16 @@ body{font-family:system-ui,-apple-system,sans-serif;font-size:12px;background:#f
         <input type="range" id="latency" min="-200" max="200" value="0" step="5" style="flex:1;accent-color:#888">
         <span class="sv" id="lat-val">0ms</span>
       </div>
+    </div>
+  </div>
+
+  <button class="collapsible-btn" id="encyclo-btn"><span class="arr">▶</span><span>Encyclopédie</span></button>
+  <div class="collapsible-content closed" id="encyclo-content">
+    <div class="encyclo-wrap">
+      <div class="encyclo-select-row">
+        <select id="encyclo-select"></select>
+      </div>
+      <div id="encyclo-body"></div>
     </div>
   </div>
 </div>
@@ -172,33 +159,204 @@ body{font-family:system-ui,-apple-system,sans-serif;font-size:12px;background:#f
 </div>
 
 <script>
+// ─── DICTIONNAIRE ────────────────────────────────────────────────────────────
 const DICT=[
-  {id:"pulse1",name:"Pulse (1)",     length:1,  pattern:"X"},
-  {id:"bin2",  name:"Bin (2)",       length:2,  pattern:"X."},
-  {id:"ter3",  name:"Ter (3)",       length:3,  pattern:"X.."},
-  {id:"fl4",   name:"4 on the floor",length:4,  pattern:"X..."},
-  {id:"pulse4",name:"Pulse (4)",     length:4,  pattern:"XXXX"},
-  {id:"tres",  name:"Tresillo",      length:8,  pattern:"X..X..X."},
-  {id:"hab",   name:"Habanera",      length:8,  pattern:"X..XX.X."},
-  {id:"son32", name:"Son 3:2",       length:16, pattern:"X..X..X...X.X..."},
-  {id:"son",   name:"Son",           length:16, pattern:"..X.X...X..X..X."},
-  {id:"rum32", name:"Rumba 3:2",     length:16, pattern:"X..X...X..X.X..."},
-  {id:"shiko", name:"Shiko",         length:16, pattern:"X...X.X...X.X..."},
-  {id:"souk",  name:"Soukous",       length:16, pattern:"X..X..X...XX...."},
-  {id:"bossa", name:"Bossa Nova",    length:16, pattern:"X..X..X...X..X.."},
-  {id:"gahu",  name:"Gahu",          length:16, pattern:"X..X..X...X...X."},
-  {id:"samba", name:"Samba",         length:16, pattern:"X..X.X.X..X.X.X."},
-  {id:"fume",  name:"Fume-fume",     length:12, pattern:"X.X.X..X.X.."},
-  {id:"bembe", name:"Bembé",         length:12, pattern:"X.X.XX.X.X.X"},
+  {id:"pulse1", name:"Pulse (1)",      length:1,  pattern:"X",                  encyclo:false},
+  {id:"bin2",   name:"Bin (2)",        length:2,  pattern:"X.",                 encyclo:false},
+  {id:"ter3",   name:"Ter (3)",        length:3,  pattern:"X..",                encyclo:false},
+  {id:"fl4",    name:"4 on the floor", length:4,  pattern:"X...",               encyclo:"fl4"},
+  {id:"pulse4", name:"Pulse (4)",      length:4,  pattern:"XXXX",               encyclo:false},
+  {id:"tres",   name:"Tresillo",       length:8,  pattern:"X..X..X.",           encyclo:"tres"},
+  {id:"cinq",   name:"Cinquillo",      length:8,  pattern:"X.XX.XX.",           encyclo:"cinq"},
+  {id:"hab",    name:"Habanera",       length:8,  pattern:"X..XX.X.",           encyclo:"hab"},
+  {id:"afoxe",  name:"Afoxê",          length:8,  pattern:"X..X.X..",           encyclo:"afoxe"},
+  {id:"reggae", name:"Clave Reggae",   length:8,  pattern:"....X.X.",           encyclo:"reggae"},
+  {id:"son32",  name:"Son 3:2",        length:16, pattern:"X..X..X...X.X...",   encyclo:"son32"},
+  {id:"son",    name:"Son",            length:16, pattern:"..X.X...X..X..X.",   encyclo:"son"},
+  {id:"rum32",  name:"Rumba 3:2",      length:16, pattern:"X..X...X..X.X...",   encyclo:"rum32"},
+  {id:"shiko",  name:"Shiko",          length:16, pattern:"X...X.X...X.X...",   encyclo:"shiko"},
+  {id:"souk",   name:"Soukous",        length:16, pattern:"X..X..X...XX....",   encyclo:"souk"},
+  {id:"bossa",  name:"Bossa Nova",     length:16, pattern:"X..X..X...X..X..",   encyclo:"bossa"},
+  {id:"gahu",   name:"Gahu",           length:16, pattern:"X..X..X...X...X.",   encyclo:"gahu"},
+  {id:"samba",  name:"Samba",          length:16, pattern:"X..X.X.X..X.X.X.",   encyclo:"samba"},
+  {id:"fume",   name:"Fume-fume",      length:12, pattern:"X.X.X..X.X..",       encyclo:"fume"},
+  {id:"bembe",  name:"Bembé",          length:12, pattern:"X.X.XX.X.X.X",       encyclo:"bembe"},
 ];
 let dict=DICT.map(r=>({...r,custom:false}));
 
-// half-split index for wrap
-function halfAt(len){
-  if(len<=4) return null;
-  return Math.ceil(len/2); // 3,4,6,8 for 6,8,12,16
-}
+// ─── ENCYCLOPÉDIE ─────────────────────────────────────────────────────────────
+const ENCYCLO={
+  fl4:{
+    chapo:"Le \"quatre au sol\" est le rythme le plus répandu de la musique électronique occidentale depuis les années 70 — une frappe sur chaque temps, sans syncopation, sans asymétrie. Sa régularité absolue est à la fois sa force (il ancre physiquement l'auditeur, synchronise les corps en masse) et sa limite (aucune tension, aucun groove au sens africain). Il est l'anti-euclidien : E(1,4) répété, distribution minimale.",
+    bullets:[
+      ["Origine","Disco américain, années 70 (DJ Frankie Knuckles, Chicago) ; avant lui, la grosse caisse jazz ou funk ne tapait pas systématiquement les 4 temps."],
+      ["Utilisation","Techno, house, EDM — Kraftwerk l'impose en Europe, Daft Punk en fait une esthétique ; base universelle des musiques de dancefloor."],
+      ["Sensation","Ancrage total, prévisibilité rassurante, énergie par accumulation et non par tension."],
+      ["Dans le dictionnaire","Sert de couche LOW de référence ; en superposition avec n'importe quel rythme asymétrique, il révèle immédiatement la syncopation de ce dernier."],
+    ]
+  },
+  tres:{
+    chapo:"Le Tresillo est le plus petit dénominateur commun des musiques afro-américaines — trois frappes sur 8 pas, distribution euclidienne maximale. On le retrouve dans quasiment toutes les musiques issues de la diaspora africaine aux Amériques, souvent sans qu'il soit nommé. Il est à la fois un rythme autonome et un sous-composant d'autres rythmes plus complexes du dictionnaire. Sa simplicité apparente cache une tension rythmique réelle avec la pulsation binaire.",
+    bullets:[
+      ["Origine","Terme cubain, mais le pattern est pan-africain et pan-américain ; présent dans les Caraïbes, le Brésil, la Nouvelle-Orléans."],
+      ["Construction","X..X..X. — intervalles 3-3-2, E(3,8) — trois points aussi équidistants que possible sur 8 cases."],
+      ["Logique","Les deux premiers intervalles de 3 créent une attente de régularité, le dernier de 2 la brise — source de toute la tension."],
+      ["Utilisation","Blues, jazz, cumbia, son cubain ; la main gauche du piano de Hound Dog d'Elvis ; de nombreuses lignes de basse hip-hop."],
+      ["Dans le dictionnaire","Sous-composant de Son 3:2 (les 3 premières frappes) ; présent dans Cinquillo, Habanera et Rumba par déformation ou extension."],
+    ]
+  },
+  cinq:{
+    chapo:"Le Cinquillo est l'un des rythmes fondateurs de la musique afro-cubaine, né de l'extension et de la densification du Tresillo. Cinq frappes sur 8 pas, il remplit l'espace laissé libre par son ancêtre en intercalant deux frappes supplémentaires. Présent dans la contradanza du XIXe siècle, il a traversé le danzón, le mambo et le cha-cha-chá, devenant un composant-clé de la généalogie rythmique cubaine. Comprendre le Cinquillo, c'est comprendre comment le Tresillo s'est complexifié au contact de la musique européenne.",
+    bullets:[
+      ["Origine","Cuba, XIXe siècle ; contradanza afro-cubaine, ancêtre direct du danzón et du mambo."],
+      ["Construction","X.XX.XX. — intervalles 2-1-2-1-2, 5 frappes sur 8 pas."],
+      ["Logique","Le Tresillo (X..X..X.) avec deux frappes intercalées aux pas 3 et 6 — le squelette reste intact, la densité double presque."],
+      ["Sensation","Plus nerveux et syncopé que le Tresillo, sentiment d'urgence et de rebond continu."],
+      ["Utilisation","Contradanza, danzón, mambo ; Pérez Prado, Tito Puente ; composant de nombreux patterns de percussion afro-cubains."],
+      ["Dans le dictionnaire","Extension directe du Tresillo ; intermédiaire entre Tresillo (3 frappes) et Pulse (5 frappes continues sur 8)."],
+    ]
+  },
+  hab:{
+    chapo:"La Habanera est un rythme né à La Havane au début du XIXe siècle, issu du contradanse européen métissé de rythmes africains. Elle a voyagé vers l'Espagne et l'Amérique latine avec une facilité remarquable, devenant l'un des premiers rythmes de la diaspora afro-cubaine à pénétrer la musique savante européenne. Sa structure est celle du Tresillo avec une frappe supplémentaire intercalée, ce qui lui donne un caractère à la fois dansant et élégant.",
+    bullets:[
+      ["Origine","La Havane, début XIXe ; importée en Espagne où elle influence le flamenco et la zarzuela ; Bizet l'utilise dans Carmen (1875) — paradoxalement la version la plus connue en Europe."],
+      ["Construction","X..XX.X. — intervalles 3-1-2-2 — le Tresillo auquel on ajoute un contretemps au pas 4."],
+      ["Sensation","Balancement asymétrique, légèreté malgré la syncope, caractère dansé et élégant."],
+      ["Utilisation","Tango argentin (qui en descend directement), bolero cubain, blues américain (Hey Bo Diddley)."],
+      ["Anecdote","Bo Diddley a construit toute sa carrière sur ce pattern — appelé \"Bo Diddley beat\" en Amérique du Nord, sans que personne ne sache toujours qu'il vient de La Havane."],
+    ]
+  },
+  afoxe:{
+    chapo:"L'Afoxê (ou Ijexá) est un rythme afro-brésilien de Salvador de Bahia, issu de la tradition yoruba-nagô du candomblé. Distinct de la Samba, il appartient à une famille rythmique plus proche des racines africaines — les mêmes qui ont engendré le Bembé à Cuba. Il est le rythme des cortèges d'afoxê, processions carnavalesques qui maintiennent vivant le lien avec la culture yoruba en plein Carnaval brésilien. Sa douceur hypnotique contraste avec la puissance explosive de la Samba.",
+    bullets:[
+      ["Origine","Salvador de Bahia (Brésil) ; tradition yoruba-nagô du candomblé ; l'Afoxê Filhos de Gandhi (fondé en 1949) est le groupe le plus célèbre."],
+      ["Construction","X..X.X.. — intervalles 3-2-3, 3 frappes sur 8 pas."],
+      ["Sensation","Douceur hypnotique, balancement lent et profond, sentiment de procession — à l'opposé de l'urgence de la Samba."],
+      ["Utilisation","Carnaval de Salvador, candomblé ; Gilberto Gil et Caetano Veloso l'ont popularisé internationalement dans les années 70-80."],
+      ["Dans le dictionnaire","Même nombre de frappes que le Tresillo (3 sur 8) mais distribution différente (3-2-3 vs 3-3-2) — comparer les deux révèle comment un même nombre de frappes peut produire des caractères radicalement différents."],
+      ["Anecdote","Gil a composé \"Patuscada de Gandhi\" (1969) pour l'Afoxê Filhos de Gandhi — l'un des premiers morceaux à ancrer l'identité afro-brésilienne dans la musique populaire."],
+    ]
+  },
+  reggae:{
+    chapo:"La Clave Reggae est le pattern fondateur de la rythmique jamaïcaine — deux frappes sur 8 pas, placées sur le contretemps du 3e temps et son \"et\". Née dans le ska et le rocksteady des années 60, elle s'est imposée comme l'ADN rythmique du reggae roots des années 70. Sa caractéristique la plus frappante est l'absence totale de frappe sur les 4 premiers pas — ce silence initial est précisément ce qui crée la sensation de \"retard\" caractéristique du reggae, ce groove pesant et suspendu qui a influencé la quasi-totalité de la musique populaire mondiale.",
+    bullets:[
+      ["Origine","Jamaïque, fin des années 60 ; évolution du ska (contretemps rapide) puis du rocksteady (ralentissement) vers le reggae roots ; Sly Dunbar est le batteur qui en a le plus défini l'esthétique."],
+      ["Construction","....X.X. — intervalles 4-2-2, 2 frappes sur 8 pas — le \"vide\" des 4 premiers pas est constitutif."],
+      ["Logique","La grosse caisse frappe sur le 3e temps (pas 5) et son contretemps (pas 7), laissant les temps 1 et 2 totalement vides — inversion complète du 4 on the floor."],
+      ["Sensation","Pesanteur, suspension, sentiment d'être \"derrière\" la pulsation — le groove le plus \"late\" du dictionnaire."],
+      ["Utilisation","Reggae roots, dub — Bob Marley, Lee \"Scratch\" Perry, King Tubby ; absorbé par le hip-hop, le trip-hop (Massive Attack, Portishead), le grime britannique."],
+      ["Dans le dictionnaire","Complémentaire du 4 on the floor : là où l'un frappe, l'autre se tait — les superposer crée une conversation fondamentale entre avant et arrière du temps."],
+    ]
+  },
+  son32:{
+    chapo:"Le Son clave est le squelette rythmique de toute la musique afro-cubaine — né de la rencontre entre rythmes bantous et guitare espagnole dans l'Oriente cubain au XIXe siècle. Joué aux claves, deux bâtons de bois dur, il structure une famille musicale entière qui a rayonné mondialement. Son asymétrie fondamentale — 5 frappes inégalement réparties sur 16 pas — est précisément ce qui génère le groove syncopé caractéristique de la salsa. C'est l'un des rythmes les plus influents du XXe siècle, présent explicitement ou implicitement dans une proportion considérable de la musique populaire mondiale.",
+    bullets:[
+      ["Origine","Cuba, XIXe siècle, confluence yoruba/bantou et espagnole ; \"clave\" désigne à la fois l'instrument et la fonction structurelle (\"clé\" en espagnol)."],
+      ["Utilisation","Son montuno, salsa, latin jazz — Celia Cruz, Tito Puente, Buena Vista Social Club ; absorbé en hip-hop (Timbaland), implicite dans le reggaeton."],
+      ["Construction","X..X..X...X.X... — intervalles 3-3-4-2-4, E(5,16)."],
+      ["Logique","La partie \"3\" (3 frappes) crée l'élan, la partie \"2\" (2 frappes) pose la résolution — l'asymétrie génère une tension permanente avec la pulsation."],
+      ["Sensation","Groove tiré en avant, sentiment d'incomplétude qui appelle la résolution, quasi-impossible de rester immobile."],
+      ["Dans le dictionnaire","Rotation miroir = \"Son\" (2:3) ; Rumba 3:2 en est la variante par déplacement d'une frappe ; les 3 premières frappes forment un Tresillo."],
+      ["Anecdote","Dans la tradition cubaine, \"jouer contre la clave\" est la faute musicale suprême — un orchestre entier peut s'arrêter pour corriger."],
+    ]
+  },
+  son:{
+    chapo:"Le Son 2:3 est la rotation du Son clave 3:2 — les mêmes 5 frappes décalées de 8 pas, ce qui inverse la logique élan/résolution. Ce n'est pas un rythme séparé mais une position différente du même pattern dans le cycle. Dans la pratique cubaine, les deux formes coexistent et dialoguent au sein d'un même morceau, créant une conversation rythmique continue entre musiciens.",
+    bullets:[
+      ["Construction","..X.X...X..X..X. — commence par 2 silences, la résolution arrive en premier."],
+      ["Sensation","Plus posé que le 3:2, sentiment d'être \"derrière le temps\", légère flottaison."],
+      ["Usage","Certains instruments jouent en 2:3 pendant que d'autres tiennent le 3:2 — c'est cette superposition qui crée la richesse de la clave."],
+      ["Dans le dictionnaire","Même pattern que Son 3:2, décalage de 8 pas — comprendre les deux ensemble est essentiel pour saisir la logique de la clave."],
+    ]
+  },
+  rum32:{
+    chapo:"La Rumba clave est la cousine \"africaine\" du Son — plus proche des racines yoruba et bantou, moins métissée avec l'harmonie européenne. Elle diffère du Son par le déplacement d'une seule frappe (la 3e, avancée d'un pas), ce qui la fait sonner plus \"derrière le temps\" et plus funky. C'est le rythme de la rumba cubaine traditionnelle (yambu, guaguancó, columbia) — à ne pas confondre avec la \"rumba\" européenne, déformation commerciale.",
+    bullets:[
+      ["Origine","Cuba, communautés afro-cubaines du XIXe siècle ; la rumba est une forme populaire urbaine, pas un rythme de cérémonie."],
+      ["Construction","X..X...X..X.X... — intervalles 3-4-3-2-4 — 3e frappe du Son avancée d'un pas."],
+      ["Sensation","Plus \"derrière le temps\" que le Son, groove plus lourd, sentiment de retenue puis de lâcher."],
+      ["Utilisation","Guaguancó notamment ; Carlos Santana l'utilise abondamment dans ses arrangements latins."],
+      ["Dans le dictionnaire","Variante du Son 3:2 par déplacement d'une seule frappe — même nombre de pas, même nombre de frappes, caractère sensiblement différent."],
+    ]
+  },
+  shiko:{
+    chapo:"Le Shiko est un des rythmes fondamentaux de l'Afrique de l'Ouest, issu des peuples Ewe du Ghana et du Togo. Sa structure euclidienne — 5 frappes sur 16 pas — le place dans la même famille mathématique que le Son cubain, mais son caractère est radicalement différent : plus circulaire, moins tendu, plus hypnotique. Il est moins connu en Occident que la clave mais structurellement aussi central dans son contexte d'origine.",
+    bullets:[
+      ["Origine","Ewe (Ghana/Togo) ; joué aux tambours dans les cérémonies communautaires."],
+      ["Construction","X...X.X...X.X... — intervalles 4-2-4-2-4, E(5,16)."],
+      ["Logique","Alternance régulière 4-2 créant un balancement en deux temps inégaux — plus régulier que la clave, moins de tension élan/résolution."],
+      ["Sensation","Groove circulaire et hypnotique, sensation de rotation continue, moins \"tiré en avant\" que la clave."],
+      ["Dans le dictionnaire","Même E(5,16) que Son 3:2, Bossa Nova et Gahu — trois façons différentes de placer 5 frappes sur 16 pas ; les comparer révèle comment une même contrainte mathématique produit des caractères radicalement différents."],
+    ]
+  },
+  souk:{
+    chapo:"Le Soukous est le rythme de la rumba congolaise, né à Kinshasa et Brazzaville dans les années 40-60 de la fusion entre la rumba cubaine importée par des disques, les rythmes bantous et la guitare électrique. Il est l'exemple parfait d'un aller-retour culturel : la rumba afro-cubaine, elle-même issue des rythmes bantous, revient en Afrique centrale et y génère une nouvelle forme musicale autonome.",
+    bullets:[
+      ["Origine","Congo-Kinshasa et Congo-Brazzaville, années 50-60 ; Franco Luambo et l'OK Jazz, Tabu Ley Rochereau ; \"soukous\" vient du français \"secouer\"."],
+      ["Construction","X..X..X...XX.... — variante du Son par condensation des deux dernières frappes."],
+      ["Sensation","Groove léger et dansant, en avant du temps, accroche immédiate."],
+      ["Utilisation","Musique de danse populaire dans toute l'Afrique subsaharienne depuis les années 70 ; a influencé l'afrobeat et la world music des années 80-90."],
+      ["Anecdote","Le retour du rythme bantou en Afrique via Cuba est l'un des exemples les plus frappants de \"boucle culturelle\" dans l'histoire de la musique populaire."],
+    ]
+  },
+  bossa:{
+    chapo:"La Bossa Nova est née à Rio de Janeiro en 1958 de la rencontre entre la samba brésilienne, le cool jazz américain et une nouvelle génération de musiciens cariocas. João Gilberto, en tapant ce pattern à la guitare tout en chantant et jouant les accords, a créé une texture entièrement nouvelle. Sa structure euclidienne sur 16 pas donne une fluidité très différente de la samba traditionnelle dont elle est issue.",
+    bullets:[
+      ["Origine","Rio de Janeiro, 1958 ; João Gilberto, Tom Jobim, Vinicius de Moraes — Chega de Saudade est le premier enregistrement."],
+      ["Construction","X..X..X...X..X.. — intervalles 3-3-4-3-3, E(5,16)."],
+      ["Singularité","Seul rythme de la famille E(5,16) avec une quasi-symétrie entre les deux moitiés (3-3-4 / 3-3) — c'est elle qui donne la sensation de flottaison."],
+      ["Sensation","Légèreté mélancolique, swing sans lourdeur, \"saudade\" rendue rythmique."],
+      ["Utilisation","Jazz international dès 1962 (Stan Getz, The Girl from Ipanema) ; influence durable sur le jazz, la pop brésilienne et le lounge."],
+      ["Dans le dictionnaire","Même E(5,16) que Son 3:2, Shiko, Gahu — famille commune, caractère radicalement différent par la symétrie et le tempo lent caractéristique."],
+    ]
+  },
+  gahu:{
+    chapo:"Le Gahu est un rythme de danse des Ewe du Ghana, apparu dans les années 40 et intégrant des influences extérieures. C'est l'un des rythmes africains les plus étudiés par les ethnomusicologues occidentaux, notamment par John Miller Chernoff dans African Rhythm and African Sensibility (1979). Sa structure euclidienne le rapproche du Son cubain tout en sonnant radicalement différent par son grand vide central.",
+    bullets:[
+      ["Origine","Ewe du Ghana, milieu XXe siècle ; danse communautaire mixte, moins cérémonielle que le Bembé ; son nom évoquerait l'argent (\"ga\"), signalant une danse plus \"moderne\"."],
+      ["Construction","X..X..X...X...X. — intervalles 3-3-4-4-2, E(5,16)."],
+      ["Logique","Le grand intervalle central de 4+4 crée un \"vide\" inhabituel au milieu du pattern — c'est lui qui donne au Gahu son caractère suspendu."],
+      ["Sensation","Groove aéré, suspension au milieu du cycle, résolution rapide en fin de pattern."],
+      ["Dans le dictionnaire","Troisième membre de la famille E(5,16) avec Son 3:2 et Shiko ; le vide central le distingue nettement des deux autres."],
+    ]
+  },
+  samba:{
+    chapo:"La Samba est le rythme national brésilien, né à Rio de Janeiro au début du XXe siècle dans les communautés afro-brésiliennes. Sa structure sur 16 pas est plus dense que la Bossa Nova qui en dérive, avec 7 frappes créant un enchevêtrement caractéristique. C'est un rythme collectif, conçu pour être joué par de nombreux instruments simultanément, chacun apportant un pattern complémentaire.",
+    bullets:[
+      ["Origine","Rio de Janeiro, début XXe siècle ; communautés bahianaises installées dans les favelas ; institutionnalisé par le Carnaval."],
+      ["Construction","X..X.X.X..X.X.X. — intervalles 3-2-2-3-2-2-2, E(7,16)."],
+      ["Logique","Deux groupes 3-2-2 encadrant un centre — structure quasi-palindromique donnant le sentiment de \"revenir au départ\"."],
+      ["Sensation","Énergie explosive, en avant du temps, impossibilité physique de rester statique."],
+      ["Utilisation","Samba de enredo (Carnaval), pagode, samba-funk ; Jorge Ben Jor, Seu Jorge ; a influencé le funk brésilien et le MPB."],
+      ["Dans le dictionnaire","Même densité que Bembé (7 frappes) mais sur 16 pas — sensation très différente, moins oppressante."],
+    ]
+  },
+  fume:{
+    chapo:"Le Fume-fume est un des rythmes fondateurs de la musique Ewe du Ghana, utilisé comme rythme-référence (\"bell pattern\") dans les cérémonies collectives. Sur base 12, il répartit 6 frappes en deux groupes asymétriques, créant un pattern qui peut être lu comme commençant à plusieurs endroits selon l'accent culturel. C'est l'un des rythmes les plus analysés dans l'ethnomusicologie africaine.",
+    bullets:[
+      ["Origine","Ewe (Ghana/Togo) ; joué à la cloche (gankogui) pour organiser les autres instruments de l'ensemble."],
+      ["Construction","X.X.X..X.X.. — intervalles 2-2-3-2-3, E(6,12)."],
+      ["Singularité","Peut être entendu en 3 (deux groupes de 6) ou en 2 (trois groupes de 4) selon l'acculturation — rythme \"ambigu\" jouant sur la frontière binaire/ternaire."],
+      ["Sensation","Oscillation, ambiguïté métrique, sensation de \"toupie\" pouvant basculer d'un côté ou de l'autre."],
+      ["Dans le dictionnaire","Complémentaire exact de Bembé — les 6 pas de l'un sont les 6 silences de l'autre ; joués ensemble ils couvrent tous les 12 pas."],
+      ["Anecdote","Steve Reich a utilisé ce pattern dans Music for 18 Musicians sans le nommer ; la musique minimaliste américaine lui doit beaucoup."],
+    ]
+  },
+  bembe:{
+    chapo:"Le Bembé est un rythme de cérémonie yoruba, joué dans la Santería cubaine pour l'invocation des Orishas, avec des équivalents structurels chez les Ewe du Ghana et les Yoruba du Nigeria. C'est le rythme euclidien le plus dense du dictionnaire sur base 12 — 7 frappes sur 12 pas, laissant à peine de l'espace. Cette densité quasi-continue produit une tension hypnotique sans repos qui explique son usage rituel. Il a profondément influencé le jazz modal et la musique minimaliste occidentale.",
+    bullets:[
+      ["Origine","Yoruba (Nigeria/Bénin), transplanté à Cuba avec la traite ; \"Bembé\" désigne aussi la cérémonie elle-même."],
+      ["Utilisation","Rituels de Santería ; jazz modal années 60 (Coltrane, Miles Davis) ; Steve Reich, Drumming (1971)."],
+      ["Construction","X.X.XX.X.X.X — 7 frappes sur 12 pas, E(7,12) — maximum euclidien sur base 12."],
+      ["Singularité","Un seul intervalle d'1 pas (entre frappes 5 et 6) au milieu d'intervalles de 2 — micro-accentuation caractéristique, comme un trébuchement contrôlé."],
+      ["Dans le dictionnaire","Complémentaire exact de Fume-fume ; même densité que Samba (7 frappes) mais sur 12 pas — plus oppressant."],
+      ["Sensation","Urgence hypnotique, absence de respiration, état de transe — la densité est fonctionnelle, pas décorative."],
+      ["Anecdote","Reich découvre ce rythme en étudiant la musique Ewe au Ghana en 1970 ; il réalise qu'il peut être lu comme plusieurs rythmes superposés selon l'accent — principe du phasing."],
+    ]
+  },
+};
 
+// ─── MOTEUR AUDIO ─────────────────────────────────────────────────────────────
 const DECAY_MIN=0.01,DECAY_MAX=0.35;
 function decayToT(v){return Math.log(v/DECAY_MIN)/Math.log(DECAY_MAX/DECAY_MIN);}
 function tToDecay(t){return DECAY_MIN*Math.pow(DECAY_MAX/DECAY_MIN,t);}
@@ -212,13 +370,12 @@ const LAYERS=[
 let state=LAYERS.map(l=>({
   dictIdx:dict.findIndex(r=>r.id===l.defId),
   pattern:dict.find(r=>r.id===l.defId).pattern.split(''),
-  shift:0,paramVal:l.pVal,volVal:l.volVal,stepPos:0,confirming:false,
-  wrapped:false
+  shift:0,paramVal:l.pVal,volVal:l.volVal,stepPos:0,confirming:false,wrapped:false
 }));
 
 let playing=false,timerID=null,ac=null,savingLi=null,latencyMs=0;
 let halfOn=false,doubleOn=false;
-const STEP_W=22; // px per step including gap
+const STEP_W=22;
 
 function getSpeedMult(){return doubleOn?2:halfOn?0.5:1;}
 function getAC(){if(!ac)ac=new(window.AudioContext||window.webkitAudioContext)();return ac;}
@@ -244,8 +401,8 @@ function playNoise(decay,vol,lat){sched(()=>{
 },lat);}
 
 function rotate(arr,n){const l=arr.length;if(!l)return arr;const k=((n%l)+l)%l;return[...arr.slice(k),...arr.slice(0,k)];}
+function halfAt(len){if(len<=4)return null;return Math.ceil(len/2);}
 
-// Build steps DOM — wrap param controls whether flex-break spacer is inserted
 function buildStepsDOM(li,wrap){
   const container=document.getElementById('steps-'+LAYERS[li].id);
   if(!container)return;
@@ -269,18 +426,15 @@ function buildStepsDOM(li,wrap){
   state[li].wrapped=wrap;
 }
 
-// Check if steps fit in one line, rebuild if wrap state changes
 function checkWrap(li){
   const wrap=document.getElementById('steps-'+LAYERS[li].id);
   if(!wrap)return;
-  const avail=wrap.parentElement.clientWidth - 60; // subtract shift-ctrl width
-  const len=state[li].pattern.length;
-  const needed=len*STEP_W;
+  const avail=wrap.parentElement.clientWidth-60;
+  const needed=state[li].pattern.length*STEP_W;
   const shouldWrap=needed>avail;
-  if(shouldWrap!==state[li].wrapped) buildStepsDOM(li,shouldWrap);
+  if(shouldWrap!==state[li].wrapped)buildStepsDOM(li,shouldWrap);
 }
 
-// ResizeObserver per layer
 const observers=[];
 function attachObserver(li){
   const wrap=document.getElementById('steps-'+LAYERS[li].id);
@@ -329,15 +483,12 @@ function mkSl(lbl,slMin,slMax,initVal,slStep,fmt,cb,isExp){
   row.appendChild(lb);row.appendChild(sl);row.appendChild(sv);return row;
 }
 
+// ─── BUILD RHYTHM LAYERS ──────────────────────────────────────────────────────
 function buildRhythmLayers(){
   observers.forEach(o=>o.disconnect());observers.length=0;
   const cont=document.getElementById('layers');cont.innerHTML='';
-
   LAYERS.forEach((layer,li)=>{
-    const layerDiv=document.createElement('div');
-    layerDiv.className='layer '+layer.cls;
-
-    // MENU
+    const layerDiv=document.createElement('div');layerDiv.className='layer '+layer.cls;
     const menu=document.createElement('div');menu.className='layer-menu';
     const sel=document.createElement('select');sel.id='sel-'+layer.id;
     dict.forEach((r,i)=>{
@@ -348,22 +499,16 @@ function buildRhythmLayers(){
     sel.addEventListener('change',function(){
       const idx=parseInt(this.value);state[li].dictIdx=idx;
       state[li].pattern=rotate(dict[idx].pattern.split(''),state[li].shift);
-      state[li].stepPos=0;
-      state[li].wrapped=false;
-      buildStepsDOM(li,false);
-      setTimeout(()=>checkWrap(li),0);
-      updateCtrlBtns(li);
+      state[li].stepPos=0;state[li].wrapped=false;
+      buildStepsDOM(li,false);setTimeout(()=>checkWrap(li),0);updateCtrlBtns(li);
     });
-
     const saveIco=document.createElement('button');saveIco.className='ico-save';saveIco.title='Sauvegarder';saveIco.textContent='💾';
     saveIco.addEventListener('click',()=>openModal(li));
-
     const trashBtn=document.createElement('button');trashBtn.className='ico';trashBtn.id='trash-'+layer.id;trashBtn.innerHTML='🗑';trashBtn.style.display='none';
     trashBtn.addEventListener('click',()=>{
       if(state[li].confirming)return;state[li].confirming=true;
       document.getElementById('conf-'+layer.id).style.display='flex';
     });
-
     const confRow=document.createElement('div');confRow.className='confirm-row';confRow.id='conf-'+layer.id;confRow.style.display='none';
     const confTxt=document.createElement('span');confTxt.textContent='Suppr.?';
     const okB=document.createElement('button');okB.className='ico';okB.innerHTML='✓';okB.style.color='#cc3333';
@@ -374,13 +519,12 @@ function buildRhythmLayers(){
       state[li].shift=0;
       const sn=document.getElementById('shift-num-'+layer.id);if(sn)sn.textContent='0';
       LAYERS.forEach((_,i)=>rebuildSelect(i));
-      buildStepsDOM(li,false);setTimeout(()=>checkWrap(li),0);
-      updateCtrlBtns(li);
+      buildStepsDOM(li,false);setTimeout(()=>checkWrap(li),0);updateCtrlBtns(li);
+      buildEncycloSelect();
     });
     const noB=document.createElement('button');noB.className='ico';noB.innerHTML='✕';
     noB.addEventListener('click',()=>{state[li].confirming=false;confRow.style.display='none';});
     confRow.appendChild(confTxt);confRow.appendChild(okB);confRow.appendChild(noB);
-
     const shiftCtrl=document.createElement('div');shiftCtrl.className='shift-ctrl';
     const btnM=document.createElement('button');btnM.className='shift-btn';btnM.textContent='−';
     const shiftNum=document.createElement('span');shiftNum.className='shift-num';shiftNum.id='shift-num-'+layer.id;shiftNum.textContent='0';
@@ -388,35 +532,27 @@ function buildRhythmLayers(){
     btnM.addEventListener('click',()=>{
       state[li].shift=((state[li].shift-1+state[li].pattern.length)%state[li].pattern.length);
       shiftNum.textContent=state[li].shift;
-      state[li].pattern=rotate(dict[state[li].dictIdx].pattern.split(''),state[li].shift);
-      buildStepsDOM(li,state[li].wrapped);
+      state[li].pattern=rotate(dict[state[li].dictIdx].pattern.split(''),state[li].shift);buildStepsDOM(li,state[li].wrapped);
     });
     btnP.addEventListener('click',()=>{
       state[li].shift=(state[li].shift+1)%state[li].pattern.length;
       shiftNum.textContent=state[li].shift;
-      state[li].pattern=rotate(dict[state[li].dictIdx].pattern.split(''),state[li].shift);
-      buildStepsDOM(li,state[li].wrapped);
+      state[li].pattern=rotate(dict[state[li].dictIdx].pattern.split(''),state[li].shift);buildStepsDOM(li,state[li].wrapped);
     });
     shiftCtrl.appendChild(btnM);shiftCtrl.appendChild(shiftNum);shiftCtrl.appendChild(btnP);
-
     menu.appendChild(sel);menu.appendChild(saveIco);menu.appendChild(trashBtn);menu.appendChild(confRow);
-
-    // STEPS WRAP
     const stepsWrap=document.createElement('div');stepsWrap.className='layer-steps-wrap';
     const stepsDiv=document.createElement('div');stepsDiv.className='steps';stepsDiv.id='steps-'+layer.id;
-    stepsWrap.appendChild(stepsDiv);
-    stepsWrap.appendChild(shiftCtrl);
-
-    layerDiv.appendChild(menu);
-    layerDiv.appendChild(stepsWrap);
+    stepsWrap.appendChild(stepsDiv);stepsWrap.appendChild(shiftCtrl);
+    layerDiv.appendChild(menu);layerDiv.appendChild(stepsWrap);
     cont.appendChild(layerDiv);
-
     buildStepsDOM(li,false);
     setTimeout(()=>{checkWrap(li);attachObserver(li);},0);
     updateCtrlBtns(li);
   });
 }
 
+// ─── BUILD SOUND LAYERS ───────────────────────────────────────────────────────
 function buildSoundLayers(){
   const cont=document.getElementById('sounds');cont.innerHTML='';
   LAYERS.forEach((layer,li)=>{
@@ -430,12 +566,45 @@ function buildSoundLayers(){
   });
 }
 
+// ─── ENCYCLOPÉDIE UI ──────────────────────────────────────────────────────────
+function buildEncycloSelect(){
+  const sel=document.getElementById('encyclo-select');
+  if(!sel)return;
+  const curVal=sel.value;
+  sel.innerHTML='';
+  dict.filter(r=>r.encyclo).forEach(r=>{
+    const o=document.createElement('option');o.value=r.encyclo;
+    o.textContent=r.name;sel.appendChild(o);
+  });
+  if(curVal&&[...sel.options].some(o=>o.value===curVal))sel.value=curVal;
+  renderEncyclo(sel.value||sel.options[0]?.value);
+}
+
+function renderEncyclo(key){
+  const body=document.getElementById('encyclo-body');
+  if(!body)return;
+  if(!key||!ENCYCLO[key]){
+    body.innerHTML='<p class="encyclo-empty">Sélectionne un rythme.</p>';return;
+  }
+  const e=ENCYCLO[key];
+  const chapo=document.createElement('p');chapo.className='encyclo-chapo';chapo.textContent=e.chapo;
+  const ul=document.createElement('ul');ul.className='encyclo-bullets';
+  e.bullets.forEach(([k,v])=>{
+    const li=document.createElement('li');
+    const bk=document.createElement('span');bk.className='bkey';bk.textContent=k;
+    const bv=document.createElement('span');bv.className='bval';bv.textContent=v;
+    li.appendChild(bk);li.appendChild(bv);ul.appendChild(li);
+  });
+  body.innerHTML='';body.appendChild(chapo);body.appendChild(ul);
+}
+
+document.getElementById('encyclo-select').addEventListener('change',function(){renderEncyclo(this.value);});
+
+// ─── PLAYBACK ─────────────────────────────────────────────────────────────────
 function highlightAll(){
   LAYERS.forEach((layer,li)=>{
     const div=document.getElementById('steps-'+layer.id);if(!div)return;
-    div.querySelectorAll('.step').forEach((s,si)=>{
-      s.classList.toggle('cur',si===state[li].stepPos);
-    });
+    div.querySelectorAll('.step').forEach((s,si)=>s.classList.toggle('cur',si===state[li].stepPos));
   });
 }
 
@@ -452,7 +621,7 @@ function tick(){
     state[li].stepPos=(state[li].stepPos+1)%pat.length;
   });
   highlightAll();
-  timerID=setTimeout(tick,interval);
+  timerID=setTimeout(tick,(60/parseInt(document.getElementById('bpm').value)/2)*1000/getSpeedMult());
 }
 
 function togglePlay(){
@@ -465,10 +634,7 @@ function togglePlay(){
     playing=false;clearTimeout(timerID);
     document.getElementById('btn-play').textContent='Play';
     document.getElementById('btn-play').classList.remove('active');
-    LAYERS.forEach(l=>{
-      const d=document.getElementById('steps-'+l.id);
-      if(d)d.querySelectorAll('.step').forEach(s=>s.classList.remove('cur'));
-    });
+    LAYERS.forEach(l=>{const d=document.getElementById('steps-'+l.id);if(d)d.querySelectorAll('.step').forEach(s=>s.classList.remove('cur'));});
   }
 }
 
@@ -478,20 +644,21 @@ function openModal(li){
   setTimeout(()=>document.getElementById('modal-input').focus(),50);
 }
 
+// ─── COLLAPSIBLES ─────────────────────────────────────────────────────────────
 function makeCollapsible(btnId,contentId,startOpen){
   const btn=document.getElementById(btnId),content=document.getElementById(contentId);
   if(startOpen){content.classList.replace('closed','opened');btn.classList.add('open');}
   btn.addEventListener('click',()=>{
     const open=content.classList.contains('opened');
-    content.classList.toggle('opened',!open);
-    content.classList.toggle('closed',open);
+    content.classList.toggle('opened',!open);content.classList.toggle('closed',open);
     btn.classList.toggle('open',!open);
   });
 }
-
 makeCollapsible('sons-btn','sons-content',true);
 makeCollapsible('params-btn','params-content',false);
+makeCollapsible('encyclo-btn','encyclo-content',false);
 
+// ─── EVENTS ───────────────────────────────────────────────────────────────────
 document.getElementById('btn-half').addEventListener('click',()=>{
   if(halfOn){halfOn=false;}else{halfOn=true;doubleOn=false;document.getElementById('btn-double').classList.remove('on');}
   document.getElementById('btn-half').classList.toggle('on',halfOn);
@@ -501,18 +668,14 @@ document.getElementById('btn-double').addEventListener('click',()=>{
   document.getElementById('btn-double').classList.toggle('on',doubleOn);
 });
 document.getElementById('btn-play').addEventListener('click',togglePlay);
-document.addEventListener('keydown',e=>{
-  if(e.code==='Space'&&e.target.tagName!=='INPUT'){e.preventDefault();togglePlay();}
-});
+document.addEventListener('keydown',e=>{if(e.code==='Space'&&e.target.tagName!=='INPUT'){e.preventDefault();togglePlay();}});
 document.getElementById('bpm').addEventListener('input',function(){document.getElementById('bpm-val').textContent=this.value;});
-document.getElementById('latency').addEventListener('input',function(){
-  latencyMs=parseInt(this.value);document.getElementById('lat-val').textContent=this.value+'ms';
-});
+document.getElementById('latency').addEventListener('input',function(){latencyMs=parseInt(this.value);document.getElementById('lat-val').textContent=this.value+'ms';});
 document.getElementById('modal-cancel').addEventListener('click',()=>document.getElementById('modal-bg').classList.remove('open'));
 document.getElementById('modal-ok').addEventListener('click',()=>{
   const name=document.getElementById('modal-input').value.trim();if(!name||savingLi===null)return;
   const li=savingLi;const pat=state[li].pattern.join('');
-  dict.push({id:'c_'+Date.now(),name,length:pat.length,pattern:pat,custom:true});
+  dict.push({id:'c_'+Date.now(),name,length:pat.length,pattern:pat,custom:true,encyclo:false});
   state[li].dictIdx=dict.length-1;
   LAYERS.forEach((_,i)=>rebuildSelect(i));updateCtrlBtns(li);
   document.getElementById('modal-bg').classList.remove('open');
@@ -522,8 +685,10 @@ document.getElementById('modal-input').addEventListener('keydown',e=>{
   if(e.key==='Escape')document.getElementById('modal-cancel').click();
 });
 
+// ─── INIT ─────────────────────────────────────────────────────────────────────
 buildRhythmLayers();
 buildSoundLayers();
+buildEncycloSelect();
 </script>
 </body>
 </html>
