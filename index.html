@@ -863,6 +863,7 @@ function renderEncyclo(key){
     };
   }
   if(!key||!ENCYCLO[key]){body.innerHTML='<p class="encyclo-empty">Sélectionne un rythme.</p>';return;}
+  const e=ENCYCLO[key];
   const chapo=document.createElement('p');chapo.className='encyclo-chapo';chapo.textContent=e.chapo;
   const ul=document.createElement('ul');ul.className='encyclo-bullets';
   e.bullets.forEach(([k,v])=>{
