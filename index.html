@@ -66,9 +66,21 @@ body{font-family:system-ui,-apple-system,sans-serif;font-size:12px;background:#f
 #circle-view{display:none;align-items:center;justify-content:center;flex-shrink:0;overflow:visible}
 #rhythm-canvas{display:block;touch-action:none;cursor:pointer;max-width:100%;max-height:100%}
 
-/* edit-rows : 1 seule ligne flex-wrap (tous modes sauf paysage-circle) */
 .edit-rows{display:flex;flex-direction:row;flex-wrap:wrap;align-items:center;gap:3px;margin-top:2px}
-.erow-shift,.erow-speed,.erow-comp{display:contents} /* les boutons s'insèrent à plat */
+.edit-rows.hidden{display:none}
+.erow-shift,.erow-speed,.erow-comp{display:contents}
+.btn-edit-toggle{padding:2px 6px;cursor:pointer;font-size:10px;font-weight:500;background:transparent;border:1px solid #c0bdb7;border-radius:4px;color:#666;flex-shrink:0}
+.btn-edit-toggle:hover{background:#e8e5e0}
+.btn-edit-toggle.active{background:#d0cec7;border-color:#a0a09a;color:#1a1a18}
+.btn-info-ico{padding:1px 5px;cursor:pointer;font-size:10px;font-weight:700;background:transparent;border:1px solid #c0bdb7;border-radius:4px;color:#666;flex-shrink:0;line-height:1.4;min-width:20px;text-align:center}
+.btn-info-ico:hover{background:#e8e5e0}
+.btn-info-ico.active{background:#d0cec7;border-color:#888;color:#1a1a18}
+/* SCÈNE / RYTHMIQUE */
+.scene-bar{display:flex;align-items:center;gap:5px;padding:.3rem .1rem;border-bottom:1px solid #e0ddd8;margin-bottom:4px}
+.scene-bar select{font-size:10px;flex:1;min-width:0;padding:1px 3px;border:1px solid #ccc;border-radius:4px;background:#fff;color:#1a1a18}
+.scene-bar-label{font-size:10px;font-weight:500;color:#888;flex-shrink:0;letter-spacing:.03em}
+.btn-scene-ico{cursor:pointer;font-size:13px;background:none;border:none;padding:1px 3px;line-height:1;opacity:.55;flex-shrink:0}
+.btn-scene-ico:hover{opacity:1}
 
 /* circle mode */
 body.view-circle .layer-steps-wrap{display:none}
@@ -242,6 +254,7 @@ body.view-circle #hdivider-after-layers{margin:0}
     </div>
   </div>
   <div class="hdivider" style="margin:.3rem 0"></div>
+  <div class="scene-bar" id="scene-bar"></div>
   <div class="rhythm-section" id="layers-wrap">
     <div id="layers"></div>
     <div id="circle-view">
@@ -264,7 +277,7 @@ body.view-circle #hdivider-after-layers{margin:0}
 
 <div class="modal-bg" id="modal-bg">
   <div class="modal">
-    <h3>Nom du rythme</h3>
+    <h3 id="modal-h3">Nom du rythme</h3>
     <input type="text" id="modal-input" placeholder="Mon rythme...">
     <div class="modal-btns">
       <button class="btn" id="modal-cancel">Annuler</button>
@@ -337,15 +350,163 @@ const ENCYCLO={
   bembe:{chapo:"Le Bembé est un rythme de cérémonie yoruba, joué dans la Santería cubaine pour l'invocation des Orishas, avec des équivalents structurels chez les Ewe du Ghana et les Yoruba du Nigeria. C'est le rythme euclidien le plus dense du dictionnaire sur base 12 — 7 frappes sur 12 pas, laissant à peine de l'espace. Cette densité quasi-continue produit une tension hypnotique sans repos qui explique son usage rituel. Il a profondément influencé le jazz modal et la musique minimaliste occidentale.",bullets:[["Origine","Yoruba (Nigeria/Bénin), transplanté à Cuba avec la traite ; \"Bembé\" désigne aussi la cérémonie elle-même."],["Utilisation","Rituels de Santería (Cuba) ; jazz modal : Miles Davis Kind of Blue (1959), Coltrane Africa/Brass (1961), Wayne Shorter — le pattern sous-tend l'ostinato africain de nombreuses compositions modales ; Steve Reich, Drumming (1971) et Clapping Music (1972)."],["Écritures","X.X.XX.X.X.X\nIntervalles : 2-2-1-2-2-2\nE(7,12) — maximum euclidien sur base 12"],["Singularité","Un seul intervalle d'1 pas (entre frappes 5 et 6) — micro-accentuation caractéristique, comme un trébuchement contrôlé."],["Relations","Complémentaire exact de Fume-fume ; même densité que Samba (7 frappes) mais sur 12 pas — plus oppressant."],["Sensation","Urgence hypnotique, absence de respiration, état de transe — la densité est fonctionnelle, pas décorative."],["Anecdote","Reich découvre ce rythme en étudiant la musique Ewe au Ghana en 1970 — principe du phasing qu'il exploitera dans toute son œuvre."]]}
 };
 
+// ─── SCÈNES / RYTHMIQUES ──────────────────────────────────────────────────────
+let scenes=[
+  {id:'salsa',    name:'Salsa',      custom:false, layers:[
+    {patId:'son32', shift:0, halfOn:false, doubleOn:false, muted:false},
+    {patId:'tres',  shift:0, halfOn:false, doubleOn:false, muted:false},
+    {patId:'tumbao',shift:0, halfOn:false, doubleOn:false, muted:true},
+  ]},
+  {id:'bossanova',name:'Bossa Nova', custom:false, layers:[
+    {patId:'sync4', shift:1, halfOn:false, doubleOn:false, muted:false},
+    {patId:'bossa', shift:0, halfOn:false, doubleOn:false, muted:false},
+    {patId:'tumbao',shift:0, halfOn:false, doubleOn:false, muted:true},
+  ]},
+];
+
+function applyScene(sceneId){
+  const sc=scenes.find(s=>s.id===sceneId);if(!sc)return;
+  LAYERS.forEach((layer,li)=>{
+    const sl=sc.layers[li];if(!sl)return;
+    const idx=dict.findIndex(r=>r.id===sl.patId);if(idx<0)return;
+    state[li].dictIdx=idx;
+    state[li].pattern=dict[idx].pattern.split('');
+    // appliquer shift
+    if(sl.shift){
+      state[li].pattern=rotate(state[li].pattern,state[li].pattern.length-sl.shift);
+    }
+    state[li].shift=0;state[li].shiftCount=sl.shift||0;state[li].wrapped=false;
+    state[li].muted=sl.muted;
+    state[li].halfOn=sl.halfOn;state[li].doubleOn=sl.doubleOn;
+    state[li].pendingHalf=false;state[li].pendingDouble=false;state[li].pendingClear=false;
+    clearDirty(li);
+  });
+  // rebuild UI
+  buildRhythmLayers();
+  buildSoundLayers();
+  LAYERS.forEach((_,li)=>{
+    setTimeout(()=>checkWrap(li),0);
+  });
+}
+
+function buildSceneSelect(sel){
+  sel.innerHTML='';
+  const stdOpt=document.createElement('option');stdOpt.value='';stdOpt.textContent='— Rythmique —';stdOpt.disabled=true;stdOpt.selected=true;
+  sel.appendChild(stdOpt);
+  const customs=scenes.filter(s=>s.custom);
+  const stds=scenes.filter(s=>!s.custom);
+  stds.forEach(s=>{const o=document.createElement('option');o.value=s.id;o.textContent=s.name;sel.appendChild(o);});
+  if(customs.length){
+    const sep=document.createElement('option');sep.disabled=true;sep.textContent='─ ─ ─ ─ ─';sel.appendChild(sep);
+    customs.forEach(s=>{const o=document.createElement('option');o.value=s.id;o.textContent=s.name;sel.appendChild(o);});
+  }
+}
+
+function buildSceneBar(){
+  const bar=document.getElementById('scene-bar');if(!bar)return;
+  bar.innerHTML='';
+  const lbl=document.createElement('span');lbl.className='scene-bar-label';lbl.textContent='Rythmique';
+  const sel=document.createElement('select');sel.id='scene-select';
+  sel.style.cssText='font-size:10px;flex:1;min-width:0;max-width:140px;padding:1px 2px;border:1px solid #ccc;border-radius:4px;background:#fff;color:#1a1a18';
+  buildSceneSelect(sel);
+  sel.addEventListener('change',function(){
+    if(!this.value)return;
+    const sc=scenes.find(s=>s.id===this.value);
+    applyScene(this.value);
+    if(sc)[...this.options].forEach(o=>{o.selected=(o.value===sc.id);});
+    // mettre à jour état bouton i scène
+    updateSceneInfoBtn();
+  });
+
+  const btnSave=document.createElement('button');btnSave.className='btn-scene-ico';btnSave.title='Sauvegarder cette rythmique';btnSave.textContent='💾';
+  btnSave.addEventListener('click',()=>openSceneModal());
+
+  // bouton i scène
+  const btnInfoSc=document.createElement('button');
+  btnInfoSc.className='btn-info-ico';btnInfoSc.id='scene-info-btn';
+  btnInfoSc.textContent='i';btnInfoSc.title='À propos de cette rythmique';
+  btnInfoSc.style.minWidth='20px';btnInfoSc.style.opacity='.3';btnInfoSc.style.cursor='default';
+  btnInfoSc.addEventListener('click',()=>{
+    const scId=sel.value;
+    const eKey=SCENE_ENCYCLO[scId];
+    if(!eKey)return;
+    const isOn=btnInfoSc.classList.contains('active');
+    // désactiver tous les i couches aussi
+    LAYERS.forEach(l=>{const b=document.getElementById('info-ico-'+l.id);if(b)b.classList.remove('active');});
+    const content=document.getElementById('encyclo-content');
+    const encloBtn=document.getElementById('encyclo-btn');
+    if(isOn){
+      btnInfoSc.classList.remove('active');
+      if(content){content.classList.replace('opened','closed');if(encloBtn)encloBtn.classList.remove('open');}
+    } else {
+      btnInfoSc.classList.add('active');
+      const es=document.getElementById('encyclo-select');
+      if(es&&[...es.options].some(o=>o.value===eKey)){es.value=eKey;renderEncyclo(eKey);}
+      if(content&&content.classList.contains('closed')){content.classList.replace('closed','opened');if(encloBtn)encloBtn.classList.add('open');}
+    }
+  });
+
+  // bouton Édit scène — toggle layers-wrap
+  const btnEditSc=document.createElement('button');
+  btnEditSc.className='btn-edit-toggle';btnEditSc.id='scene-edit-btn';
+  btnEditSc.textContent='Édit';btnEditSc.title='Afficher/masquer les couches';
+  btnEditSc.classList.add('active'); // ouvert par défaut
+  btnEditSc.addEventListener('click',()=>{
+    const lw=document.getElementById('layers-wrap');
+    const dv=document.getElementById('hdivider-after-layers');
+    const hidden=lw.style.display==='none';
+    lw.style.display=hidden?'':'none';
+    if(dv)dv.style.display=hidden?'':'none';
+    btnEditSc.classList.toggle('active',hidden);
+  });
+
+  bar.appendChild(lbl);bar.appendChild(sel);bar.appendChild(btnSave);bar.appendChild(btnInfoSc);bar.appendChild(btnEditSc);
+}
+
+// clés encyclo par scène (pour le bouton i scène)
+const SCENE_ENCYCLO={salsa:'son32', bossanova:'bossa'};
+
+function updateSceneInfoBtn(){
+  const sel=document.getElementById('scene-select');
+  const btn=document.getElementById('scene-info-btn');
+  if(!sel||!btn)return;
+  const hasE=!!(sel.value&&SCENE_ENCYCLO[sel.value]);
+  btn.style.opacity=hasE?'1':'.3';
+  btn.style.cursor=hasE?'pointer':'default';
+}
+
+let sceneModalCb=null;
+function openSceneModal(){
+  sceneModalCb=null;
+  document.getElementById('modal-input').value='';
+  document.getElementById('modal-bg').classList.add('open');
+  document.getElementById('modal-h3').textContent='Nom de la rythmique';
+  sceneModalCb=(name)=>{
+    const id='sc_'+Date.now();
+    scenes.push({
+      id,name,custom:true,
+      layers:LAYERS.map((_,li)=>({
+        patId:dict[state[li].dictIdx].id,
+        shift:state[li].shiftCount||0,
+        halfOn:state[li].halfOn,
+        doubleOn:state[li].doubleOn,
+        muted:state[li].muted,
+      }))
+    });
+    const sel=document.getElementById('scene-select');
+    buildSceneSelect(sel);
+  };
+}
+
 // ─── AUDIO ────────────────────────────────────────────────────────────────────
 const DECAY_MIN=0.01,DECAY_MAX=0.35;
 function decayToT(v){return Math.log(v/DECAY_MIN)/Math.log(DECAY_MAX/DECAY_MIN);}
 function tToDecay(t){return DECAY_MIN*Math.pow(DECAY_MAX/DECAY_MIN,t);}
 
 const LAYERS=[
-  {id:"low",  label:"Grave", defId:"fl4",   cls:"c-low",  param:"pitch",pMin:40,  pMax:400, pVal:100,pStep:1,    volVal:0.5, fmt:v=>Math.round(v)+'Hz'},
-  {id:"high", label:"Aigu",  defId:"son32", cls:"c-high", param:"pitch",pMin:200, pMax:2000,pVal:440,pStep:1,    volVal:0.5, fmt:v=>Math.round(v)+'Hz'},
-  {id:"noise",label:"Noise", defId:"pulse1",cls:"c-noise",param:"decay",pMin:0.01,pMax:0.35,pVal:0.02,pStep:0.001,volVal:0.25,fmt:v=>parseFloat(v).toFixed(3)+'s'},
+  {id:"low",  label:"Grave", defId:"fl4",    cls:"c-low",  param:"pitch",pMin:40,  pMax:400, pVal:100,pStep:1,    volVal:0.5, fmt:v=>Math.round(v)+'Hz'},
+  {id:"high", label:"Aigu",  defId:"tres",   cls:"c-high", param:"pitch",pMin:200, pMax:2000,pVal:440,pStep:1,    volVal:0.5, fmt:v=>Math.round(v)+'Hz'},
+  {id:"noise",label:"Noise", defId:"pulse4", cls:"c-noise",param:"decay",pMin:0.01,pMax:0.35,pVal:0.02,pStep:0.001,volVal:0.25,fmt:v=>parseFloat(v).toFixed(3)+'s'},
 ];
 
 let state=LAYERS.map((l,li)=>({
@@ -354,7 +515,7 @@ let state=LAYERS.map((l,li)=>({
   shift:0, dirty:false, handEdited:false,
   halfOn:false, doubleOn:false,
   pendingHalf:false, pendingDouble:false, pendingClear:false,
-  nextStepTime:0, startTime:0, muted:li>0,
+  nextStepTime:0, startTime:0, muted:li>1,
   paramVal:l.pVal, volVal:l.volVal,
   stepPos:0, wrapped:false
 }));
@@ -569,11 +730,10 @@ function buildRhythmLayers(){
       const sn=document.getElementById('shift-num-'+layer.id);if(sn)sn.textContent='0';
       clearDirty(li);
       buildStepsDOM(li,false);setTimeout(()=>checkWrap(li),0);updateCtrlBtns(li);
-      const eKey=dict[idx].encyclo;
-      if(eKey){
-        const es=document.getElementById('encyclo-select');
-        if(es&&[...es.options].some(o=>o.value===eKey)){es.value=eKey;renderEncyclo(eKey);}
-      }
+      // mettre à jour état bouton i
+      const hasEncyclo=!!(dict[idx]&&dict[idx].encyclo);
+      const bi=document.getElementById('info-ico-'+layer.id);
+      if(bi){bi.style.opacity=hasEncyclo?'1':'.3';bi.style.cursor=hasEncyclo?'pointer':'default';}
     });
 
     const saveIco=document.createElement('button');saveIco.className='ico-save';saveIco.id='save-ico-'+layer.id;saveIco.title='Sauvegarder';saveIco.textContent='💾';
@@ -626,8 +786,10 @@ function buildRhythmLayers(){
       const selEl=document.getElementById('sel-'+layer.id);
       if(selEl)[...selEl.options].forEach(o=>{o.selected=(o.value===pick.id);});
       clearDirty(li);buildStepsDOM(li,false);setTimeout(()=>checkWrap(li),0);updateCtrlBtns(li);
-      const eKey=pick.encyclo;
-      if(eKey){const es=document.getElementById('encyclo-select');if(es&&[...es.options].some(o=>o.value===eKey)){es.value=eKey;renderEncyclo(eKey);}}
+      // mettre à jour bouton i
+      const eKey2=pick.encyclo;
+      const bi2=document.getElementById('info-ico-'+layer.id);
+      if(bi2){bi2.style.opacity=eKey2?'1':'.3';bi2.style.cursor=eKey2?'pointer':'default';}
     });
 
     // MUTE BOUTON CARRÉ — dans sel-row à gauche du select
@@ -752,16 +914,63 @@ function buildRhythmLayers(){
     });
 
     // ── assemble rows ──────────────────────────────────────────────────────
-    // All modes except paysage-circle: edit-rows is flex-wrap row (1 line)
-    // Paysage-circle CSS splits into column: shift / comp / speed+dice
-    speedRow.appendChild(btnRandEdit);  // dice on speed row = line 5
+    speedRow.appendChild(btnRandEdit);
     editRows.appendChild(shiftRow);
     editRows.appendChild(compRow);
     editRows.appendChild(speedRow);
+    editRows.classList.add('hidden'); // fermé par défaut
 
-    // add dice to selRow, editRows to menu
+    // bouton i — info encyclopédie, toggle exclusif
+    const hasEncyclo=!!(dict[state[li].dictIdx]&&dict[state[li].dictIdx].encyclo);
+    const btnInfo=document.createElement('button');
+    btnInfo.className='btn-info-ico';btnInfo.id='info-ico-'+layer.id;
+    btnInfo.title='À propos de ce rythme';btnInfo.textContent='i';
+    btnInfo.style.opacity=hasEncyclo?'1':'.3';
+    btnInfo.style.cursor=hasEncyclo?'pointer':'default';
+    btnInfo.style.minWidth='20px'; // double largeur
+    btnInfo.addEventListener('click',()=>{
+      const eKey=dict[state[li].dictIdx]?.encyclo;
+      if(!eKey)return;
+      const isOn=btnInfo.classList.contains('active');
+      // désactiver tous les boutons i
+      LAYERS.forEach(l=>{
+        const b=document.getElementById('info-ico-'+l.id);
+        if(b)b.classList.remove('active');
+      });
+      const content=document.getElementById('encyclo-content');
+      const encloBtn=document.getElementById('encyclo-btn');
+      if(isOn){
+        // fermer le volet
+        if(content){content.classList.replace('opened','closed');if(encloBtn)encloBtn.classList.remove('open');}
+      } else {
+        // activer ce bouton + ouvrir volet sur la fiche
+        btnInfo.classList.add('active');
+        const es=document.getElementById('encyclo-select');
+        if(es&&[...es.options].some(o=>o.value===eKey)){
+          es.value=eKey;renderEncyclo(eKey);
+        }
+        if(content&&content.classList.contains('closed')){
+          content.classList.replace('closed','opened');
+          if(encloBtn)encloBtn.classList.add('open');
+        }
+      }
+    });
+
+    // bouton Édit toggle
+    const btnEdit=document.createElement('button');
+    btnEdit.className='btn-edit-toggle';
+    btnEdit.title='Ouvrir/fermer les outils d\'édition';
+    btnEdit.textContent='Édit';
+    btnEdit.addEventListener('click',()=>{
+      const hidden=editRows.classList.toggle('hidden');
+      btnEdit.classList.toggle('active',!hidden);
+    });
+
+    // add mute + dice + i + edit à selRow, editRows au menu
     selRow.insertBefore(btnMuteSq, selRow.firstChild);
     selRow.appendChild(btnDice);
+    selRow.appendChild(btnInfo);
+    selRow.appendChild(btnEdit);
     menu.appendChild(editRows);
 
     layerDiv.appendChild(menu);layerDiv.appendChild(stepsWrap);
@@ -1031,8 +1240,7 @@ function openPanel(key){
 document.getElementById('btn-panel-bpm').addEventListener('click',()=>openPanel('bpm'));
 document.getElementById('btn-panel-sons').addEventListener('click',()=>openPanel('sons'));
 document.getElementById('btn-panel-params').addEventListener('click',()=>openPanel('params'));
-// BPM ouvert par défaut
-openPanel('bpm');
+// panneau fermé par défaut
 
 makeCollapsible('encyclo-btn','encyclo-content',true);
 
@@ -1110,12 +1318,17 @@ document.getElementById('btn-global-double').addEventListener('click',()=>{
 document.getElementById('latency').addEventListener('input',function(){latencyMs=parseInt(this.value);document.getElementById('lat-val').textContent=this.value+'ms';});
 document.getElementById('modal-cancel').addEventListener('click',()=>document.getElementById('modal-bg').classList.remove('open'));
 document.getElementById('modal-ok').addEventListener('click',()=>{
-  const name=document.getElementById('modal-input').value.trim();if(!name||savingLi===null)return;
-  const li=savingLi;const pat=state[li].pattern.join('');
-  dict.push({id:'c_'+Date.now(),name,length:pat.length,pattern:pat,custom:true,encyclo:false});
-  state[li].dictIdx=dict.length-1;
-  LAYERS.forEach((_,i)=>rebuildSelect(i));
-  updateCtrlBtns(li);clearDirty(li);
+  const name=document.getElementById('modal-input').value.trim();if(!name)return;
+  if(sceneModalCb){sceneModalCb(name);sceneModalCb=null;}
+  else if(savingLi!==null){
+    const li=savingLi;const pat=state[li].pattern.join('');
+    dict.push({id:'c_'+Date.now(),name,length:pat.length,pattern:pat,custom:true,encyclo:false});
+    state[li].dictIdx=dict.length-1;
+    LAYERS.forEach((_,i)=>rebuildSelect(i));
+    updateCtrlBtns(li);clearDirty(li);
+  }
+  document.getElementById('modal-h3').textContent='Nom du rythme';
+  savingLi=null;
   document.getElementById('modal-bg').classList.remove('open');
 });
 document.getElementById('modal-input').addEventListener('keydown',e=>{
@@ -1348,24 +1561,23 @@ window.addEventListener('resize',()=>{if(circleView)setTimeout(resizeCanvas,50);
 buildRhythmLayers();
 buildSoundLayers();
 buildEncycloSelect();
-// onboarding : mute visuel Aigu et Noise
+buildSceneBar();
+// onboarding : mute visuel Noise seulement
 LAYERS.forEach((layer,li)=>{
-  if(li>0){
+  if(li===2){
     const steps=document.getElementById('steps-'+layer.id);
     if(steps)steps.classList.add('muted');
-    // layerDiv déjà marqué muted-layer via buildRhythmLayers
   }
 });
-// ouvrir encyclopédie sur 4 on the floor
+// encyclopédie : rendu initial mais volet FERMÉ
 const es=document.getElementById('encyclo-select');
-if(es&&[...es.options].some(o=>o.value==='fl4')){es.value='fl4';renderEncyclo('fl4');}
-// ouvrir le volet encyclopédie
-const encycloBtn=document.getElementById('encyclo-btn');
+if(es){const firstVal=[...es.options].find(o=>!o.disabled)?.value;if(firstVal)renderEncyclo(firstVal);}
+// s'assurer que le volet est fermé
 const encycloContent=document.getElementById('encyclo-content');
-if(encycloBtn&&encycloContent){
-  encycloContent.classList.replace('closed','opened');
-  encycloBtn.classList.add('open');
-}
+const encycloBtn2=document.getElementById('encyclo-btn');
+if(encycloContent){encycloContent.classList.remove('opened');encycloContent.classList.add('closed');}
+if(encycloBtn2)encycloBtn2.classList.remove('open');
+
 </script>
 </body>
 </html>
