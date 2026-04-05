@@ -10,26 +10,49 @@ body{font-family:system-ui,-apple-system,sans-serif;font-size:12px;background:#f
 .frame{border:1px solid #d0cec7;border-radius:12px;padding:.75rem .85rem;background:#fff;width:100%;max-width:900px}
 .app-title{font-size:15px;font-weight:500;letter-spacing:.04em;margin-bottom:.6rem;color:#1a1a18;text-align:center}
 
-.transport{display:flex;flex-direction:column;align-items:stretch;gap:5px;margin-bottom:.5rem}
-.t-line{display:flex;align-items:center;justify-content:center;gap:8px}
+/* === TRANSPORT LIGNE 1 === */
+.transport{display:flex;flex-direction:column;align-items:stretch;gap:0;margin-bottom:0}
+.t-line1{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:.45rem .1rem}
+.t-group{display:flex;align-items:center;gap:5px}
 .t-title{font-size:14px;font-weight:500;letter-spacing:.04em;color:#1a1a18}
 .btn{padding:4px 12px;cursor:pointer;font-size:12px;font-weight:500;background:#fff;border:1px solid #b0aea7;border-radius:6px;color:#1a1a18}
 .btn:hover{background:#f0ede8}
 .btn.active{background:#ddeeff;border-color:#5599cc;color:#1155aa}
-.btn-play-main{padding:5px 22px;font-size:13px}
-.btn-sync{padding:4px 9px;font-size:13px}
-.btn-sm-tempo{padding:3px 8px;cursor:pointer;font-size:11px;background:#fff;border:1px solid #b0aea7;border-radius:5px;color:#666}
-.btn-sm-tempo:hover{background:#f0ede8}
-.btn-sm-tempo.active{background:#ddeeff;border-color:#5599cc;color:#1155aa}
+.btn-play-main{padding:5px 22px;font-size:13px;border:2px solid #F5C518;color:#1a1a18;border-radius:6px 0 0 6px}
+.btn-play-main:hover{background:#fffbe8}
+.btn-play-main.active{background:#F5C518;border-color:#d4a800;color:#1a1a18}
+.btn-sync{padding:4px 7px;font-size:12px;border:2px solid #F5C518;border-left:none;border-radius:0 6px 6px 0;color:#888;background:#fff;cursor:pointer;font-weight:500}
+.btn-sync:hover{background:#fffbe8}
+.btn-panel{padding:3px 7px;cursor:pointer;font-size:11px;font-weight:500;background:#fff;border:1px solid #b0aea7;border-radius:5px;color:#555;letter-spacing:.03em}
+.btn-panel:hover{background:#f0ede8}
+.btn-panel.active{background:#e8e5e0;border-color:#888;color:#222}
+.btn-view{padding:4px 9px;font-size:13px}
+/* MUTE BOUTON CARRÉ dans sel-row */
+.btn-mute-sq{width:26px;height:26px;flex-shrink:0;border:none;border-radius:4px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;background:var(--cc);transition:background .15s;padding:0;line-height:1}
+.btn-mute-sq.muted{background:#c8c5c0}
+.btn-mute-sq:hover{filter:brightness(.9)}
+/* couche OFF : fond grisé */
+.layer.muted-layer{background:#f0ede855 !important}
+/* === PANNEAU 2 (onglets exclusifs) === */
+.panel2{border-top:1px solid #e0ddd8;border-bottom:1px solid #e0ddd8;background:#faf9f7;overflow:hidden;transition:max-height .22s ease,padding .22s ease;max-height:0;padding:0 .1rem}
+.panel2.open{max-height:400px;padding:.5rem .1rem}
+.panel2-inner{display:none}
+.panel2-inner.active{display:block}
+/* tempo dans panneau 2 */
+.t-tempo-wrap{display:flex;flex-direction:column;gap:4px}
+.t-line-tempo{display:flex;align-items:center;gap:8px}
 .t-label{font-size:10px;color:#888;font-weight:400}
 .t-slider-wrap{display:flex;flex-direction:column;align-items:center;gap:1px;flex:1;max-width:200px}
 .t-spm-display{font-size:11px;color:#999;font-weight:400;cursor:pointer;text-align:center}
 .t-spm-display:hover{color:#555}
 .t-spm-input{font-size:11px;width:70px;text-align:center;border:1px solid #5599cc;border-radius:4px;padding:1px 4px;outline:none}
 .t-slider{width:100%;accent-color:#888}
+.t-equiv-line{display:flex;align-items:center;gap:8px;justify-content:center}
 .t-equiv{font-size:13px;font-weight:500;color:#1a1a18;white-space:nowrap;letter-spacing:.02em}
+.btn-sm-tempo{padding:3px 8px;cursor:pointer;font-size:11px;background:#fff;border:1px solid #b0aea7;border-radius:5px;color:#666}
+.btn-sm-tempo:hover{background:#f0ede8}
+.btn-sm-tempo.active{background:#ddeeff;border-color:#5599cc;color:#1155aa}
 .hdivider{height:1px;background:#e0ddd8;margin:.5rem 0}
-.btn-view{padding:4px 9px;font-size:13px}
 /* === LAYOUT BASE === */
 #layers-wrap{display:flex;align-items:flex-start;gap:0}
 #layers{flex:1;display:flex;flex-direction:column;gap:4px;min-width:0}
@@ -162,26 +185,56 @@ body.view-circle #hdivider-after-layers{margin:0}
 <body>
 <div class="frame">
   <div class="transport">
-    <div class="t-line t-line1">
-      <span class="t-title">Basic Rhythm</span>
-      <button class="btn btn-play-main" id="btn-play">Play</button>
-      <button class="btn btn-sync" id="btn-resync" title="Resynchroniser">⟳</button>
-      <button class="btn btn-view" id="btn-view" title="Basculer vue">⊞</button>
-    </div>
-    <div class="t-line t-line2">
-      <span class="t-label">TEMPO</span>
-      <div class="t-slider-wrap">
-        <span class="t-spm-display" id="bpm-val" title="Cliquer pour éditer">220 spm</span>
-        <input type="range" class="t-slider" id="bpm" min="30" max="400" value="220" step="1">
+    <div class="t-line1">
+      <div class="t-group">
+        <span class="t-title">Basic Rhythm</span>
+      </div>
+      <div class="t-group" style="gap:0">
+        <button class="btn btn-play-main" id="btn-play">Play</button>
+        <button class="btn btn-sync" id="btn-resync" title="Resynchroniser">⟳</button>
+      </div>
+      <div class="t-group">
+        <button class="btn-panel" id="btn-panel-bpm" title="Tempo">BPM</button>
+        <button class="btn-panel" id="btn-panel-sons" title="Réglages sons">🔊</button>
+        <button class="btn-panel" id="btn-panel-params" title="Paramètres avancés">⚙</button>
+      </div>
+      <div class="t-group">
+        <button class="btn btn-view" id="btn-view" title="Vue circulaire">⊞</button>
       </div>
     </div>
-    <div class="t-line t-line3">
-      <button class="btn-sm-tempo" id="btn-global-half">/2</button>
-      <span class="t-equiv" id="bpm-equiv"><span style="letter-spacing:-.1em">♩♩</span>=55&ensp;♩=110&ensp;♩.=73</span>
-      <button class="btn-sm-tempo" id="btn-global-double">×2</button>
+    <!-- PANNEAU 2 : onglets exclusifs -->
+    <div class="panel2" id="panel2">
+      <div class="panel2-inner" id="panel-bpm">
+        <div class="t-tempo-wrap">
+          <div class="t-line-tempo">
+            <span class="t-label">TEMPO</span>
+            <div class="t-slider-wrap">
+              <span class="t-spm-display" id="bpm-val" title="Steps Par Minute — 1 step = 1 subdivision. Cliquer pour éditer">120 spm</span>
+              <input type="range" class="t-slider" id="bpm" min="30" max="400" value="120" step="1">
+            </div>
+          </div>
+          <div class="t-equiv-line">
+            <button class="btn-sm-tempo" id="btn-global-half">/2</button>
+            <span class="t-equiv" id="bpm-equiv"><span style="letter-spacing:-.1em">♩♩</span>=30&ensp;♩=60&ensp;♩.=40</span>
+            <button class="btn-sm-tempo" id="btn-global-double">×2</button>
+          </div>
+        </div>
+      </div>
+      <div class="panel2-inner" id="panel-sons">
+        <div class="sound-layers" id="sounds"></div>
+      </div>
+      <div class="panel2-inner" id="panel-params">
+        <div class="params-inner">
+          <div class="sl-row">
+            <label style="width:50px;font-size:9px;color:#888">Latence</label>
+            <input type="range" id="latency" min="-200" max="200" value="0" step="5" style="flex:1;accent-color:#888">
+            <span class="sv" id="lat-val">0ms</span>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-  <div class="hdivider"></div>
+  <div class="hdivider" style="margin:.3rem 0"></div>
   <div class="rhythm-section" id="layers-wrap">
     <div id="layers"></div>
     <div id="circle-view">
@@ -190,27 +243,13 @@ body.view-circle #hdivider-after-layers{margin:0}
   </div>
   <div class="hdivider" id="hdivider-after-layers"></div>
 
-  <button class="collapsible-btn" id="sons-btn"><span class="arr">▶</span><span>Réglages sons</span></button>
-  <div class="collapsible-content closed" id="sons-content">
-    <div class="sound-layers" id="sounds"></div>
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:6px;border-top:1px solid #e0ddd8;padding-top:6px">
+    <button class="collapsible-btn encyclo-main-btn" id="encyclo-btn" style="border-top:none;margin-top:0;padding-top:0;flex:0 0 auto"><span class="arr">▶</span><span>Encyclopédie des rythmes</span></button>
   </div>
-
-  <button class="collapsible-btn" id="params-btn"><span class="arr">▶</span><span>Paramètres avancés</span></button>
-  <div class="collapsible-content closed" id="params-content">
-    <div class="params-inner">
-      <div class="sl-row">
-        <label style="width:50px;font-size:9px;color:#888">Latence</label>
-        <input type="range" id="latency" min="-200" max="200" value="0" step="5" style="flex:1;accent-color:#888">
-        <span class="sv" id="lat-val">0ms</span>
-      </div>
-    </div>
-  </div>
-
-  <button class="collapsible-btn encyclo-main-btn" id="encyclo-btn"><span class="arr">▶</span><span>Encyclopédie des rythmes</span></button>
-  <div class="collapsible-content closed" id="encyclo-content">
-    <div class="encyclo-wrap">
-      <div class="encyclo-select-row">
-        <select id="encyclo-select"></select>
+  <div class="collapsible-content opened" id="encyclo-content">
+    <div class="encyclo-wrap" style="padding-top:4px">
+      <div style="margin-bottom:6px">
+        <select id="encyclo-select" style="font-size:11px;padding:2px 5px;border:1px solid #ccc;border-radius:5px;background:#fff;color:#1a1a18;max-width:260px"></select>
       </div>
       <div id="encyclo-body"></div>
     </div>
@@ -240,7 +279,7 @@ const DICT=[
   {id:"pulse1", name:"Pulse",           length:1,  pattern:"X",                  encyclo:false},
   {id:"bin2",   name:"Bin",             length:2,  pattern:"X.",                 encyclo:false},
   {id:"ter3",   name:"Ter",             length:3,  pattern:"X..",                encyclo:false},
-  {id:"fl4",    name:"4 on the floor",      length:4,  pattern:"X...",               encyclo:"fl4"},
+  {id:"fl4",    name:"4 on the floor",      length:8,  pattern:"X.X.X.X.",               encyclo:"fl4"},
   {id:"pulse4", name:"Pulse×4",           length:4,  pattern:"XXXX",               encyclo:false},
   {id:"sync4",  name:"Syncope double",  length:4,  pattern:"..XX",               encyclo:false},
   {id:"silence",name:"Silence",          length:4,  pattern:"....",               encyclo:false},
@@ -296,18 +335,18 @@ function decayToT(v){return Math.log(v/DECAY_MIN)/Math.log(DECAY_MAX/DECAY_MIN);
 function tToDecay(t){return DECAY_MIN*Math.pow(DECAY_MAX/DECAY_MIN,t);}
 
 const LAYERS=[
-  {id:"low",  label:"Low",  defId:"fl4",   cls:"c-low",  param:"pitch",pMin:40,  pMax:400, pVal:100,pStep:1,    volVal:0.5, fmt:v=>Math.round(v)+'Hz'},
-  {id:"high", label:"High", defId:"son32", cls:"c-high", param:"pitch",pMin:200, pMax:2000,pVal:440,pStep:1,    volVal:0.5, fmt:v=>Math.round(v)+'Hz'},
-  {id:"noise",label:"Noise",defId:"pulse1",cls:"c-noise",param:"decay",pMin:0.01,pMax:0.35,pVal:0.02,pStep:0.001,volVal:0.25,fmt:v=>parseFloat(v).toFixed(3)+'s'},
+  {id:"low",  label:"Grave", defId:"fl4",   cls:"c-low",  param:"pitch",pMin:40,  pMax:400, pVal:100,pStep:1,    volVal:0.5, fmt:v=>Math.round(v)+'Hz'},
+  {id:"high", label:"Aigu",  defId:"son32", cls:"c-high", param:"pitch",pMin:200, pMax:2000,pVal:440,pStep:1,    volVal:0.5, fmt:v=>Math.round(v)+'Hz'},
+  {id:"noise",label:"Noise", defId:"pulse1",cls:"c-noise",param:"decay",pMin:0.01,pMax:0.35,pVal:0.02,pStep:0.001,volVal:0.25,fmt:v=>parseFloat(v).toFixed(3)+'s'},
 ];
 
-let state=LAYERS.map(l=>({
+let state=LAYERS.map((l,li)=>({
   dictIdx:dict.findIndex(r=>r.id===l.defId),
   pattern:dict.find(r=>r.id===l.defId).pattern.split(''),
   shift:0, dirty:false, handEdited:false,
   halfOn:false, doubleOn:false,
   pendingHalf:false, pendingDouble:false, pendingClear:false,
-  nextStepTime:0, startTime:0, muted:false,
+  nextStepTime:0, startTime:0, muted:li>0,
   paramVal:l.pVal, volVal:l.volVal,
   stepPos:0, wrapped:false
 }));
@@ -440,7 +479,6 @@ function updateDirtyUI(li){
   }
   if(tag)tag.classList.toggle('show',state[li].handEdited);
 }
-
 // ─── STEPS DOM ────────────────────────────────────────────────────────────────
 function buildStepsDOM(li,wrap){
   const container=document.getElementById('steps-'+LAYERS[li].id);
@@ -567,7 +605,7 @@ function buildRhythmLayers(){
     const stepsDiv=document.createElement('div');stepsDiv.className='steps';stepsDiv.id='steps-'+layer.id;
     stepsWrap.appendChild(stepsDiv);
 
-    // DICE button (random rhythm)
+    // DICE button (random rhythm) — ligne 1
     const btnDice=document.createElement('button');btnDice.className='ico-save';btnDice.title='Rythme aléatoire';btnDice.textContent='🎲';btnDice.style.opacity='.55';
     btnDice.addEventListener('click',()=>{
       const playable=dict.filter(r=>r.length>1);
@@ -584,12 +622,19 @@ function buildRhythmLayers(){
       if(eKey){const es=document.getElementById('encyclo-select');if(es&&[...es.options].some(o=>o.value===eKey)){es.value=eKey;renderEncyclo(eKey);}}
     });
 
-    // MUTE button (in sel-row)
-    const btnMute=document.createElement('button');btnMute.className='ico-mute';btnMute.id='mute-'+layer.id;btnMute.title='Muter';btnMute.textContent='🔇';
-    btnMute.addEventListener('click',()=>{
+    // MUTE BOUTON CARRÉ — dans sel-row à gauche du select
+    const btnMuteSq=document.createElement('button');
+    btnMuteSq.className='btn-mute-sq'+(state[li].muted?' muted':'');
+    btnMuteSq.id='mute-sq-'+layer.id;
+    btnMuteSq.title=state[li].muted?'Activer la couche':'Désactiver la couche';
+    btnMuteSq.textContent=state[li].muted?'🔇':'🔊';
+    btnMuteSq.addEventListener('click',()=>{
       state[li].muted=!state[li].muted;
-      btnMute.classList.toggle('active',state[li].muted);
+      btnMuteSq.classList.toggle('muted',state[li].muted);
+      btnMuteSq.textContent=state[li].muted?'🔇':'🔊';
+      btnMuteSq.title=state[li].muted?'Activer la couche':'Désactiver la couche';
       stepsDiv.classList.toggle('muted',state[li].muted);
+      layerDiv.classList.toggle('muted-layer',state[li].muted);
     });
 
     // EDIT ROWS inside menu
@@ -668,7 +713,7 @@ function buildRhythmLayers(){
     compRow.appendChild(btnComp);compRow.appendChild(btnSwap);
 
     // ── transformer dice ───────────────────────────────────────────────────
-    const btnRandEdit=document.createElement('button');btnRandEdit.className='edit-btn';btnRandEdit.title='Transformations aléatoires';btnRandEdit.textContent='🎲';
+    const btnRandEdit=document.createElement('button');btnRandEdit.className='edit-btn';btnRandEdit.title='Transformations aléatoires';btnRandEdit.textContent='✦';
     btnRandEdit.addEventListener('click',()=>{
       const speedRoll=Math.random();
       if(speedRoll<0.25){
@@ -706,12 +751,13 @@ function buildRhythmLayers(){
     editRows.appendChild(compRow);
     editRows.appendChild(speedRow);
 
-    // add dice + mute to selRow, editRows to menu
+    // add dice to selRow, editRows to menu
+    selRow.insertBefore(btnMuteSq, selRow.firstChild);
     selRow.appendChild(btnDice);
-    selRow.appendChild(btnMute);
     menu.appendChild(editRows);
 
     layerDiv.appendChild(menu);layerDiv.appendChild(stepsWrap);
+    if(state[li].muted)layerDiv.classList.add('muted-layer');
     cont.appendChild(layerDiv);
 
     buildStepsDOM(li,false);
@@ -732,7 +778,7 @@ function mkSl(lbl,slMin,slMax,initVal,slStep,fmt,cb,isExp){
 }
 
 function buildSoundLayers(){
-  const cont=document.getElementById('sounds');cont.innerHTML='';
+  const cont=document.getElementById('sounds');if(!cont)return;cont.innerHTML='';
   LAYERS.forEach((layer,li)=>{
     const row=document.createElement('div');row.className='sound-layer '+layer.cls;
     const lbl=document.createElement('div');lbl.className='sound-lbl';lbl.textContent=layer.label;
@@ -874,9 +920,33 @@ function makeCollapsible(btnId,contentId,startOpen){
     content.classList.toggle('opened',!open);content.classList.toggle('closed',open);btn.classList.toggle('open',!open);
   });
 }
-makeCollapsible('sons-btn','sons-content',false);
-makeCollapsible('params-btn','params-content',false);
-makeCollapsible('encyclo-btn','encyclo-content',false);
+// ─── PANNEAU 2 — onglets exclusifs ────────────────────────────────────────────
+const PANELS={bpm:'panel-bpm',sons:'panel-sons',params:'panel-params'};
+let activePanel=null;
+function openPanel(key){
+  const panel2=document.getElementById('panel2');
+  if(activePanel===key){
+    // toggle off
+    panel2.classList.remove('open');
+    document.getElementById('btn-panel-'+key).classList.remove('active');
+    Object.values(PANELS).forEach(id=>document.getElementById(id).classList.remove('active'));
+    activePanel=null;return;
+  }
+  // switch
+  Object.keys(PANELS).forEach(k=>{
+    document.getElementById('btn-panel-'+k).classList.toggle('active',k===key);
+    document.getElementById(PANELS[k]).classList.toggle('active',k===key);
+  });
+  panel2.classList.add('open');
+  activePanel=key;
+}
+document.getElementById('btn-panel-bpm').addEventListener('click',()=>openPanel('bpm'));
+document.getElementById('btn-panel-sons').addEventListener('click',()=>openPanel('sons'));
+document.getElementById('btn-panel-params').addEventListener('click',()=>openPanel('params'));
+// BPM ouvert par défaut
+openPanel('bpm');
+
+makeCollapsible('encyclo-btn','encyclo-content',true);
 
 // ─── EVENTS ───────────────────────────────────────────────────────────────────
 document.getElementById('btn-resync').addEventListener('click',()=>{
@@ -887,10 +957,13 @@ document.getElementById('btn-play').addEventListener('click',togglePlay);
 document.addEventListener('keydown',e=>{if(e.code==='Space'&&e.target.tagName!=='INPUT'){e.preventDefault();togglePlay();}});
 
 function updateSpmDisplay(){
-  const spm=parseInt(document.getElementById('bpm').value);
+  const spm=parseInt(document.getElementById('bpm').value)*globalSpeedMult;
   const half=Math.round(spm/2),third=Math.round(spm/3),quarter=Math.round(spm/4);
   document.getElementById('bpm-equiv').innerHTML='<span style="letter-spacing:-.1em">♩♩</span>='+quarter+'&ensp;♩='+half+'&ensp;♩.='+third;
 }
+// init display
+document.getElementById('bpm-val').textContent='120 spm';
+updateSpmDisplay();
 document.getElementById('bpm').addEventListener('input',function(){
   document.getElementById('bpm-val').textContent=parseInt(this.value)+' spm';
   updateSpmDisplay();
@@ -1187,6 +1260,24 @@ window.addEventListener('resize',()=>{if(circleView)setTimeout(resizeCanvas,50);
 buildRhythmLayers();
 buildSoundLayers();
 buildEncycloSelect();
+// onboarding : mute visuel Aigu et Noise
+LAYERS.forEach((layer,li)=>{
+  if(li>0){
+    const steps=document.getElementById('steps-'+layer.id);
+    if(steps)steps.classList.add('muted');
+    // layerDiv déjà marqué muted-layer via buildRhythmLayers
+  }
+});
+// ouvrir encyclopédie sur 4 on the floor
+const es=document.getElementById('encyclo-select');
+if(es&&[...es.options].some(o=>o.value==='fl4')){es.value='fl4';renderEncyclo('fl4');}
+// ouvrir le volet encyclopédie
+const encycloBtn=document.getElementById('encyclo-btn');
+const encycloContent=document.getElementById('encyclo-content');
+if(encycloBtn&&encycloContent){
+  encycloContent.classList.replace('closed','opened');
+  encycloBtn.classList.add('open');
+}
 </script>
 </body>
 </html>
