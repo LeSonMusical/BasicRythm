@@ -23,10 +23,17 @@ body{font-family:system-ui,-apple-system,sans-serif;font-size:12px;background:#f
 .btn-play-main.active{background:#F5C518;border-color:#d4a800;color:#1a1a18}
 .btn-sync{padding:4px 7px;font-size:12px;border:2px solid #F5C518;border-left:none;border-radius:0 6px 6px 0;color:#888;background:#fff;cursor:pointer;font-weight:500}
 .btn-sync:hover{background:#fffbe8}
-.btn-panel{padding:3px 7px;cursor:pointer;font-size:11px;font-weight:500;background:#fff;border:1px solid #b0aea7;border-radius:5px;color:#555;letter-spacing:.03em}
-.btn-panel:hover{background:#f0ede8}
-.btn-panel.active{background:#e8e5e0;border-color:#888;color:#222}
-.btn-view{padding:4px 9px;font-size:13px}
+.btn-panel{padding:3px 7px;cursor:pointer;font-size:11px;font-weight:500;background:transparent;border:1px solid #c0bdb7;border-radius:5px;color:#666;letter-spacing:.03em}
+.btn-panel:hover{background:#e8e5e0}
+.btn-panel.active{background:#d0cec7;border-color:#a0a09a;color:#1a1a18}
+.btn-view{padding:4px 9px;font-size:13px;border:2px solid #888 !important;border-radius:6px}
+/* === PANNEAU 2 (onglets exclusifs) === */
+.panel2{border-top:1px solid #c8c5c0;border-bottom:1px solid #c8c5c0;background:#e8e5e0;overflow:hidden;transition:max-height .22s ease,padding .22s ease;max-height:0;padding:0 .85rem}
+.panel2.open{max-height:400px;padding:.5rem .85rem}
+/* LOCAL PLAY button dans fiche encyclo */
+.btn-local-play{padding:3px 10px;cursor:pointer;font-size:11px;font-weight:500;background:#fff;border:1px solid #b0aea7;border-radius:5px;color:#555;margin-bottom:8px}
+.btn-local-play:hover{background:#f0ede8}
+.btn-local-play.playing{background:#F5C518;border-color:#d4a800;color:#1a1a18}
 /* MUTE BOUTON CARRÉ dans sel-row */
 .btn-mute-sq{width:26px;height:26px;flex-shrink:0;border:none;border-radius:4px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;background:var(--cc);transition:background .15s;padding:0;line-height:1}
 .btn-mute-sq.muted{background:#c8c5c0}
@@ -209,8 +216,8 @@ body.view-circle #hdivider-after-layers{margin:0}
           <div class="t-line-tempo">
             <span class="t-label">TEMPO</span>
             <div class="t-slider-wrap">
-              <span class="t-spm-display" id="bpm-val" title="Steps Par Minute — 1 step = 1 subdivision. Cliquer pour éditer">120 spm</span>
-              <input type="range" class="t-slider" id="bpm" min="30" max="400" value="120" step="1">
+              <span class="t-spm-display" id="bpm-val" title="Steps Par Minute — 1 step = 1 subdivision. Cliquer pour éditer">200 spm</span>
+              <input type="range" class="t-slider" id="bpm" min="30" max="400" value="200" step="1">
             </div>
           </div>
           <div class="t-equiv-line">
@@ -243,14 +250,13 @@ body.view-circle #hdivider-after-layers{margin:0}
   </div>
   <div class="hdivider" id="hdivider-after-layers"></div>
 
-  <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:6px;border-top:1px solid #e0ddd8;padding-top:6px">
-    <button class="collapsible-btn encyclo-main-btn" id="encyclo-btn" style="border-top:none;margin-top:0;padding-top:0;flex:0 0 auto"><span class="arr">▶</span><span>Encyclopédie des rythmes</span></button>
+  <div style="display:flex;align-items:center;gap:6px;margin-top:6px;border-top:1px solid #e0ddd8;padding-top:6px;flex-wrap:nowrap;min-width:0">
+    <button class="collapsible-btn encyclo-main-btn" id="encyclo-btn" style="border-top:none;margin-top:0;padding-top:0;flex:0 0 auto;white-space:nowrap;width:auto"><span class="arr">▶</span><span>À propos de</span></button>
+    <button id="btn-local-play" title="Écouter ce rythme (2 cycles)" style="padding:1px 5px;font-size:11px;background:none;border:1px solid #c0bdb7;border-radius:4px;cursor:pointer;color:#666;flex-shrink:0;line-height:1.4">▶</button>
+    <select id="encyclo-select" style="font-size:11px;padding:2px 5px;border:1px solid #ccc;border-radius:5px;background:#fff;color:#1a1a18;flex:1;min-width:0;max-width:260px"></select>
   </div>
   <div class="collapsible-content opened" id="encyclo-content">
-    <div class="encyclo-wrap" style="padding-top:4px">
-      <div style="margin-bottom:6px">
-        <select id="encyclo-select" style="font-size:11px;padding:2px 5px;border:1px solid #ccc;border-radius:5px;background:#fff;color:#1a1a18;max-width:260px"></select>
-      </div>
+    <div class="encyclo-wrap" style="padding-top:6px">
       <div id="encyclo-body"></div>
     </div>
   </div>
@@ -269,43 +275,45 @@ body.view-circle #hdivider-after-layers{margin:0}
 
 <script>
 const GROUPS=[
-  {label:"Référentiels", ids:["silence","pulse1","bin2","ter3","fl4","pulse4","sync4"]},
+  {label:"Référentiels", ids:["silence","pulse1","bin2","ter3","fl4","offbeat","pulse4","sync4"]},
   {label:"8 pas",        ids:["tres","cinq","hab","afoxe","reggae"]},
   {label:"16 pas — E(5,16)", ids:["son32","son","rum32","bossa","gahu","shiko"]},
   {label:"16 pas — autres",  ids:["souk","samba","cascara","tumbao"]},
   {label:"12 pas",       ids:["fume","bembe","solea"]},
 ];
 const DICT=[
-  {id:"pulse1", name:"Pulse",           length:1,  pattern:"X",                  encyclo:false},
-  {id:"bin2",   name:"Bin",             length:2,  pattern:"X.",                 encyclo:false},
-  {id:"ter3",   name:"Ter",             length:3,  pattern:"X..",                encyclo:false},
-  {id:"fl4",    name:"4 on the floor",      length:8,  pattern:"X.X.X.X.",               encyclo:"fl4"},
-  {id:"pulse4", name:"Pulse×4",           length:4,  pattern:"XXXX",               encyclo:false},
-  {id:"sync4",  name:"Syncope double",  length:4,  pattern:"..XX",               encyclo:false},
-  {id:"silence",name:"Silence",          length:4,  pattern:"....",               encyclo:false},
-  {id:"tres",   name:"Tresillo",            length:8,  pattern:"X..X..X.",           encyclo:"tres"},
-  {id:"cinq",   name:"Cinquillo",           length:8,  pattern:"X.XX.XX.",           encyclo:"cinq"},
-  {id:"hab",    name:"Habanera",            length:8,  pattern:"X..XX.X.",           encyclo:"hab"},
-  {id:"afoxe",  name:"Afoxê / Bolero",     length:8,  pattern:"X..X.X..",           encyclo:"afoxe"},
-  {id:"reggae", name:"Clave Reggae",        length:8,  pattern:"....X.X.",           encyclo:"reggae"},
-  {id:"son32",  name:"Son 3:2",             length:16, pattern:"X..X..X...X.X...",   encyclo:"son32"},
-  {id:"son",    name:"Son (2:3)",             length:16, pattern:"..X.X...X..X..X.",   encyclo:"son"},
-  {id:"rum32",  name:"Rumba 3:2",           length:16, pattern:"X..X...X..X.X...",   encyclo:"rum32"},
-  {id:"shiko",  name:"Shiko",              length:16, pattern:"X...X.X...X.X...",   encyclo:"shiko"},
-  {id:"bossa",  name:"Bossa Nova",          length:16, pattern:"X..X..X...X..X..",   encyclo:"bossa"},
-  {id:"gahu",   name:"Gahu",               length:16, pattern:"X..X..X...X...X.",   encyclo:"gahu"},
-  {id:"souk",   name:"Soukous",            length:16, pattern:"X..X..X...XX....",   encyclo:"souk"},
-  {id:"samba",  name:"Samba",              length:16, pattern:"X..X.X.X..X.X.X.",   encyclo:"samba"},
-  {id:"cascara",name:"Cascara",            length:16, pattern:"X.X.XX.XX.XX.X.X",   encyclo:"cascara"},
-  {id:"tumbao", name:"Tumbao",             length:16, pattern:"X.XX.X.X.X.X.X.X",   encyclo:"tumbao"},
-  {id:"fume",   name:"Fume-fume",          length:12, pattern:"X.X.X..X.X..",       encyclo:"fume"},
-  {id:"bembe",  name:"Bembé",             length:12, pattern:"X.X.XX.X.X.X",       encyclo:"bembe"},
-  {id:"solea",  name:"Soleá",             length:12, pattern:"..X..X.X.X.X",       encyclo:"solea"},
+  {id:"pulse1", name:"Pulse",              length:1,  pattern:"X",          encyclo:false},
+  {id:"bin2",   name:"Bin (1:2)",          length:2,  pattern:"X.",         encyclo:false},
+  {id:"ter3",   name:"Ter (1:3)",          length:3,  pattern:"X..",        encyclo:false},
+  {id:"fl4",    name:"Four on the Floor (2,4)", length:8, pattern:"X.X.X.X.", encyclo:"fl4"},
+  {id:"offbeat",name:"Off Beat (2,4)",     length:8,  pattern:".X.X.X.X",  encyclo:"offbeat"},
+  {id:"pulse4", name:"Pulse (4:4)",        length:4,  pattern:"XXXX",       encyclo:false},
+  {id:"sync4",  name:"Double Up (2:4)",    length:4,  pattern:"..XX",       encyclo:false},
+  {id:"silence",name:"Silence",            length:4,  pattern:"....",       encyclo:false},
+  {id:"tres",   name:"Tresillo",           length:8,  pattern:"X..X..X.",   encyclo:"tres"},
+  {id:"cinq",   name:"Cinquillo",          length:8,  pattern:"X.XX.XX.",   encyclo:"cinq"},
+  {id:"hab",    name:"Habanera",           length:8,  pattern:"X..XX.X.",   encyclo:"hab"},
+  {id:"afoxe",  name:"Afoxê / Bolero",    length:8,  pattern:"X..X.X..",   encyclo:"afoxe"},
+  {id:"reggae", name:"Clave Reggae",       length:8,  pattern:"....X.X.",   encyclo:"reggae"},
+  {id:"son32",  name:"Son 3:2",            length:16, pattern:"X..X..X...X.X...", encyclo:"son32"},
+  {id:"son",    name:"Son (2:3)",          length:16, pattern:"..X.X...X..X..X.", encyclo:"son"},
+  {id:"rum32",  name:"Rumba 3:2",          length:16, pattern:"X..X...X..X.X...", encyclo:"rum32"},
+  {id:"shiko",  name:"Shiko",             length:16, pattern:"X...X.X...X.X...", encyclo:"shiko"},
+  {id:"bossa",  name:"Bossa Nova",         length:16, pattern:"X..X..X...X..X..", encyclo:"bossa"},
+  {id:"gahu",   name:"Gahu",              length:16, pattern:"X..X..X...X...X.", encyclo:"gahu"},
+  {id:"souk",   name:"Soukous",           length:16, pattern:"X..X..X...XX....", encyclo:"souk"},
+  {id:"samba",  name:"Samba",             length:16, pattern:"X..X.X.X..X.X.X.", encyclo:"samba"},
+  {id:"cascara",name:"Cascara",           length:16, pattern:"X.X.XX.XX.XX.X.X", encyclo:"cascara"},
+  {id:"tumbao", name:"Tumbao",            length:16, pattern:"X.XX.X.X.X.X.X.X", encyclo:"tumbao"},
+  {id:"fume",   name:"Fume-fume",         length:12, pattern:"X.X.X..X.X..",    encyclo:"fume"},
+  {id:"bembe",  name:"Bembé",            length:12, pattern:"X.X.XX.X.X.X",    encyclo:"bembe"},
+  {id:"solea",  name:"Soleá",            length:12, pattern:"..X..X.X.X.X",    encyclo:"solea"},
 ];
 let dict=DICT.map(r=>({...r,custom:false}));
 
 const ENCYCLO={
-  fl4:{chapo:"Le \"quatre au sol\" est le rythme le plus répandu de la musique électronique occidentale depuis les années 70 — une frappe sur chaque temps, sans syncopation, sans asymétrie. Sa régularité absolue est à la fois sa force (il ancre physiquement l'auditeur, synchronise les corps en masse) et sa limite (aucune tension, aucun groove au sens africain). Il est l'anti-euclidien : E(1,4) répété, distribution minimale.",bullets:[["Origine","Disco américain, années 70 (DJ Frankie Knuckles, Chicago) ; avant lui, la grosse caisse jazz ou funk ne tapait pas systématiquement les 4 temps."],["Utilisation","Techno, house, EDM — Kraftwerk l'impose en Europe, Daft Punk en fait une esthétique ; base universelle des musiques de dancefloor."],["Sensation","Ancrage total, prévisibilité rassurante, énergie par accumulation et non par tension."],["Relations","En superposition avec n'importe quel rythme asymétrique, il révèle immédiatement la syncopation de ce dernier."]]},
+  fl4:{chapo:"Le \"Four on the Floor\" est le rythme fondateur des musiques de danse électronique — une frappe sur chaque temps binaire (les temps 2 et 4 d'une mesure à 4/4, soit toutes les croches paires sur 8 pas). Sa régularité absolue ancre physiquement l'auditeur et synchronise les corps en masse. Il est indissociable de son complémentaire exact, l'Off Beat, qui frappe exactement là où lui se tait — ensemble ils forment le métronome binaire du dancefloor.",bullets:[["Origine","Disco américain, années 70 — DJ Frankie Knuckles, Larry Levan à New York et Chicago ; popularisé en Europe par la scène house puis techno des années 80-90."],["Écritures","X.X.X.X.\nFrappe sur chaque temps binaire (croches 1,3,5,7)\n4 frappes sur 8 pas"],["Utilisation","Techno, house, EDM, disco ; base universelle des musiques de dancefloor depuis 50 ans."],["Sensation","Ancrage total, prévisibilité rassurante, énergie par accumulation et non par tension."],["Relations","Complémentaire exact de l'Off Beat (2,4) : là où l'un frappe, l'autre se tait — les superposer produit le Pulse (4:4) continu."]]},
+  offbeat:{chapo:"L'Off Beat est le complémentaire exact du Four on the Floor — il frappe précisément sur les contretemps, là où son partenaire se tait. Ensemble ils forment le métronome binaire fondamental du dancefloor disco et électronique. L'Off Beat seul crée cette sensation de suspension et de rebond caractéristique du groove de danse — le corps anticipe la frappe suivante en s'appuyant sur l'absence.",bullets:[["Origine","Disco américain, années 70 — même héritage que le Four on the Floor ; le skank reggae et le upstroke funk sont des ancêtres directs."],["Écritures",".X.X.X.X\nFrappe sur chaque contretemps (croches 2,4,6,8)\n4 frappes sur 8 pas — complémentaire exact du Four on the Floor"],["Logique","Four on the Floor + Off Beat = Pulse (4:4) — deux rythmes opposés dont l'union forme la pulsation continue. Joués ensemble par deux instruments différents, ils créent la texture rythmique de base du disco et de la house."],["Sensation","Suspension, rebond, légèreté — le groove est porté par l'anticipation plutôt que par l'appui."],["Utilisation","Guitare rythmique funk et disco (le \"chicken scratch\") ; piano ou orgue en house ; hi-hat ouvert en techno ; clap ou snare en pop."],["Relations","Complémentaire du Four on the Floor ; apparenté au skank reggae (Off Beat sur 2 temps) et au upstroke funk."]]},
   tres:{chapo:"Le Tresillo est probablement le pattern rythmique le plus répandu dans les musiques populaires mondiales — trois frappes sur 8 pas, distribution euclidienne maximale. On le retrouve dans quasiment toutes les musiques issues de la diaspora africaine aux Amériques et au-delà, souvent sans qu'il soit nommé. Il est à la fois un rythme autonome et un sous-composant d'autres rythmes plus complexes du dictionnaire. Sa simplicité apparente cache une tension rythmique réelle avec la pulsation binaire.",bullets:[["Origine","Terme cubain, mais le pattern est pan-africain et pan-américain ; présent dans les Caraïbes, le Brésil, la Nouvelle-Orléans."],["Écritures","X..X..X.\nIntervalles : 3-3-2\nE(3,8) — distribution euclidienne maximale sur 8 pas"],["Logique","Le 1er coup lance le rythme ; le 2e coup (\"bombo\", au pas 4) crée l'élan ; le 3e coup (\"ponche\", au pas 7) résout — c'est l'asymétrie finale (intervalle 2 au lieu de 3) qui génère la tension caractéristique."],["Utilisation","Blues, jazz, cumbia, son cubain ; la main gauche du piano de Hound Dog d'Elvis ; de nombreuses lignes de basse hip-hop."],["Relations","Sous-composant de Son 3:2 (les 3 premières frappes) ; présent dans Cinquillo, Habanera et Rumba par déformation ou extension."]]},
   cinq:{chapo:"Le Cinquillo est l'un des rythmes fondateurs de la musique afro-cubaine, né de l'extension et de la densification du Tresillo. Cinq frappes sur 8 pas, il remplit l'espace laissé libre par son ancêtre en intercalant deux frappes supplémentaires. Présent dans la contradanza du XIXe siècle, il a traversé le danzón, le mambo et le cha-cha-chá, devenant un composant-clé de la généalogie rythmique cubaine. Comprendre le Cinquillo, c'est comprendre comment le Tresillo s'est complexifié au contact de la musique européenne.",bullets:[["Origine","Cuba, XIXe siècle ; contradanza afro-cubaine, ancêtre direct du danzón et du mambo."],["Écritures","X.XX.XX.\nIntervalles : 2-1-2-1-2\n5 frappes sur 8 pas"],["Logique","C'est le Tresillo avec des coups ajoutés juste avant le bombo (pas 3) et le ponche (pas 6) — même squelette, densité presque doublée."],["Sensation","Plus nerveux et syncopé que le Tresillo, sentiment d'urgence et de rebond continu."],["Utilisation","Contradanza, danzón, mambo ; Pérez Prado, Tito Puente ; composant de nombreux patterns de percussion afro-cubains."],["Relations","Extension directe du Tresillo ; intermédiaire entre Tresillo (3 frappes) et Pulse (5 frappes continues sur 8)."]]},
   hab:{chapo:"La Habanera est un rythme né à La Havane au début du XIXe siècle, issu du contradanse européen métissé de rythmes africains. Elle a voyagé vers l'Espagne et l'Amérique latine avec une facilité remarquable, devenant l'un des premiers rythmes de la diaspora afro-cubaine à pénétrer la musique savante européenne. Sa structure est celle du Tresillo avec une frappe supplémentaire intercalée, ce qui lui donne un caractère à la fois dansant et élégant.",bullets:[["Origine","La Havane, début XIXe ; importée en Espagne où elle influence le flamenco et la zarzuela ; Bizet l'utilise dans Carmen (1875)."],["Écritures","X..XX.X.\nIntervalles : 3-1-2-2\nTresillo + contretemps au pas 4"],["Sensation","Balancement asymétrique, légèreté malgré la syncope, caractère dansé et élégant."],["Utilisation","Tango argentin (qui en descend directement), bolero cubain, blues américain (Hey Bo Diddley) ; Carmen de Bizet (1875) popularise la Habanera en Europe savante."],["Anecdote","Bo Diddley a construit toute sa carrière sur ce pattern — appelé \"Bo Diddley beat\" en Amérique du Nord, sans que personne ne sache toujours qu'il vient de La Havane."]]},
@@ -836,15 +844,31 @@ function buildEncycloSelect(){
 }
 function renderEncyclo(key){
   const body=document.getElementById('encyclo-body');if(!body)return;
+  // mettre à jour état bouton local play dans header
+  const btnLP=document.getElementById('btn-local-play');
+  if(btnLP){
+    const hasPattern=!!(key&&dict.find(d=>d.encyclo===key));
+    const disabled=playing||!hasPattern;
+    btnLP.disabled=disabled;
+    btnLP.style.opacity=disabled?'.35':'1';
+    btnLP.style.cursor=disabled?'not-allowed':'pointer';
+    btnLP.style.background=localPlaySchedID?'#F5C518':'none';
+    // rebind click avec nouvelle key
+    btnLP.onclick=()=>{
+      if(playing||!hasPattern)return;
+      if(localPlayTimerID||localPlaySchedID){stopLocalPlay();return;}
+      const r=dict.find(d=>d.encyclo===key);
+      if(!r)return;
+      startLocalPlay(r.pattern,btnLP);
+    };
+  }
   if(!key||!ENCYCLO[key]){body.innerHTML='<p class="encyclo-empty">Sélectionne un rythme.</p>';return;}
-  const e=ENCYCLO[key];
   const chapo=document.createElement('p');chapo.className='encyclo-chapo';chapo.textContent=e.chapo;
   const ul=document.createElement('ul');ul.className='encyclo-bullets';
   e.bullets.forEach(([k,v])=>{
     const li=document.createElement('li');
     const bk=document.createElement('span');bk.className='bkey';bk.textContent=k;
     const bv=document.createElement('span');bv.className='bval';
-    // handle multiline values (e.g. Écritures)
     if(v.includes('\n')){
       v.split('\n').forEach((line,i)=>{
         if(i>0)bv.appendChild(document.createElement('br'));
@@ -857,7 +881,63 @@ function renderEncyclo(key){
   });
   body.innerHTML='';body.appendChild(chapo);body.appendChild(ul);
 }
-document.getElementById('encyclo-select').addEventListener('change',function(){renderEncyclo(this.value);});
+document.getElementById('encyclo-select').addEventListener('change',function(){
+  renderEncyclo(this.value);
+  // ouvrir le volet si fermé
+  const content=document.getElementById('encyclo-content');
+  const btn=document.getElementById('encyclo-btn');
+  if(content&&content.classList.contains('closed')){
+    content.classList.replace('closed','opened');
+    if(btn)btn.classList.add('open');
+  }
+});
+
+// ─── LOCAL PLAY (encyclopédie) ────────────────────────────────────────────────
+let localPlayTimerID=null;
+let localPlaySchedID=null;
+
+function stopLocalPlay(){
+  if(localPlayTimerID){clearTimeout(localPlayTimerID);localPlayTimerID=null;}
+  if(localPlaySchedID){clearTimeout(localPlaySchedID);localPlaySchedID=null;}
+  const btn=document.getElementById('btn-local-play');
+  if(btn&&!playing){btn.style.background='none';btn.textContent='▶';btn.disabled=false;btn.style.opacity='1';btn.style.cursor='pointer';}
+}
+
+function startLocalPlay(patternStr,btn){
+  if(!ac){ac=new(window.AudioContext||window.webkitAudioContext)();}
+  const resumeP=ac.resume();
+  const go=()=>{
+    const pat=patternStr.split('');
+    const spm=parseInt(document.getElementById('bpm').value);
+    const beatSec=60/spm;
+    const totalSteps=pat.length*2; // 2 cycles
+    const totalDur=beatSec*totalSteps;
+    btn.textContent='■';btn.style.background='#F5C518';
+    let step=0;
+    function tick(){
+      if(playing||step>=totalSteps){stopLocalPlay();return;}
+      const si=step%pat.length;
+      if(pat[si]==='X'){
+        const t=ac.currentTime;
+        // joue sur synthèse Aigu (triangle)
+        const o=ac.createOscillator(),g=ac.createGain();
+        o.connect(g);g.connect(ac.destination);
+        o.frequency.value=state[1].paramVal;o.type='triangle';
+        g.gain.setValueAtTime(state[1].volVal,t);
+        g.gain.exponentialRampToValueAtTime(0.001,t+0.07);
+        o.start(t);o.stop(t+0.08);
+      }
+      step++;
+      if(step<totalSteps){
+        localPlaySchedID=setTimeout(tick,beatSec*1000);
+      } else {
+        localPlayTimerID=setTimeout(stopLocalPlay,beatSec*1000);
+      }
+    }
+    tick();
+  };
+  if(resumeP&&resumeP.then){resumeP.then(go);}else{go();}
+}
 
 // ─── PLAYBACK ─────────────────────────────────────────────────────────────────
 function startPlay(){
@@ -875,6 +955,7 @@ function startPlay(){
 
 function stopPlay(){
   playing=false;
+  stopLocalPlay(); // global play coupe le local play
   clearTimeout(schedTimerID);
   cancelAnimationFrame(visualRafID);
   LAYERS.forEach(l=>{
@@ -886,10 +967,13 @@ function stopPlay(){
 
 function togglePlay(){
   if(!playing){
-    // iOS requires AudioContext creation + resume synchronously in user gesture
+    stopLocalPlay(); // couper local play si actif
     if(!ac){ac=new(window.AudioContext||window.webkitAudioContext)();}
     document.getElementById('btn-play').textContent='Stop';
     document.getElementById('btn-play').classList.add('active');
+    // désactiver bouton local play
+    const blp=document.getElementById('btn-local-play');
+    if(blp){blp.disabled=true;blp.style.opacity='.4';blp.style.cursor='not-allowed';}
     // resume then start — needed for iOS suspended state
     const resumePromise=ac.resume();
     if(resumePromise&&resumePromise.then){
@@ -901,6 +985,9 @@ function togglePlay(){
     stopPlay();
     document.getElementById('btn-play').textContent='Play';
     document.getElementById('btn-play').classList.remove('active');
+    // réactiver bouton local play
+    const blp=document.getElementById('btn-local-play');
+    if(blp){blp.disabled=false;blp.style.opacity='';blp.style.cursor='';}
   }
 }
 
@@ -962,7 +1049,7 @@ function updateSpmDisplay(){
   document.getElementById('bpm-equiv').innerHTML='<span style="letter-spacing:-.1em">♩♩</span>='+quarter+'&ensp;♩='+half+'&ensp;♩.='+third;
 }
 // init display
-document.getElementById('bpm-val').textContent='120 spm';
+document.getElementById('bpm-val').textContent='200 spm';
 updateSpmDisplay();
 document.getElementById('bpm').addEventListener('input',function(){
   document.getElementById('bpm-val').textContent=parseInt(this.value)+' spm';
