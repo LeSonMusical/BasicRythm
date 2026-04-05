@@ -33,7 +33,7 @@ body{font-family:system-ui,-apple-system,sans-serif;font-size:12px;background:#f
 /* === LAYOUT BASE === */
 #layers-wrap{display:flex;align-items:flex-start;gap:0}
 #layers{flex:1;display:flex;flex-direction:column;gap:4px;min-width:0}
-#circle-view{display:none;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
+#circle-view{display:none;align-items:center;justify-content:center;flex-shrink:0;overflow:visible}
 #rhythm-canvas{display:block;touch-action:none;cursor:pointer;max-width:100%;max-height:100%}
 
 /* edit-rows : 1 seule ligne flex-wrap (tous modes sauf paysage-circle) */
@@ -43,16 +43,18 @@ body{font-family:system-ui,-apple-system,sans-serif;font-size:12px;background:#f
 /* circle mode */
 body.view-circle .layer-steps-wrap{display:none}
 body.view-circle .layer-menu{width:100%;border-right:none}
-body.view-circle #circle-view{display:flex !important;width:100%}
+body.view-circle #circle-view{display:flex !important;width:100%;justify-content:center;align-items:center}
 body.view-circle .step{border-radius:50%}
 body.view-circle #layers-wrap{flex-direction:column}
+body.view-circle #hdivider-after-layers{margin:0}
 
 /* landscape ≥600px */
 @media(min-width:600px){
   #layers-wrap{flex-direction:row}
   /* paysage-circle: canvas à droite, même layout couches qu'en linéaire */
   body.view-circle #layers-wrap{flex-direction:row;align-items:stretch}
-  body.view-circle #circle-view{flex:1;align-self:stretch;min-width:0}
+  body.view-circle #circle-view{display:flex;flex:1;align-self:stretch;min-width:0;align-items:center;justify-content:center}
+  
 }
 
 .c-low  {--cc:#378ADD;--cb:#185FA5;--cl:#378ADD0D;--cs:#378ADD55;--ct:#ddeeff}
@@ -186,7 +188,7 @@ body.view-circle #layers-wrap{flex-direction:column}
       <canvas id="rhythm-canvas"></canvas>
     </div>
   </div>
-  <div class="hdivider"></div>
+  <div class="hdivider" id="hdivider-after-layers"></div>
 
   <button class="collapsible-btn" id="sons-btn"><span class="arr">▶</span><span>Réglages sons</span></button>
   <div class="collapsible-content closed" id="sons-content">
@@ -969,35 +971,41 @@ const LAYER_COLORS=[
   {fill:'#1D9E75',stroke:'#0F6E56',track:'rgba(29,158,117,0.35)'},   // NOISE — outer
 ];
 // radii: index 0=LOW inner, 1=HIGH mid, 2=NOISE outer
-const RADII_FRAC=[0.20,0.33,0.47];
+// RADII_FRAC computed dynamically in drawCircles based on R
 // flash state: flashStep[li] = step index that is currently flashing yellow
 const flashStep=[-1,-1,-1];
 
 function resizeCanvas(){
   const cv=document.getElementById('rhythm-canvas');if(!cv)return;
   const wrap=document.getElementById('circle-view');
-  const lw=document.getElementById('layers');
   const isLandscape=window.innerWidth>=600;
 
+  // canvas size derived from circle geometry (dotR=10, r2=r0+4*dotR)
+  const dotR=10,r0=16*dotR/Math.PI,r2=r0+4*dotR;
+  const szBase=Math.round(2*(r2+dotR+2)/0.88);  // ~234px — fits circles exactly
+
   let sz;
-  if(isLandscape){
-    const layersH=lw?lw.clientHeight:160;
-    const wrapW=wrap.clientWidth||wrap.parentElement.clientWidth*0.6||window.innerWidth*0.5;
-    sz=Math.max(80,Math.min(layersH,wrapW,500)*0.9);
-  } else {
-    const frameW=document.querySelector('.frame').clientWidth||window.innerWidth;
-    const maxH=window.innerHeight*0.55;
-    const mult=0.9*4/3*4/3; // ~1.6
-    sz=Math.max(80,Math.min((frameW-16)*mult, maxH, 600));
-  }
-  sz=Math.round(sz);
+  // landscape: exact fit; portrait: scale down 75% via CSS transform
+  sz=szBase;
   cv.width=sz;cv.height=sz;
+  cv.style.transform='';  // reset
+
   if(!isLandscape){
+    const scale=0.92;
+    cv.style.transform='scale('+scale+')';
+    cv.style.transformOrigin='top center';
     wrap.style.width='100%';
-    wrap.style.height=sz+'px';
+    // top: dotR/2 space; bottom: no extra
+    wrap.style.height=Math.round(sz*scale+dotR/2)+'px';
+    cv.style.marginTop=Math.round(-dotR/2)+'px';
   } else {
-    wrap.style.width=sz+'px';
-    wrap.style.height=sz+'px';
+    // landscape: constrain wrap height to visual canvas size to remove void
+    const visSz=Math.round(sz*0.90);
+    wrap.style.width='';
+    wrap.style.height=visSz+'px';
+    cv.style.marginTop='';cv.style.marginBottom='';
+    cv.style.transform='scale(0.90) translateY(-18%)';
+    cv.style.transformOrigin='center center';
   }
   drawCircles();
 }
@@ -1011,6 +1019,10 @@ function drawCircles(){
   const cv=document.getElementById('rhythm-canvas');if(!cv)return;
   const ctx=cv.getContext('2d');
   const W=cv.width,H=cv.height,cx=W/2,cy=H/2,R=(W/2-8)*0.88; // 12% margin
+  // r0: 16 dots touch on inner circle → 2π*r0/16 = 2*dotR → r0 = 16*10/π
+  const dotR=10;
+  const r0=16*dotR/Math.PI; // ~50.9px — inner circle radius (abs)
+  const RADII_FRAC=[r0/(R*2), (r0+dotR*2)/(R*2), (r0+dotR*4)/(R*2)];
   ctx.clearRect(0,0,W,H);
 
   const now=playing?getAC().currentTime:0;
@@ -1097,11 +1109,13 @@ function drawCircles(){
 function circleHitTest(x,y){
   const cv=document.getElementById('rhythm-canvas');if(!cv)return null;
   const W=cv.width,cx=W/2,cy=W/2,R=(W/2-8)*0.88;
+  const dotR=10;
+  const r0=16*dotR/Math.PI;
+  const RADII_FRAC=[r0/(R*2),(r0+dotR*2)/(R*2),(r0+dotR*4)/(R*2)];
   for(let li=0;li<LAYERS.length;li++){
     const pat=state[li].pattern;
     const n=pat.length;
     const r=RADII_FRAC[li]*R*2;
-    const dotR=10;
     for(let si=0;si<n;si++){
       const a=stepAngle(si,n);
       const dx=cx+r*Math.cos(a),dy=cy+r*Math.sin(a);
@@ -1150,6 +1164,7 @@ function setView(circle){
     setTimeout(()=>{resizeCanvas();setupCanvasInteraction();},30);
     setTimeout(resizeCanvas,150);
     flashStep[0]=flashStep[1]=flashStep[2]=-1;
+    const cvReset=document.getElementById('rhythm-canvas');if(cvReset){cvReset.style.marginTop='';cvReset.style.marginBottom='';}
     LAYERS.forEach(l=>{const d=document.getElementById('steps-'+l.id);if(d)d.querySelectorAll('.step').forEach(s=>s.classList.remove('cur'));});
     // restart circle RAF if playing
     if(playing) visualRafID=requestAnimationFrame(visualLoopCircle);
