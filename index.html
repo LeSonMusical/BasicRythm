@@ -29,6 +29,31 @@ body{font-family:system-ui,-apple-system,sans-serif;font-size:12px;background:#f
 .t-slider{width:100%;accent-color:#888}
 .t-equiv{font-size:13px;font-weight:500;color:#1a1a18;white-space:nowrap;letter-spacing:.02em}
 .hdivider{height:1px;background:#e0ddd8;margin:.5rem 0}
+.btn-view{padding:4px 9px;font-size:13px}
+/* === LAYOUT BASE === */
+#layers-wrap{display:flex;align-items:flex-start;gap:0}
+#layers{flex:1;display:flex;flex-direction:column;gap:4px;min-width:0}
+#circle-view{display:none;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
+#rhythm-canvas{display:block;touch-action:none;cursor:pointer;max-width:100%;max-height:100%}
+
+/* edit-rows : 1 seule ligne flex-wrap (tous modes sauf paysage-circle) */
+.edit-rows{display:flex;flex-direction:row;flex-wrap:wrap;align-items:center;gap:3px;margin-top:2px}
+.erow-shift,.erow-speed,.erow-comp{display:contents} /* les boutons s'insèrent à plat */
+
+/* circle mode */
+body.view-circle .layer-steps-wrap{display:none}
+body.view-circle .layer-menu{width:100%;border-right:none}
+body.view-circle #circle-view{display:flex !important;width:100%}
+body.view-circle .step{border-radius:50%}
+body.view-circle #layers-wrap{flex-direction:column}
+
+/* landscape ≥600px */
+@media(min-width:600px){
+  #layers-wrap{flex-direction:row}
+  /* paysage-circle: canvas à droite, même layout couches qu'en linéaire */
+  body.view-circle #layers-wrap{flex-direction:row;align-items:stretch}
+  body.view-circle #circle-view{flex:1;align-self:stretch;min-width:0}
+}
 
 .c-low  {--cc:#378ADD;--cb:#185FA5;--cl:#378ADD0D;--cs:#378ADD55;--ct:#ddeeff}
 .c-high {--cc:#D85A30;--cb:#993C1D;--cl:#D85A300D;--cs:#D85A3055;--ct:#ffeedd}
@@ -63,8 +88,6 @@ body{font-family:system-ui,-apple-system,sans-serif;font-size:12px;background:#f
 
 /* LAYER MENU — wider, holds edit controls below select row */
 .layer-menu{display:flex;flex-direction:column;gap:2px;width:min(33%,200px);flex-shrink:0;padding:4px 6px 4px 5px;border-right:1px solid var(--cs)}
-.edit-rows{display:flex;flex-direction:column;gap:2px;margin-top:2px}
-.edit-row{display:flex;align-items:center;gap:2px;flex-wrap:wrap}
 .layer-menu select{font-size:9px;flex:1;min-width:0;padding:1px 2px;border:1px solid #ccc;border-radius:4px;background:#fff;color:#1a1a18}
 .ico-save{cursor:pointer;font-size:15px;background:none;border:none;padding:2px 3px;line-height:1;opacity:.55;flex-shrink:0}
 .ico-mute{cursor:pointer;font-size:15px;background:none;border:none;padding:2px 3px;line-height:1;opacity:.55;flex-shrink:0}
@@ -116,19 +139,21 @@ body{font-family:system-ui,-apple-system,sans-serif;font-size:12px;background:#f
 .modal input[type=text]:focus{outline:none;border-color:#5599cc}
 .modal-btns{display:flex;gap:8px;justify-content:flex-end}
 
-/* MOBILE < 600px */
+/* MOBILE / PORTRAIT < 600px */
 @media(max-width:599px){
   body{padding:.4rem}
   .frame{padding:.55rem .6rem;border-radius:8px}
-  .t-group input[type=range]{width:90px}
   .layer{flex-direction:column}
   .layer-menu select{font-size:10px}
   .layer-menu{width:100%;padding:3px 5px;border-right:none;border-bottom:1px solid var(--cs)}
-  .edit-rows{flex-direction:row;flex-wrap:wrap;gap:4px 8px}
-  .edit-row{gap:3px;flex-wrap:nowrap}
+  .edit-row{gap:3px}
   .layer-steps-wrap{padding:4px 5px}
   .step{width:22px;height:22px}
   .encyclo-bullets li .bval{padding-left:8px}
+}
+/* LANDSCAPE >= 600px */
+@media(min-width:600px){
+  #layers-wrap{flex-direction:row}
 }
 </style>
 </head>
@@ -139,6 +164,7 @@ body{font-family:system-ui,-apple-system,sans-serif;font-size:12px;background:#f
       <span class="t-title">Basic Rhythm</span>
       <button class="btn btn-play-main" id="btn-play">Play</button>
       <button class="btn btn-sync" id="btn-resync" title="Resynchroniser">⟳</button>
+      <button class="btn btn-view" id="btn-view" title="Basculer vue">⊞</button>
     </div>
     <div class="t-line t-line2">
       <span class="t-label">TEMPO</span>
@@ -154,7 +180,12 @@ body{font-family:system-ui,-apple-system,sans-serif;font-size:12px;background:#f
     </div>
   </div>
   <div class="hdivider"></div>
-  <div class="rhythm-section" id="layers"></div>
+  <div class="rhythm-section" id="layers-wrap">
+    <div id="layers"></div>
+    <div id="circle-view">
+      <canvas id="rhythm-canvas"></canvas>
+    </div>
+  </div>
   <div class="hdivider"></div>
 
   <button class="collapsible-btn" id="sons-btn"><span class="arr">▶</span><span>Réglages sons</span></button>
@@ -363,6 +394,8 @@ function scheduler(){
 
 function visualLoop(){
   if(!playing)return;
+  // dispatch to circle version if active (defined later)
+  if(typeof circleView!=='undefined'&&circleView){visualLoopCircle&&visualLoopCircle();return;}
   const now=getAC().currentTime;
   LAYERS.forEach((layer,li)=>{
     const beatSec=getBeatSec(li);
@@ -373,6 +406,7 @@ function visualLoop(){
   });
   visualRafID=requestAnimationFrame(visualLoop);
 }
+let visualLoopCircle=null;
 
 function rotate(arr,n){const l=arr.length;if(!l)return arr;const k=((n%l)+l)%l;return[...arr.slice(k),...arr.slice(0,k)];}
 function halfAt(len){if(len<=4)return null;return Math.ceil(len/2);}
@@ -422,10 +456,13 @@ function buildStepsDOM(li,wrap){
       state[li].pattern[si]=state[li].pattern[si]==='X'?'.':'X';
       s.className='step '+(state[li].pattern[si]==='X'?'on':'off')+(state[li].stepPos===si?' cur':'');
       setDirty(li,true);
+      if(typeof circleView!=='undefined'&&circleView) drawCircles();
     });
     container.appendChild(s);
   });
   state[li].wrapped=wrap;
+  // if circle view active, redraw
+  if(typeof circleView!=='undefined'&&circleView) drawCircles();
 }
 
 function checkWrap(li){
@@ -556,8 +593,8 @@ function buildRhythmLayers(){
     // EDIT ROWS inside menu
     const editRows=document.createElement('div');editRows.className='edit-rows';
 
-    // Row 1: shift
-    const shiftRow=document.createElement('div');shiftRow.className='edit-row';
+    // ── shift row ──────────────────────────────────────────────────────────
+    const shiftRow=document.createElement('div');shiftRow.className='edit-row erow-shift';
     const btnL=document.createElement('button');btnL.className='edit-btn';btnL.title='Décaler gauche';btnL.textContent='◀';
     const shiftNum=document.createElement('span');shiftNum.className='shift-num';shiftNum.id='shift-num-'+layer.id;shiftNum.textContent='0';
     const btnR=document.createElement('button');btnR.className='edit-btn';btnR.title='Décaler droite';btnR.textContent='▶';
@@ -575,7 +612,8 @@ function buildRhythmLayers(){
     });
     shiftRow.appendChild(btnL);shiftRow.appendChild(shiftNum);shiftRow.appendChild(btnR);
 
-    // Row 2 & 3 merged into shiftRow
+    // ── speed row ──────────────────────────────────────────────────────────
+    const speedRow=document.createElement('div');speedRow.className='edit-row erow-speed';
     const btnHalf=document.createElement('button');btnHalf.className='edit-btn';btnHalf.id='half-'+layer.id;btnHalf.textContent='/2';
     const btnDbl=document.createElement('button');btnDbl.className='edit-btn';btnDbl.id='dbl-'+layer.id;btnDbl.textContent='×2';
     btnHalf.addEventListener('click',()=>{
@@ -600,8 +638,10 @@ function buildRhythmLayers(){
       btnDbl.classList.toggle('on',state[li].pendingDouble);
       btnHalf.classList.remove('on');
     });
-    // speed buttons added to shiftRow below
-    // complement + swap (appended directly to shiftRow)
+    speedRow.appendChild(btnHalf);speedRow.appendChild(btnDbl);
+
+    // ── comp + swap row ────────────────────────────────────────────────────
+    const compRow=document.createElement('div');compRow.className='edit-row erow-comp';
     const btnComp=document.createElement('button');btnComp.className='edit-btn';btnComp.title='Complémentaire';btnComp.textContent='⊙';btnComp.style.fontSize='13px';
     btnComp.addEventListener('click',()=>{
       state[li].pattern=state[li].pattern.map(p=>p==='X'?'.':'X');
@@ -623,12 +663,11 @@ function buildRhythmLayers(){
       state[li].pattern=[...p.slice(half),...p.slice(0,half)];
       buildStepsDOM(li,state[li].wrapped);setDirty(li,false);
     });
-    // btnComp and btnSwap appended directly to shiftRow in editrows block below
+    compRow.appendChild(btnComp);compRow.appendChild(btnSwap);
 
-    // transformer dice button
+    // ── transformer dice ───────────────────────────────────────────────────
     const btnRandEdit=document.createElement('button');btnRandEdit.className='edit-btn';btnRandEdit.title='Transformations aléatoires';btnRandEdit.textContent='🎲';
     btnRandEdit.addEventListener('click',()=>{
-      // Speed: 50% nothing, 25% /2, 25% x2
       const speedRoll=Math.random();
       if(speedRoll<0.25){
         if(!state[li].halfOn&&!state[li].pendingHalf){
@@ -641,21 +680,15 @@ function buildRhythmLayers(){
           else{state[li].pendingDouble=true;state[li].pendingClear=false;}
         }
       }
-      // else 50%: nothing
       document.getElementById('half-'+layer.id).classList.toggle('on',state[li].pendingHalf);
       document.getElementById('dbl-'+layer.id).classList.toggle('on',state[li].pendingDouble);
-      // Shift: 50% nothing, 50% random shift
       if(Math.random()<0.5){
         const n=Math.floor(Math.random()*(state[li].pattern.length-1))+1;
         state[li].shiftCount=(state[li].shiftCount+n)%state[li].pattern.length;
         state[li].pattern=rotate(state[li].pattern,state[li].pattern.length-n);
         const sn=document.getElementById('shift-num-'+layer.id);if(sn)sn.textContent=state[li].shiftCount;
       }
-      // Complement: 33%
-      if(Math.random()<0.33){
-        state[li].pattern=state[li].pattern.map(p=>p==='X'?'.':'X');
-      }
-      // Swap: 50% (if even length >=4)
+      if(Math.random()<0.33) state[li].pattern=state[li].pattern.map(p=>p==='X'?'.':'X');
       if(Math.random()<0.5&&state[li].pattern.length>=4&&state[li].pattern.length%2===0){
         const p=state[li].pattern,half=Math.floor(p.length/2);
         state[li].pattern=[...p.slice(half),...p.slice(0,half)];
@@ -663,17 +696,13 @@ function buildRhythmLayers(){
       buildStepsDOM(li,state[li].wrapped);setDirty(li,true);
     });
 
-    // separate with small spacer between groups
-    const sp1=document.createElement('span');sp1.style.cssText='display:inline-block;width:4px';
-    const sp2=document.createElement('span');sp2.style.cssText='display:inline-block;width:4px';
-    const sp3=document.createElement('span');sp3.style.cssText='display:inline-block;width:4px';
-    shiftRow.appendChild(sp1);
-    shiftRow.appendChild(btnHalf);shiftRow.appendChild(btnDbl);
-    shiftRow.appendChild(sp2);
-    shiftRow.appendChild(btnComp);shiftRow.appendChild(btnSwap);
-    shiftRow.appendChild(sp3);
-    shiftRow.appendChild(btnRandEdit);
+    // ── assemble rows ──────────────────────────────────────────────────────
+    // All modes except paysage-circle: edit-rows is flex-wrap row (1 line)
+    // Paysage-circle CSS splits into column: shift / comp / speed+dice
+    speedRow.appendChild(btnRandEdit);  // dice on speed row = line 5
     editRows.appendChild(shiftRow);
+    editRows.appendChild(compRow);
+    editRows.appendChild(speedRow);
 
     // add dice + mute to selRow, editRows to menu
     selRow.appendChild(btnDice);
@@ -804,6 +833,7 @@ function stopPlay(){
     const d=document.getElementById('steps-'+l.id);
     if(d)d.querySelectorAll('.step').forEach(s=>s.classList.remove('cur'));
   });
+  if(typeof circleView!=='undefined'&&circleView) drawCircles();
 }
 
 function togglePlay(){
@@ -929,6 +959,214 @@ document.getElementById('modal-input').addEventListener('keydown',e=>{
   if(e.key==='Enter')document.getElementById('modal-ok').click();
   if(e.key==='Escape')document.getElementById('modal-cancel').click();
 });
+
+// ─── CIRCULAR VIEW ────────────────────────────────────────────────────────────
+let circleView=false;
+// LOW=blue center, HIGH=orange mid, NOISE=green outer
+const LAYER_COLORS=[
+  {fill:'#378ADD',stroke:'#185FA5',track:'rgba(55,138,221,0.35)'},   // LOW  — inner
+  {fill:'#D85A30',stroke:'#993C1D',track:'rgba(216,90,48,0.35)'},    // HIGH — mid
+  {fill:'#1D9E75',stroke:'#0F6E56',track:'rgba(29,158,117,0.35)'},   // NOISE — outer
+];
+// radii: index 0=LOW inner, 1=HIGH mid, 2=NOISE outer
+const RADII_FRAC=[0.20,0.33,0.47];
+// flash state: flashStep[li] = step index that is currently flashing yellow
+const flashStep=[-1,-1,-1];
+
+function resizeCanvas(){
+  const cv=document.getElementById('rhythm-canvas');if(!cv)return;
+  const wrap=document.getElementById('circle-view');
+  const lw=document.getElementById('layers');
+  const isLandscape=window.innerWidth>=600;
+
+  let sz;
+  if(isLandscape){
+    const layersH=lw?lw.clientHeight:160;
+    const wrapW=wrap.clientWidth||wrap.parentElement.clientWidth*0.6||window.innerWidth*0.5;
+    sz=Math.max(80,Math.min(layersH,wrapW,500)*0.9);
+  } else {
+    const frameW=document.querySelector('.frame').clientWidth||window.innerWidth;
+    const maxH=window.innerHeight*0.55;
+    const mult=0.9*4/3*4/3; // ~1.6
+    sz=Math.max(80,Math.min((frameW-16)*mult, maxH, 600));
+  }
+  sz=Math.round(sz);
+  cv.width=sz;cv.height=sz;
+  if(!isLandscape){
+    wrap.style.width='100%';
+    wrap.style.height=sz+'px';
+  } else {
+    wrap.style.width=sz+'px';
+    wrap.style.height=sz+'px';
+  }
+  drawCircles();
+}
+
+function stepAngle(si,total){
+  // step 0 at top (12h = -π/2), clockwise
+  return -Math.PI/2 + (2*Math.PI*si/total);
+}
+
+function drawCircles(){
+  const cv=document.getElementById('rhythm-canvas');if(!cv)return;
+  const ctx=cv.getContext('2d');
+  const W=cv.width,H=cv.height,cx=W/2,cy=H/2,R=(W/2-8)*0.88; // 12% margin
+  ctx.clearRect(0,0,W,H);
+
+  const now=playing?getAC().currentTime:0;
+
+  // compute needle fraction (layer 0 reference)
+  let needleFrac=0;
+  if(playing){
+    const bs=getBeatSec(0),el=now-state[0].startTime;
+    const cycleLen=bs*state[0].pattern.length;
+    needleFrac=((el%cycleLen)+cycleLen)%cycleLen/cycleLen;
+  }
+  const needleAngle=-Math.PI/2+needleFrac*2*Math.PI;
+
+  // draw layers (order: outer first so inner draws on top)
+  [2,1,0].forEach(li=>{
+    const pat=state[li].pattern;
+    const n=pat.length;
+    const r=RADII_FRAC[li]*R*2;
+    const col=LAYER_COLORS[li];
+    const dotR=10;
+
+    // thin track ring (1px)
+    ctx.beginPath();ctx.arc(cx,cy,r,0,2*Math.PI);
+    ctx.strokeStyle=col.track;ctx.lineWidth=1;ctx.stroke();
+
+    // compute which step the needle is currently on for this layer
+    let needleSi=-1;
+    if(playing){
+      const bs=getBeatSec(li),el=now-state[li].startTime;
+      needleSi=Math.floor(el/bs)%n;
+      // update flash: if needle just moved to a new X step, flash it
+      if(needleSi!==flashStep[li]){
+        flashStep[li]=needleSi;
+      }
+    }
+
+    for(let si=0;si<n;si++){
+      const a=stepAngle(si,n);
+      const dx=cx+r*Math.cos(a),dy=cy+r*Math.sin(a);
+      const isOn=pat[si]==='X';
+      const isFlash=playing&&si===flashStep[li]&&isOn;
+      const isMuted=state[li].muted;
+
+      ctx.beginPath();ctx.arc(dx,dy,dotR,0,2*Math.PI);
+      if(isFlash&&!isMuted){
+        // yellow flash for currently played X step
+        ctx.fillStyle='#f5c518';ctx.fill();
+        ctx.strokeStyle='#c89a00';ctx.lineWidth=1.5;ctx.stroke();
+      } else if(isOn){
+        ctx.fillStyle=isMuted?col.fill+'66':col.fill;ctx.fill();
+        ctx.strokeStyle=col.stroke;ctx.lineWidth=1;ctx.stroke();
+      } else {
+        ctx.fillStyle='#f0ede8';ctx.fill();
+        ctx.strokeStyle='#c8c5c0';ctx.lineWidth=0.75;ctx.stroke();
+      }
+    }
+  });
+
+  // 3 needles, one per layer, length = ring radius, colored
+  LAYERS.forEach((layer,li)=>{
+    const r=RADII_FRAC[li]*R*2;
+    const col=LAYER_COLORS[li];
+    // compute this layer's needle angle
+    let frac=0;
+    if(playing){
+      const bs=getBeatSec(li),el=now-state[li].startTime;
+      const cyc=bs*state[li].pattern.length;
+      frac=((el%cyc)+cyc)%cyc/cyc;
+    }
+    const ang=-Math.PI/2+frac*2*Math.PI;
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(cx,cy);
+    ctx.lineTo(cx+r*Math.cos(ang),cy+r*Math.sin(ang));
+    ctx.strokeStyle=col.stroke;ctx.lineWidth=1.5;
+    ctx.lineCap='round';ctx.stroke();
+    ctx.restore();
+  });
+  // center pivot
+  ctx.beginPath();ctx.arc(cx,cy,3,0,2*Math.PI);
+  ctx.fillStyle='#1a1a18';ctx.fill();
+}
+
+function circleHitTest(x,y){
+  const cv=document.getElementById('rhythm-canvas');if(!cv)return null;
+  const W=cv.width,cx=W/2,cy=W/2,R=(W/2-8)*0.88;
+  for(let li=0;li<LAYERS.length;li++){
+    const pat=state[li].pattern;
+    const n=pat.length;
+    const r=RADII_FRAC[li]*R*2;
+    const dotR=10;
+    for(let si=0;si<n;si++){
+      const a=stepAngle(si,n);
+      const dx=cx+r*Math.cos(a),dy=cy+r*Math.sin(a);
+      if(Math.hypot(x-dx,y-dy)<=dotR+5) return {li,si};
+    }
+  }
+  return null;
+}
+
+function setupCanvasInteraction(){
+  const cv=document.getElementById('rhythm-canvas');if(!cv)return;
+  function onPt(ex,ey){
+    const rect=cv.getBoundingClientRect();
+    const scaleX=cv.width/rect.width,scaleY=cv.height/rect.height;
+    const hit=circleHitTest((ex-rect.left)*scaleX,(ey-rect.top)*scaleY);
+    if(!hit)return;
+    const{li,si}=hit;
+    state[li].pattern[si]=state[li].pattern[si]==='X'?'.':'X';
+    setDirty(li,true);
+    if(!circleView)buildStepsDOM(li,state[li].wrapped);
+    drawCircles();
+  }
+  cv.addEventListener('click',e=>onPt(e.clientX,e.clientY));
+  cv.addEventListener('touchend',e=>{e.preventDefault();const t=e.changedTouches[0];onPt(t.clientX,t.clientY);},{passive:false});
+}
+
+// define visualLoopCircle (referenced in visualLoop dispatcher above)
+visualLoopCircle=function(){
+  if(!playing)return;
+  const now=getAC().currentTime;
+  drawCircles();
+  visualRafID=requestAnimationFrame(visualLoopCircle);
+};
+
+function setView(circle){
+  circleView=circle;
+  document.body.classList.toggle('view-circle',circle);
+  document.getElementById('btn-view').textContent=circle?'⊞':'◎';
+  document.getElementById('btn-view').title=circle?'Vue linéaire':'Vue circulaire';
+
+  // always cancel current RAF before switching loop type
+  cancelAnimationFrame(visualRafID);
+  visualRafID=null;
+
+  if(circle){
+    setTimeout(()=>{resizeCanvas();setupCanvasInteraction();},30);
+    setTimeout(resizeCanvas,150);
+    flashStep[0]=flashStep[1]=flashStep[2]=-1;
+    LAYERS.forEach(l=>{const d=document.getElementById('steps-'+l.id);if(d)d.querySelectorAll('.step').forEach(s=>s.classList.remove('cur'));});
+    // restart circle RAF if playing
+    if(playing) visualRafID=requestAnimationFrame(visualLoopCircle);
+  } else {
+    LAYERS.forEach((_,li)=>{buildStepsDOM(li,false);setTimeout(()=>checkWrap(li),0);});
+    // restart linear RAF if playing
+    if(playing) visualRafID=requestAnimationFrame(visualLoop);
+  }
+}
+
+document.getElementById('btn-view').addEventListener('click',()=>setView(!circleView));
+
+// resize observer for canvas
+if(window.ResizeObserver){
+  new ResizeObserver(()=>{if(circleView)resizeCanvas();}).observe(document.getElementById('layers-wrap'));
+}
+window.addEventListener('resize',()=>{if(circleView)setTimeout(resizeCanvas,50);});
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 buildRhythmLayers();
