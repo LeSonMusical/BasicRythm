@@ -3,18 +3,38 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Basic Rhythm</title>
+<title>PoumTchak</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
+*{user-select:none;-webkit-user-select:none}
+.encyclo-wrap,.encyclo-chapo,.encyclo-bullets{user-select:text;-webkit-user-select:text}
+input,textarea{user-select:text;-webkit-user-select:text}
+
 body{font-family:system-ui,-apple-system,sans-serif;font-size:12px;background:#f5f4f0;color:#1a1a18;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:1rem}
 .frame{border:1px solid #d0cec7;border-radius:12px;padding:.75rem .85rem;background:#fff;width:100%;max-width:900px}
-.app-title{font-size:15px;font-weight:500;letter-spacing:.04em;margin-bottom:.6rem;color:#1a1a18;text-align:center}
+/* === HEADER / LIGNE 1 === */
+.app-header{display:flex;align-items:center;justify-content:space-between;padding:.3rem .1rem;margin-bottom:0}
+.app-header-left{display:flex;align-items:center;gap:4px}
+.app-header-center{display:flex;align-items:center;gap:0;position:absolute;left:50%;transform:translateX(-50%)}
+.app-header-wrap{position:relative;display:flex;align-items:center;justify-content:space-between;padding:.3rem .1rem}
+.app-name{font-size:14px;font-weight:700;letter-spacing:.06em;color:#1a1a18}
+.app-version{font-size:9px;color:#aaa;font-weight:400;margin-left:3px}
+.btn-about{padding:1px 7px;font-size:11px;font-weight:700;background:transparent;border:1px solid #c0bdb7;border-radius:50%;color:#888;cursor:pointer;line-height:1.5}
+.btn-about:hover{background:#e8e5e0}
+.btn-about.active{background:#d0cec7;color:#1a1a18}
+.tx-badge{font-size:9px;padding:1px 5px;background:#ffeedd;border:1px solid #D85A30;border-radius:3px;color:#993C1D;font-weight:600;margin-left:4px}
+/* CHEVRON VOLET — transparent, couleur selon section */
+.btn-volet{padding:2px 5px;cursor:pointer;font-size:10px;font-weight:500;background:transparent;border:none;border-radius:4px;color:#bbb;flex-shrink:0;white-space:nowrap;transition:color .12s}
+.btn-volet:hover{color:#555}
+.btn-volet.open{color:#555}
+.btn-volet-groove{color:#C8961A}.btn-volet-groove:hover{color:#8B6914}.btn-volet-groove.open{color:#8B6914}
+.btn-volet-encyclo{color:#888}.btn-volet-encyclo:hover{color:#333}.btn-volet-encyclo.open{color:#333}
+/* couleur couche appliquée via style inline */
 
-/* === TRANSPORT LIGNE 1 === */
+/* === TRANSPORT === */
 .transport{display:flex;flex-direction:column;align-items:stretch;gap:0;margin-bottom:0}
-.t-line1{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:.45rem .1rem}
+.t-line2{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:.15rem .1rem}
 .t-group{display:flex;align-items:center;gap:5px}
-.t-title{font-size:14px;font-weight:500;letter-spacing:.04em;color:#1a1a18}
 .btn{padding:4px 12px;cursor:pointer;font-size:12px;font-weight:500;background:#fff;border:1px solid #b0aea7;border-radius:6px;color:#1a1a18}
 .btn:hover{background:#f0ede8}
 .btn.active{background:#ddeeff;border-color:#5599cc;color:#1155aa}
@@ -26,26 +46,11 @@ body{font-family:system-ui,-apple-system,sans-serif;font-size:12px;background:#f
 .btn-panel{padding:3px 7px;cursor:pointer;font-size:11px;font-weight:500;background:transparent;border:1px solid #c0bdb7;border-radius:5px;color:#666;letter-spacing:.03em}
 .btn-panel:hover{background:#e8e5e0}
 .btn-panel.active{background:#d0cec7;border-color:#a0a09a;color:#1a1a18}
-.btn-view{padding:4px 9px;font-size:13px;border:2px solid #888 !important;border-radius:6px}
-/* === PANNEAU 2 (onglets exclusifs) === */
+.btn-view{padding:4px 9px;font-size:13px;border:2px solid #F5C518 !important;border-radius:6px}
+/* PANNEAU 2 */
 .panel2{border-top:1px solid #c8c5c0;border-bottom:1px solid #c8c5c0;background:#e8e5e0;overflow:hidden;transition:max-height .22s ease,padding .22s ease;max-height:0;padding:0 .85rem}
 .panel2.open{max-height:400px;padding:.5rem .85rem}
-/* LOCAL PLAY button dans fiche encyclo */
-.btn-local-play{padding:3px 10px;cursor:pointer;font-size:11px;font-weight:500;background:#fff;border:1px solid #b0aea7;border-radius:5px;color:#555;margin-bottom:8px}
-.btn-local-play:hover{background:#f0ede8}
-.btn-local-play.playing{background:#F5C518;border-color:#d4a800;color:#1a1a18}
-/* MUTE BOUTON CARRÉ dans sel-row */
-.btn-mute-sq{width:26px;height:26px;flex-shrink:0;border:none;border-radius:4px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;background:var(--cc);transition:background .15s;padding:0;line-height:1}
-.btn-mute-sq.muted{background:#c8c5c0}
-.btn-mute-sq:hover{filter:brightness(.9)}
-/* couche OFF : fond grisé */
-.layer.muted-layer{background:#f0ede855 !important}
-/* === PANNEAU 2 (onglets exclusifs) === */
-.panel2{border-top:1px solid #e0ddd8;border-bottom:1px solid #e0ddd8;background:#faf9f7;overflow:hidden;transition:max-height .22s ease,padding .22s ease;max-height:0;padding:0 .1rem}
-.panel2.open{max-height:400px;padding:.5rem .1rem}
-.panel2-inner{display:none}
-.panel2-inner.active{display:block}
-/* tempo dans panneau 2 */
+.panel2-inner{display:none}.panel2-inner.active{display:block}
 .t-tempo-wrap{display:flex;flex-direction:column;gap:4px}
 .t-line-tempo{display:flex;align-items:center;gap:8px}
 .t-label{font-size:10px;color:#888;font-weight:400}
@@ -59,22 +64,33 @@ body{font-family:system-ui,-apple-system,sans-serif;font-size:12px;background:#f
 .btn-sm-tempo{padding:3px 8px;cursor:pointer;font-size:11px;background:#fff;border:1px solid #b0aea7;border-radius:5px;color:#666}
 .btn-sm-tempo:hover{background:#f0ede8}
 .btn-sm-tempo.active{background:#ddeeff;border-color:#5599cc;color:#1155aa}
-.hdivider{height:1px;background:#e0ddd8;margin:.5rem 0}
+.hdivider{height:1px;background:#e0ddd8;margin:.4rem 0}
+/* PLAY CHAPO inline */
+.chapo-play{padding:1px 5px;font-size:10px;cursor:pointer;background:transparent;border:1px solid #c0bdb7;border-radius:3px;color:#666;margin-left:4px;line-height:1.4;vertical-align:middle}
+.chapo-play:hover{background:#e8e5e0}
+.chapo-play.playing{background:#F5C518;border-color:#d4a800}
 /* === LAYOUT BASE === */
 #layers-wrap{display:flex;align-items:flex-start;gap:0}
 #layers{flex:1;display:flex;flex-direction:column;gap:4px;min-width:0}
 #circle-view{display:none;align-items:center;justify-content:center;flex-shrink:0;overflow:visible}
 #rhythm-canvas{display:block;touch-action:none;cursor:pointer;max-width:100%;max-height:100%}
-
+/* MUTE */
+.btn-mute-sq{width:26px;height:26px;flex-shrink:0;border:none;border-radius:4px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;background:var(--cc);transition:background .15s;padding:0;line-height:1}
+.btn-mute-sq.muted{background:#c8c5c0}.btn-mute-sq:hover{filter:brightness(.9)}
+.layer.muted-layer{background:#f0ede855 !important}
+/* EDIT ROWS */
 .edit-rows{display:flex;flex-direction:row;flex-wrap:wrap;align-items:center;gap:3px;margin-top:2px}
 .edit-rows.hidden{display:none}
 .erow-shift,.erow-speed,.erow-comp{display:contents}
-.btn-edit-toggle{padding:2px 6px;cursor:pointer;font-size:10px;font-weight:500;background:transparent;border:1px solid #c0bdb7;border-radius:4px;color:#666;flex-shrink:0}
-.btn-edit-toggle:hover{background:#e8e5e0}
-.btn-edit-toggle.active{background:#d0cec7;border-color:#a0a09a;color:#1a1a18}
 .btn-info-ico{padding:1px 5px;cursor:pointer;font-size:10px;font-weight:700;background:transparent;border:1px solid #c0bdb7;border-radius:4px;color:#666;flex-shrink:0;line-height:1.4;min-width:20px;text-align:center}
 .btn-info-ico:hover{background:#e8e5e0}
 .btn-info-ico.active{background:#d0cec7;border-color:#888;color:#1a1a18}
+/* steps / mod */
+.layer-steps-wrap{flex:1;display:flex;flex-direction:row;align-items:flex-start;gap:4px;padding:4px 5px 4px 6px;min-width:0}
+.layer-steps-wrap.hidden-steps{display:none}
+.steps-mod-sep{height:1px;background:var(--cs);margin:2px 0}
+.btn-mod-wrap{display:flex;flex-shrink:0;align-self:flex-start;padding-top:2px}
+.btn-mod-wrap.hidden{display:none}
 /* SCÈNE / RYTHMIQUE */
 .scene-bar{display:flex;align-items:center;gap:5px;padding:.3rem .5rem;border-bottom:1px solid #e0ddd8;margin-bottom:4px;background:#faf3e0;border-left:3px solid #C8961A;border-radius:4px}
 .scene-bar select{font-size:10px;flex:1;min-width:0;padding:1px 3px;border:1px solid #d4b86a;border-radius:4px;background:#fff;color:#1a1a18}
@@ -84,11 +100,13 @@ body{font-family:system-ui,-apple-system,sans-serif;font-size:12px;background:#f
 
 /* circle mode */
 body.view-circle .layer-steps-wrap{display:none}
+body.view-circle .layer-steps-outer{display:none}
 body.view-circle .layer-menu{width:100%;border-right:none}
 body.view-circle #circle-view{display:flex !important;width:100%;justify-content:center;align-items:center}
 body.view-circle .step{border-radius:50%}
 body.view-circle #layers-wrap{flex-direction:column}
 body.view-circle #hdivider-after-layers{margin:0}
+body.view-circle .btn-steps-toggle{display:none}
 
 /* landscape ≥600px */
 @media(min-width:600px){
@@ -105,8 +123,10 @@ body.view-circle #hdivider-after-layers{margin:0}
 
 .rhythm-section{display:flex;flex-direction:column;gap:4px}
 
-/* LAYER — desktop: menu | steps | edit-ctrl */
-.layer{display:flex;align-items:stretch;border-radius:5px;overflow:hidden;border-left:3px solid var(--cc);background:var(--cl);min-height:34px}
+/* LAYER */
+.layer{display:flex;flex-direction:column;border-radius:5px;overflow:hidden;border-left:3px solid var(--cc);background:var(--cl);min-height:34px}
+.layer-top{display:flex;align-items:stretch}
+.layer-steps-outer{flex:1;display:flex;flex-direction:column;min-width:0}
 
 .sel-row{display:flex;align-items:center;gap:2px}
 .modified-tag{font-size:8px;color:#c0580a;display:none;padding-left:1px}
@@ -120,15 +140,14 @@ body.view-circle #hdivider-after-layers{margin:0}
 .ico:hover{background:rgba(0,0,0,.06)}
 .confirm-row{display:flex;align-items:center;gap:2px;font-size:9px;color:#666;flex-shrink:0}
 
-.layer-steps-wrap{flex:1;display:flex;align-items:center;padding:4px 5px 4px 6px;min-width:0}
 .steps{display:flex;gap:2px;align-items:flex-start;flex-wrap:wrap;flex:1;min-width:0}
 .step{width:20px;height:20px;border-radius:3px;border:1px solid #d0cec7;background:#f0ede8;flex-shrink:0;cursor:pointer;transition:background .05s}
 .step:hover{border-color:#aaa}
 .step.on{background:var(--cs);border-color:var(--cc)}
 .step.cur{background:var(--cc) !important;border-color:var(--cb) !important}
 .step.off.cur{background:#bbb !important;border-color:#888 !important}
-.muted .step.on{background:#d0cec755 !important;border-color:#b0aea7 !important}
-.muted .step.cur{background:#aaa !important;border-color:#888 !important}
+.muted-layer .step.on{background:#c8c5c0 !important;border-color:#a0a09a !important}
+.muted-layer .step.cur{background:#aaa !important;border-color:#888 !important}
 
 /* LAYER MENU — wider, holds edit controls below select row */
 .layer-menu{display:flex;flex-direction:column;gap:2px;width:min(33%,200px);flex-shrink:0;padding:4px 6px 4px 5px;border-right:1px solid var(--cs)}
@@ -187,7 +206,7 @@ body.view-circle #hdivider-after-layers{margin:0}
 @media(max-width:599px){
   body{padding:.4rem}
   .frame{padding:.55rem .6rem;border-radius:8px}
-  .layer{flex-direction:column}
+  .layer-top{flex-direction:column}
   .layer-menu select{font-size:10px}
   .layer-menu{width:100%;padding:3px 5px;border-right:none;border-bottom:1px solid var(--cs)}
   .edit-row{gap:3px}
@@ -203,38 +222,46 @@ body.view-circle #hdivider-after-layers{margin:0}
 </head>
 <body>
 <div class="frame">
+  <!-- LIGNE 1 : PoumTchak | Play⟳ | ? -->
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:.3rem .1rem;margin-bottom:0">
+    <div style="display:flex;align-items:center;gap:3px;min-width:80px">
+      <span class="app-name">PoumTchak</span>
+      <span class="app-version">v1.4</span>
+      <span id="tx-badge" class="tx-badge" style="display:none">TX</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:0">
+      <button class="btn btn-play-main" id="btn-play">Play</button>
+      <button class="btn btn-sync" id="btn-resync" title="Resynchroniser">⟳</button>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:flex-end;min-width:80px">
+      <button class="btn-about" id="btn-about" title="PoumTchak — À propos">?</button>
+    </div>
+  </div>
+  <!-- LIGNE 2 : commandes -->
   <div class="transport">
-    <div class="t-line1">
-      <div class="t-group">
-        <span class="t-title">Basic Rhythm</span>
-      </div>
-      <div class="t-group" style="gap:0">
-        <button class="btn btn-play-main" id="btn-play">Play</button>
-        <button class="btn btn-sync" id="btn-resync" title="Resynchroniser">⟳</button>
-      </div>
+    <div class="t-line2">
+      <div style="flex:1"></div>
       <div class="t-group">
         <button class="btn-panel" id="btn-panel-bpm" title="Tempo">BPM</button>
         <button class="btn-panel" id="btn-panel-sons" title="Réglages sons">🔊</button>
         <button class="btn-panel" id="btn-panel-params" title="Paramètres avancés">⚙</button>
       </div>
-      <div class="t-group">
+      <div style="flex:1;display:flex;justify-content:flex-end">
         <button class="btn btn-view" id="btn-view" title="Vue circulaire">⊞</button>
       </div>
     </div>
     <!-- PANNEAU 2 : onglets exclusifs -->
     <div class="panel2" id="panel2">
       <div class="panel2-inner" id="panel-bpm">
-        <div class="t-tempo-wrap">
-          <div class="t-line-tempo">
-            <span class="t-label">TEMPO</span>
-            <div class="t-slider-wrap">
-              <span class="t-spm-display" id="bpm-val" title="Steps Par Minute — 1 step = 1 subdivision. Cliquer pour éditer">200 spm</span>
-              <input type="range" class="t-slider" id="bpm" min="30" max="400" value="200" step="1">
-            </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
+          <div style="font-size:10px;font-weight:700;color:#555;letter-spacing:.06em">TEMPO</div>
+          <div style="display:flex;align-items:center;gap:6px;width:100%">
+            <input type="range" class="t-slider" id="bpm" min="30" max="400" value="200" step="1" style="flex:1">
+            <span class="t-spm-display" id="bpm-val" title="Steps Par Minute — cliquer pour éditer" style="min-width:52px;text-align:right">200 spm</span>
           </div>
-          <div class="t-equiv-line">
+          <div style="display:flex;align-items:center;gap:6px;justify-content:center">
             <button class="btn-sm-tempo" id="btn-global-half">/2</button>
-            <span class="t-equiv" id="bpm-equiv"><span style="letter-spacing:-.1em">♩♩</span>=30&ensp;♩=60&ensp;♩.=40</span>
+            <span class="t-equiv" id="bpm-equiv" style="font-size:11px"><span style="letter-spacing:-.1em">♩♩</span>=50&ensp;♩=100&ensp;♩.=67</span>
             <button class="btn-sm-tempo" id="btn-global-double">×2</button>
           </div>
         </div>
@@ -263,12 +290,12 @@ body.view-circle #hdivider-after-layers{margin:0}
   </div>
   <div class="hdivider" id="hdivider-after-layers"></div>
 
-  <div style="display:flex;align-items:center;gap:6px;margin-top:6px;border-top:1px solid #e0ddd8;padding-top:6px;flex-wrap:nowrap;min-width:0">
-    <button class="collapsible-btn encyclo-main-btn" id="encyclo-btn" style="border-top:none;margin-top:0;padding-top:0;flex:0 0 auto;white-space:nowrap;width:auto"><span class="arr">▶</span><span>À propos de</span></button>
-    <button id="btn-local-play" title="Écouter ce rythme (2 cycles)" style="padding:1px 5px;font-size:11px;background:none;border:1px solid #c0bdb7;border-radius:4px;cursor:pointer;color:#666;flex-shrink:0;line-height:1.4">▶</button>
+  <div style="display:flex;align-items:center;gap:6px;margin-top:4px;border-top:1px solid #e0ddd8;padding-top:4px;flex-wrap:nowrap;min-width:0">
+    <span style="font-size:11px;font-weight:500;color:#444;flex-shrink:0;white-space:nowrap">À propos de</span>
     <select id="encyclo-select" style="font-size:11px;padding:2px 5px;border:1px solid #ccc;border-radius:5px;background:#fff;color:#1a1a18;flex:1;min-width:0;max-width:260px"></select>
+    <button class="btn-volet btn-volet-encyclo" id="encyclo-volet-btn" title="Écouter (2 cycles) / Ouvrir-Fermer">lire ▶</button>
   </div>
-  <div class="collapsible-content opened" id="encyclo-content">
+  <div class="collapsible-content closed" id="encyclo-content">
     <div class="encyclo-wrap" style="padding-top:6px">
       <div id="encyclo-body"></div>
     </div>
@@ -351,6 +378,33 @@ const ENCYCLO={
   bembe:{chapo:"Le Bembé est un rythme de cérémonie yoruba, joué dans la Santería cubaine pour l'invocation des Orishas, avec des équivalents structurels chez les Ewe du Ghana et les Yoruba du Nigeria. C'est le rythme euclidien le plus dense du dictionnaire sur base 12 — 7 frappes sur 12 pas, laissant à peine de l'espace. Cette densité quasi-continue produit une tension hypnotique sans repos qui explique son usage rituel. Il a profondément influencé le jazz modal et la musique minimaliste occidentale.",bullets:[["Origine","Yoruba (Nigeria/Bénin), transplanté à Cuba avec la traite ; \"Bembé\" désigne aussi la cérémonie elle-même."],["Utilisation","Rituels de Santería (Cuba) ; jazz modal : Miles Davis Kind of Blue (1959), Coltrane Africa/Brass (1961), Wayne Shorter — le pattern sous-tend l'ostinato africain de nombreuses compositions modales ; Steve Reich, Drumming (1971) et Clapping Music (1972)."],["Écritures","X.X.XX.X.X.X\nIntervalles : 2-2-1-2-2-2\nE(7,12) — maximum euclidien sur base 12"],["Singularité","Un seul intervalle d'1 pas (entre frappes 5 et 6) — micro-accentuation caractéristique, comme un trébuchement contrôlé."],["Relations","Complémentaire exact de Fume-fume ; même densité que Samba (7 frappes) mais sur 12 pas — plus oppressant."],["Sensation","Urgence hypnotique, absence de respiration, état de transe — la densité est fonctionnelle, pas décorative."],["Anecdote","Reich découvre ce rythme en étudiant la musique Ewe au Ghana en 1970 — principe du phasing qu'il exploitera dans toute son œuvre."]]}
 };
 
+let sceneModified=false;
+function markSceneModified(){
+  sceneModified=true;
+  const sel=document.getElementById('scene-select');
+  if(!sel)return;
+  const cur=[...sel.options].find(o=>o.selected&&o.value&&!o.disabled);
+  if(cur&&!cur.dataset.modified){
+    cur.dataset.origName=cur.textContent;
+    cur.dataset.modified='1';
+    cur.textContent=cur.textContent+' •modifié';
+    cur.style.fontStyle='italic';
+    cur.style.color='#c0580a';
+  }
+}
+function clearSceneModified(){
+  sceneModified=false;
+  const sel=document.getElementById('scene-select');
+  if(!sel)return;
+  [...sel.options].forEach(o=>{
+    if(o.dataset.modified){
+      o.textContent=o.dataset.origName||o.textContent.replace(' •modifié','');
+      o.style.fontStyle='';o.style.color='';
+      delete o.dataset.modified;delete o.dataset.origName;
+    }
+  });
+}
+
 // ─── SCÈNES / RYTHMIQUES ──────────────────────────────────────────────────────
 let scenes=[
   {id:'salsa',    name:'Salsa',      custom:false, layers:[
@@ -387,6 +441,7 @@ function applyScene(sceneId){
     state[li].pendingHalf=false;state[li].pendingDouble=false;state[li].pendingClear=false;
     clearDirty(li);
   });
+  clearSceneModified();
   // rebuild UI
   buildRhythmLayers();
   buildSoundLayers();
@@ -411,7 +466,7 @@ function buildSceneSelect(sel){
 function buildSceneBar(){
   const bar=document.getElementById('scene-bar');if(!bar)return;
   bar.innerHTML='';
-  const lbl=document.createElement('span');lbl.className='scene-bar-label';lbl.textContent='Rythmique';
+  const lbl=document.createElement('span');lbl.className='scene-bar-label';lbl.textContent='Groove';
   const sel=document.createElement('select');sel.id='scene-select';
   sel.style.cssText='font-size:10px;flex:1;min-width:0;max-width:140px;padding:1px 2px;border:1px solid #ccc;border-radius:4px;background:#fff;color:#1a1a18';
   buildSceneSelect(sel);
@@ -424,14 +479,14 @@ function buildSceneBar(){
     updateSceneInfoBtn();
   });
 
-  const btnSave=document.createElement('button');btnSave.className='btn-scene-ico';btnSave.title='Sauvegarder cette rythmique';btnSave.textContent='💾';
+  const btnSave=document.createElement('button');btnSave.className='btn-scene-ico';btnSave.title='Sauvegarder ce groove';btnSave.textContent='💾';
   btnSave.addEventListener('click',()=>openSceneModal());
 
   // bouton i scène
   const btnInfoSc=document.createElement('button');
   btnInfoSc.className='btn-info-ico';btnInfoSc.id='scene-info-btn';
   btnInfoSc.textContent='i';btnInfoSc.title='À propos de cette rythmique';
-  btnInfoSc.style.minWidth='20px';btnInfoSc.style.opacity='.3';btnInfoSc.style.cursor='default';
+  btnInfoSc.style.minWidth='20px';btnInfoSc.style.opacity='.3';btnInfoSc.style.cursor='default';btnInfoSc.style.pointerEvents='none';
   btnInfoSc.addEventListener('click',()=>{
     const scId=sel.value;
     const eKey=SCENE_ENCYCLO[scId];
@@ -440,30 +495,29 @@ function buildSceneBar(){
     // désactiver tous les i couches aussi
     LAYERS.forEach(l=>{const b=document.getElementById('info-ico-'+l.id);if(b)b.classList.remove('active');});
     const content=document.getElementById('encyclo-content');
-    const encloBtn=document.getElementById('encyclo-btn');
+    // encloBtn remplacé par toggleEncyclo
     if(isOn){
       btnInfoSc.classList.remove('active');
-      if(content){content.classList.replace('opened','closed');if(encloBtn)encloBtn.classList.remove('open');}
+      if(content){toggleEncyclo(false);}
     } else {
       btnInfoSc.classList.add('active');
       const es=document.getElementById('encyclo-select');
       if(es&&[...es.options].some(o=>o.value===eKey)){es.value=eKey;renderEncyclo(eKey);}
-      if(content&&content.classList.contains('closed')){content.classList.replace('closed','opened');if(encloBtn)encloBtn.classList.add('open');}
+      if(content&&content.classList.contains('closed')){toggleEncyclo(true);}
     }
   });
 
-  // bouton Édit scène — toggle layers-wrap
   const btnEditSc=document.createElement('button');
-  btnEditSc.className='btn-edit-toggle';btnEditSc.id='scene-edit-btn';
-  btnEditSc.textContent='Édit';btnEditSc.title='Afficher/masquer les couches';
-  btnEditSc.classList.add('active'); // ouvert par défaut
+  btnEditSc.className='btn-volet btn-volet-groove open';btnEditSc.id='scene-edit-btn';
+  btnEditSc.textContent='Patterns ▼';btnEditSc.title='Afficher/masquer les couches';
   btnEditSc.addEventListener('click',()=>{
     const lw=document.getElementById('layers-wrap');
     const dv=document.getElementById('hdivider-after-layers');
     const hidden=lw.style.display==='none';
     lw.style.display=hidden?'':'none';
     if(dv)dv.style.display=hidden?'':'none';
-    btnEditSc.classList.toggle('active',hidden);
+    btnEditSc.textContent=hidden?'Patterns ▼':'Patterns ▶';
+    btnEditSc.classList.toggle('open',hidden);
   });
 
   bar.appendChild(lbl);bar.appendChild(sel);bar.appendChild(btnSave);bar.appendChild(btnInfoSc);bar.appendChild(btnEditSc);
@@ -632,6 +686,7 @@ function setDirty(li,handEdit){
   state[li].dirty=true;
   if(handEdit)state[li].handEdited=true;
   updateDirtyUI(li);
+  markSceneModified();
 }
 function clearDirty(li){
   state[li].dirty=false;state[li].handEdited=false;
@@ -736,6 +791,7 @@ function buildRhythmLayers(){
       const sn=document.getElementById('shift-num-'+layer.id);if(sn)sn.textContent='0';
       clearDirty(li);
       buildStepsDOM(li,false);setTimeout(()=>checkWrap(li),0);updateCtrlBtns(li);
+      markSceneModified();
       // mettre à jour état bouton i
       const hasEncyclo=!!(dict[idx]&&dict[idx].encyclo);
       const bi=document.getElementById('info-ico-'+layer.id);
@@ -774,7 +830,8 @@ function buildRhythmLayers(){
 
     menu.appendChild(selRow);menu.appendChild(modTag);menu.appendChild(ctrlIcons);
 
-    // COL C : steps
+    // COL C : steps dans layer-steps-outer
+    const stepsOuter=document.createElement('div');stepsOuter.className='layer-steps-outer';
     const stepsWrap=document.createElement('div');stepsWrap.className='layer-steps-wrap';
     const stepsDiv=document.createElement('div');stepsDiv.className='steps';stepsDiv.id='steps-'+layer.id;
     stepsWrap.appendChild(stepsDiv);
@@ -798,187 +855,150 @@ function buildRhythmLayers(){
       if(bi2){bi2.style.opacity=eKey2?'1':'.3';bi2.style.cursor=eKey2?'pointer':'default';}
     });
 
-    // MUTE BOUTON CARRÉ — dans sel-row à gauche du select
+    // MUTE BOUTON CARRÉ
     const btnMuteSq=document.createElement('button');
     btnMuteSq.className='btn-mute-sq'+(state[li].muted?' muted':'');
     btnMuteSq.id='mute-sq-'+layer.id;
-    btnMuteSq.title=state[li].muted?'Activer la couche':'Désactiver la couche';
+    btnMuteSq.title=state[li].muted?'Activer le pattern':'Désactiver le pattern';
     btnMuteSq.textContent=state[li].muted?'🔇':'🔊';
+    function applyMuteVisual(muted){
+      btnMuteSq.classList.toggle('muted',muted);
+      btnMuteSq.textContent=muted?'🔇':'🔊';
+      btnMuteSq.title=muted?'Activer le pattern':'Désactiver le pattern';
+      stepsDiv.classList.toggle('muted',muted);
+      layerDiv.classList.toggle('muted-layer',muted);
+      // griser select + btnSteps + btnMod + btnModSel
+      sel.style.opacity=muted?'.4':'';
+      sel.style.pointerEvents=muted?'none':'';
+      const bs=document.getElementById('steps-btn-'+layer.id);
+      if(bs){bs.style.opacity=muted?'.3':'';bs.style.pointerEvents=muted?'none':'';}
+      const bm=document.getElementById('mod-btn-'+layer.id);
+      if(bm){bm.style.opacity=muted?'.3':'';bm.style.pointerEvents=muted?'none':'';}
+      const bms=document.getElementById('mod-sel-btn-'+layer.id);
+      if(bms){bms.style.opacity=muted?'.3':'';bms.style.pointerEvents=muted?'none':'';}
+    }
     btnMuteSq.addEventListener('click',()=>{
       state[li].muted=!state[li].muted;
-      btnMuteSq.classList.toggle('muted',state[li].muted);
-      btnMuteSq.textContent=state[li].muted?'🔇':'🔊';
-      btnMuteSq.title=state[li].muted?'Activer la couche':'Désactiver la couche';
-      stepsDiv.classList.toggle('muted',state[li].muted);
-      layerDiv.classList.toggle('muted-layer',state[li].muted);
+      applyMuteVisual(state[li].muted);
     });
+    if(state[li].muted)setTimeout(()=>applyMuteVisual(true),0);
 
-    // EDIT ROWS inside menu
-    const editRows=document.createElement('div');editRows.className='edit-rows';
 
-    // ── shift row ──────────────────────────────────────────────────────────
-    const shiftRow=document.createElement('div');shiftRow.className='edit-row erow-shift';
-    const btnL=document.createElement('button');btnL.className='edit-btn';btnL.title='Décaler gauche';btnL.textContent='◀';
-    const shiftNum=document.createElement('span');shiftNum.className='shift-num';shiftNum.id='shift-num-'+layer.id;shiftNum.textContent='0';
-    const btnR=document.createElement('button');btnR.className='edit-btn';btnR.title='Décaler droite';btnR.textContent='▶';
-    btnL.addEventListener('click',()=>{
-      state[li].shiftCount=((state[li].shiftCount||0)-1+state[li].pattern.length)%state[li].pattern.length;
-      shiftNum.textContent=state[li].shiftCount;
-      state[li].pattern=rotate(state[li].pattern,1);
-      buildStepsDOM(li,state[li].wrapped);setDirty(li,false);
-    });
-    btnR.addEventListener('click',()=>{
-      state[li].shiftCount=((state[li].shiftCount||0)+1)%state[li].pattern.length;
-      shiftNum.textContent=state[li].shiftCount;
-      state[li].pattern=rotate(state[li].pattern,state[li].pattern.length-1);
-      buildStepsDOM(li,state[li].wrapped);setDirty(li,false);
-    });
-    shiftRow.appendChild(btnL);shiftRow.appendChild(shiftNum);shiftRow.appendChild(btnR);
-
-    // ── speed row ──────────────────────────────────────────────────────────
-    const speedRow=document.createElement('div');speedRow.className='edit-row erow-speed';
-    const btnHalf=document.createElement('button');btnHalf.className='edit-btn';btnHalf.id='half-'+layer.id;btnHalf.textContent='/2';
-    const btnDbl=document.createElement('button');btnDbl.className='edit-btn';btnDbl.id='dbl-'+layer.id;btnDbl.textContent='×2';
-    btnHalf.addEventListener('click',()=>{
-      if(state[li].halfOn||state[li].pendingHalf){
-        state[li].pendingHalf=false;state[li].pendingDouble=false;state[li].pendingClear=true;
-      } else if(state[li].doubleOn||state[li].pendingDouble){
-        state[li].pendingHalf=false;state[li].pendingDouble=false;state[li].pendingClear=true;
-      } else {
-        state[li].pendingHalf=true;state[li].pendingDouble=false;state[li].pendingClear=false;
-      }
-      btnHalf.classList.toggle('on',state[li].pendingHalf);
-      btnDbl.classList.remove('on');
-    });
-    btnDbl.addEventListener('click',()=>{
-      if(state[li].doubleOn||state[li].pendingDouble){
-        state[li].pendingHalf=false;state[li].pendingDouble=false;state[li].pendingClear=true;
-      } else if(state[li].halfOn||state[li].pendingHalf){
-        state[li].pendingHalf=false;state[li].pendingDouble=false;state[li].pendingClear=true;
-      } else {
-        state[li].pendingDouble=true;state[li].pendingHalf=false;state[li].pendingClear=false;
-      }
-      btnDbl.classList.toggle('on',state[li].pendingDouble);
-      btnHalf.classList.remove('on');
-    });
-    speedRow.appendChild(btnHalf);speedRow.appendChild(btnDbl);
-
-    // ── comp + swap row ────────────────────────────────────────────────────
-    const compRow=document.createElement('div');compRow.className='edit-row erow-comp';
-    const btnComp=document.createElement('button');btnComp.className='edit-btn';btnComp.title='Complémentaire';btnComp.textContent='⊙';btnComp.style.fontSize='13px';
-    btnComp.addEventListener('click',()=>{
-      state[li].pattern=state[li].pattern.map(p=>p==='X'?'.':'X');
-      buildStepsDOM(li,state[li].wrapped);setDirty(li,false);
-    });
-    const btnSwap=document.createElement('button');btnSwap.className='edit-btn';btnSwap.title='Intervertir les deux moitiés';btnSwap.textContent='⇄';btnSwap.style.fontSize='13px';
-    function updateSwapBtn(){
-      const l=state[li].pattern.length;
-      const ok=(l>=4&&l%2===0);
-      btnSwap.disabled=!ok;
-      btnSwap.style.opacity=ok?'1':'0.3';
-      btnSwap.style.cursor=ok?'pointer':'not-allowed';
-    }
-    updateSwapBtn();
-    sel.addEventListener('change',()=>setTimeout(updateSwapBtn,0));
-    btnSwap.addEventListener('click',()=>{
-      const p=state[li].pattern;
-      const half=Math.floor(p.length/2);
-      state[li].pattern=[...p.slice(half),...p.slice(0,half)];
-      buildStepsDOM(li,state[li].wrapped);setDirty(li,false);
-    });
-    compRow.appendChild(btnComp);compRow.appendChild(btnSwap);
-
-    // ── transformer dice ───────────────────────────────────────────────────
-    const btnRandEdit=document.createElement('button');btnRandEdit.className='edit-btn';btnRandEdit.title='Transformations aléatoires';btnRandEdit.textContent='✦';
-    btnRandEdit.addEventListener('click',()=>{
-      const speedRoll=Math.random();
-      if(speedRoll<0.25){
-        if(!state[li].halfOn&&!state[li].pendingHalf){
-          if(state[li].doubleOn||state[li].pendingDouble){state[li].pendingDouble=false;state[li].pendingClear=true;}
-          else{state[li].pendingHalf=true;state[li].pendingClear=false;}
-        }
-      } else if(speedRoll<0.5){
-        if(!state[li].doubleOn&&!state[li].pendingDouble){
-          if(state[li].halfOn||state[li].pendingHalf){state[li].pendingHalf=false;state[li].pendingClear=true;}
-          else{state[li].pendingDouble=true;state[li].pendingClear=false;}
-        }
-      }
-      document.getElementById('half-'+layer.id).classList.toggle('on',state[li].pendingHalf);
-      document.getElementById('dbl-'+layer.id).classList.toggle('on',state[li].pendingDouble);
-      if(Math.random()<0.5){
-        const n=Math.floor(Math.random()*(state[li].pattern.length-1))+1;
-        state[li].shiftCount=(state[li].shiftCount+n)%state[li].pattern.length;
-        state[li].pattern=rotate(state[li].pattern,state[li].pattern.length-n);
-        const sn=document.getElementById('shift-num-'+layer.id);if(sn)sn.textContent=state[li].shiftCount;
-      }
-      if(Math.random()<0.33) state[li].pattern=state[li].pattern.map(p=>p==='X'?'.':'X');
-      if(Math.random()<0.5&&state[li].pattern.length>=4&&state[li].pattern.length%2===0){
-        const p=state[li].pattern,half=Math.floor(p.length/2);
-        state[li].pattern=[...p.slice(half),...p.slice(0,half)];
-      }
+    // ── UN SEUL editRows — déplacé dans menu (circulaire) ou stepsOuter (linéaire) ──
+    const editRows=document.createElement('div');editRows.className='edit-rows hidden';editRows.id='edit-rows-'+layer.id;
+    // sep intégré : se déplace avec editRows, jamais orphelin
+    const sep=document.createElement('div');sep.className='steps-mod-sep';
+    editRows.appendChild(sep);
+    const sr=document.createElement('div');sr.className='edit-row erow-shift';
+    const bL2=document.createElement('button');bL2.className='edit-btn';bL2.title='Décaler gauche';bL2.textContent='◀';
+    const sN2=document.createElement('span');sN2.className='shift-num';sN2.id='shift-num-'+layer.id;sN2.textContent=state[li].shiftCount||0;
+    const bR2=document.createElement('button');bR2.className='edit-btn';bR2.title='Décaler droite';bR2.textContent='▶';
+    bL2.addEventListener('click',()=>{state[li].shiftCount=((state[li].shiftCount||0)-1+state[li].pattern.length)%state[li].pattern.length;sN2.textContent=state[li].shiftCount;state[li].pattern=rotate(state[li].pattern,1);buildStepsDOM(li,state[li].wrapped);setDirty(li,false);});
+    bR2.addEventListener('click',()=>{state[li].shiftCount=((state[li].shiftCount||0)+1)%state[li].pattern.length;sN2.textContent=state[li].shiftCount;state[li].pattern=rotate(state[li].pattern,state[li].pattern.length-1);buildStepsDOM(li,state[li].wrapped);setDirty(li,false);});
+    sr.appendChild(bL2);sr.appendChild(sN2);sr.appendChild(bR2);
+    // speed
+    const spR=document.createElement('div');spR.className='edit-row erow-speed';
+    const bH2=document.createElement('button');bH2.className='edit-btn';bH2.id='half-'+layer.id;bH2.textContent='/2';
+    const bD2=document.createElement('button');bD2.className='edit-btn';bD2.id='dbl-'+layer.id;bD2.textContent='×2';
+    bH2.addEventListener('click',()=>{if(state[li].halfOn||state[li].pendingHalf){state[li].pendingHalf=false;state[li].pendingDouble=false;state[li].pendingClear=true;}else if(state[li].doubleOn||state[li].pendingDouble){state[li].pendingHalf=false;state[li].pendingDouble=false;state[li].pendingClear=true;}else{state[li].pendingHalf=true;state[li].pendingDouble=false;state[li].pendingClear=false;}bH2.classList.toggle('on',state[li].pendingHalf);bD2.classList.remove('on');});
+    bD2.addEventListener('click',()=>{if(state[li].doubleOn||state[li].pendingDouble){state[li].pendingHalf=false;state[li].pendingDouble=false;state[li].pendingClear=true;}else if(state[li].halfOn||state[li].pendingHalf){state[li].pendingHalf=false;state[li].pendingDouble=false;state[li].pendingClear=true;}else{state[li].pendingDouble=true;state[li].pendingHalf=false;state[li].pendingClear=false;}bD2.classList.toggle('on',state[li].pendingDouble);bH2.classList.remove('on');});
+    spR.appendChild(bH2);spR.appendChild(bD2);
+    // comp+swap
+    const cR=document.createElement('div');cR.className='edit-row erow-comp';
+    const bC2=document.createElement('button');bC2.className='edit-btn';bC2.title='Complémentaire';bC2.textContent='⊙';bC2.style.fontSize='13px';
+    bC2.addEventListener('click',()=>{state[li].pattern=state[li].pattern.map(p=>p==='X'?'.':'X');buildStepsDOM(li,state[li].wrapped);setDirty(li,false);});
+    const bSw2=document.createElement('button');bSw2.className='edit-btn';bSw2.title='Intervertir';bSw2.textContent='⇄';bSw2.style.fontSize='13px';
+    const checkSwap2=()=>{const ok=state[li].pattern.length>=4&&state[li].pattern.length%2===0;bSw2.disabled=!ok;bSw2.style.opacity=ok?'1':'0.3';};checkSwap2();
+    bSw2.addEventListener('click',()=>{const p=state[li].pattern,half=Math.floor(p.length/2);state[li].pattern=[...p.slice(half),...p.slice(0,half)];buildStepsDOM(li,state[li].wrapped);setDirty(li,false);});
+    cR.appendChild(bC2);cR.appendChild(bSw2);
+    // rand
+    const bRE2=document.createElement('button');bRE2.className='edit-btn';bRE2.title='Transformations aléatoires';bRE2.textContent='✦';
+    bRE2.addEventListener('click',()=>{
+      const sr2=Math.random();
+      if(sr2<0.25){if(!state[li].halfOn&&!state[li].pendingHalf){if(state[li].doubleOn||state[li].pendingDouble){state[li].pendingDouble=false;state[li].pendingClear=true;}else{state[li].pendingHalf=true;state[li].pendingClear=false;}}}
+      else if(sr2<0.5){if(!state[li].doubleOn&&!state[li].pendingDouble){if(state[li].halfOn||state[li].pendingHalf){state[li].pendingHalf=false;state[li].pendingClear=true;}else{state[li].pendingDouble=true;state[li].pendingClear=false;}}}
+      if(Math.random()<0.5){const n=Math.floor(Math.random()*(state[li].pattern.length-1))+1;state[li].shiftCount=(state[li].shiftCount+n)%state[li].pattern.length;sN2.textContent=state[li].shiftCount;state[li].pattern=rotate(state[li].pattern,state[li].pattern.length-n);}
+      if(Math.random()<0.33)state[li].pattern=state[li].pattern.map(p=>p==='X'?'.':'X');
+      if(Math.random()<0.5&&state[li].pattern.length>=4&&state[li].pattern.length%2===0){const p=state[li].pattern,half=Math.floor(p.length/2);state[li].pattern=[...p.slice(half),...p.slice(0,half)];}
       buildStepsDOM(li,state[li].wrapped);setDirty(li,true);
     });
+    spR.appendChild(bRE2);editRows.appendChild(sr);editRows.appendChild(cR);editRows.appendChild(spR);
 
-    // ── assemble rows ──────────────────────────────────────────────────────
-    speedRow.appendChild(btnRandEdit);
-    editRows.appendChild(shiftRow);
-    editRows.appendChild(compRow);
-    editRows.appendChild(speedRow);
-    editRows.classList.add('hidden'); // fermé par défaut
-
-    // bouton i — info encyclopédie, toggle exclusif
+    // bouton i — info encyclopédie
     const hasEncyclo=!!(dict[state[li].dictIdx]&&dict[state[li].dictIdx].encyclo);
     const btnInfo=document.createElement('button');
     btnInfo.className='btn-info-ico';btnInfo.id='info-ico-'+layer.id;
     btnInfo.title='À propos de ce rythme';btnInfo.textContent='i';
     btnInfo.style.opacity=hasEncyclo?'1':'.3';
     btnInfo.style.cursor=hasEncyclo?'pointer':'default';
-    btnInfo.style.minWidth='20px'; // double largeur
+    btnInfo.style.minWidth='20px';
     btnInfo.addEventListener('click',()=>{
-      const eKey=dict[state[li].dictIdx]?.encyclo;
-      if(!eKey)return;
+      const eKey=dict[state[li].dictIdx]?.encyclo;if(!eKey)return;
       const isOn=btnInfo.classList.contains('active');
-      // désactiver tous les boutons i
-      LAYERS.forEach(l=>{
-        const b=document.getElementById('info-ico-'+l.id);
-        if(b)b.classList.remove('active');
-      });
+      LAYERS.forEach(l=>{const b=document.getElementById('info-ico-'+l.id);if(b)b.classList.remove('active');});
       const content=document.getElementById('encyclo-content');
-      const encloBtn=document.getElementById('encyclo-btn');
-      if(isOn){
-        // fermer le volet
-        if(content){content.classList.replace('opened','closed');if(encloBtn)encloBtn.classList.remove('open');}
-      } else {
-        // activer ce bouton + ouvrir volet sur la fiche
+      if(isOn){toggleEncyclo(false);}
+      else{
         btnInfo.classList.add('active');
         const es=document.getElementById('encyclo-select');
-        if(es&&[...es.options].some(o=>o.value===eKey)){
-          es.value=eKey;renderEncyclo(eKey);
-        }
-        if(content&&content.classList.contains('closed')){
-          content.classList.replace('closed','opened');
-          if(encloBtn)encloBtn.classList.add('open');
-        }
+        if(es&&[...es.options].some(o=>o.value===eKey)){es.value=eKey;renderEncyclo(eKey);}
+        if(content&&content.classList.contains('closed'))toggleEncyclo(true);
       }
     });
 
-    // bouton Édit toggle
-    const btnEdit=document.createElement('button');
-    btnEdit.className='btn-edit-toggle';
-    btnEdit.title='Ouvrir/fermer les outils d\'édition';
-    btnEdit.textContent='Édit';
-    btnEdit.addEventListener('click',()=>{
-      const hidden=editRows.classList.toggle('hidden');
-      btnEdit.classList.toggle('active',!hidden);
+    // bouton Steps ▶/▼ — vue linéaire, couleur couche
+    const btnSteps=document.createElement('button');
+    btnSteps.className='btn-volet open';btnSteps.id='steps-btn-'+layer.id;
+    btnSteps.style.color='var(--cc)';
+    btnSteps.textContent='Steps ▼';btnSteps.title='Afficher/masquer les steps';
+    btnSteps.addEventListener('click',()=>{
+      const hidden=stepsWrap.classList.toggle('hidden-steps');
+      btnSteps.textContent=hidden?'Steps ▶':'Steps ▼';
+      btnSteps.classList.toggle('open',!hidden);
+      const mw=document.getElementById('mod-wrap-'+layer.id);
+      if(mw)mw.classList.toggle('hidden',hidden);
     });
 
-    // add mute + i + edit à selRow (dé retiré), editRows au menu
+    // toggleMod — un seul editRows, sep lié
+    function toggleMod(forceOpen){
+      const isHidden=editRows.classList.contains('hidden');
+      const open=forceOpen!==undefined?forceOpen:isHidden;
+      editRows.classList.toggle('hidden',!open);
+      sep.style.display=open?'':'none';
+      const txt=open?'Mod ▼':'Mod ▶';
+      [btnMod,btnModSel].forEach(b=>{if(b){b.textContent=txt;b.classList.toggle('open',open);}});
+    }
+
+    // bouton Mod dans selRow (visible en vue circulaire)
+    const btnModSel=document.createElement('button');
+    btnModSel.className='btn-volet';btnModSel.id='mod-sel-btn-'+layer.id;
+    btnModSel.style.cssText='color:var(--cc);display:none';
+    btnModSel.textContent='Mod ▶';btnModSel.title='Afficher/masquer les outils de modification';
+    btnModSel.addEventListener('click',()=>toggleMod());
+
+    // bouton Mod dans stepsWrap (vue linéaire)
+    const modWrap=document.createElement('div');modWrap.className='btn-mod-wrap';modWrap.id='mod-wrap-'+layer.id;
+    const btnMod=document.createElement('button');
+    btnMod.className='btn-volet';btnMod.id='mod-btn-'+layer.id;
+    btnMod.style.color='var(--cc)';
+    btnMod.textContent='Mod ▶';btnMod.title='Afficher/masquer les outils de modification';
+    btnMod.addEventListener('click',()=>toggleMod());
+    modWrap.appendChild(btnMod);
+    stepsWrap.appendChild(modWrap);
+
+    // add mute + i + Steps▶ + ModSel à selRow
     selRow.insertBefore(btnMuteSq, selRow.firstChild);
     selRow.appendChild(btnInfo);
-    selRow.appendChild(btnEdit);
-    menu.appendChild(editRows);
+    selRow.appendChild(btnSteps);
+    selRow.appendChild(btnModSel);
+    // editRows dans stepsOuter par défaut (vue linéaire) ; déplacé dans menu en circulaire par setView
 
-    layerDiv.appendChild(menu);layerDiv.appendChild(stepsWrap);
+    // structure: layer-top(menu | stepsOuter)
+    const layerTop=document.createElement('div');layerTop.className='layer-top';
+    stepsOuter.appendChild(stepsWrap);
+    stepsOuter.appendChild(editRows);
+    layerTop.appendChild(menu);layerTop.appendChild(stepsOuter);
+    layerDiv.appendChild(layerTop);
     if(state[li].muted)layerDiv.classList.add('muted-layer');
     cont.appendChild(layerDiv);
 
@@ -1041,8 +1061,8 @@ function buildRhythmSelect(selEl,includeCustom){
 function buildEncycloSelect(){
   const sel=document.getElementById('encyclo-select');if(!sel)return;
   const curVal=sel.value;sel.innerHTML='';
-  // entrée intro en tête
-  const oIntro=document.createElement('option');oIntro.value='_intro';oIntro.textContent='Encyclopédie du Rythme';
+  // entrée PoumTchak en tête
+  const oIntro=document.createElement('option');oIntro.value='_poumtchak';oIntro.textContent='PoumTchak';
   sel.appendChild(oIntro);
   const sep0=document.createElement('option');sep0.disabled=true;sep0.textContent='─ ─ ─ ─ ─';sep0.style.color='#ccc';sel.appendChild(sep0);
   let first=true;
@@ -1058,57 +1078,76 @@ function buildEncycloSelect(){
     });
   });
   if(curVal&&[...sel.options].some(o=>o.value===curVal))sel.value=curVal;
-  else sel.value='_intro';
+  else sel.value='_poumtchak';
   renderEncyclo(sel.value);
 }
 function renderEncyclo(key){
   const body=document.getElementById('encyclo-body');if(!body)return;
-  // mettre à jour état bouton local play dans header
-  const btnLP=document.getElementById('btn-local-play');
-  if(btnLP){
-    const hasPattern=!!(key&&key!=='_intro'&&dict.find(d=>d.encyclo===key));
-    const disabled=playing||!hasPattern;
-    btnLP.disabled=disabled;
-    btnLP.style.opacity=disabled?'.35':'1';
-    btnLP.style.cursor=disabled?'not-allowed':'pointer';
-    btnLP.style.background=localPlaySchedID?'#F5C518':'none';
-    btnLP.onclick=()=>{
-      if(playing||!hasPattern)return;
-      if(localPlayTimerID||localPlaySchedID){stopLocalPlay();return;}
-      const r=dict.find(d=>d.encyclo===key);
-      if(!r)return;
-      startLocalPlay(r.pattern,btnLP);
-    };
+  // bouton lire▼/▶ = toggle volet SEULEMENT (pas de lecture audio)
+  const btnV=document.getElementById('encyclo-volet-btn');
+  if(btnV){
+    btnV.onclick=()=>toggleEncyclo();
   }
-  // page d'intro
-  if(key==='_intro'){
+  // page PoumTchak
+  if(key==='_poumtchak'){
     body.innerHTML='';
-    const intro=document.createElement('div');
-    const p1=document.createElement('p');p1.className='encyclo-chapo';
-    p1.textContent="Cette encyclopédie rassemble les rythmes fondamentaux qui constituent le langage rythmique mondial — des grooves africains aux musiques électroniques, en passant par les Caraïbes et le Brésil. Chaque fiche contextualise un pattern : son origine géographique et culturelle, sa logique interne, sa sensation physique, ses usages et ses relations avec les autres rythmes. L'objectif n'est pas de tout mémoriser, mais de comprendre comment des structures simples génèrent une richesse infinie — et de pouvoir les reconnaître, jouer et transformer.";
-    const ul=document.createElement('ul');ul.className='encyclo-bullets';
-    const concepts=[
-      ['Step (subdivision)','L\'unité de base du temps dans l\'appli. 1 step = 1 croche (une noire = 2 steps). Le tempo en SPM (Steps Par Minute) indique combien de subdivisions s\'écoulent en une minute.'],
-      ['Pattern','Une séquence de frappes (X) et de silences (.) qui se répète en boucle. Chaque couche joue son pattern indépendamment.'],
-      ['Cycle','Un tour complet du pattern. Deux patterns de longueurs différentes (ex. 8 et 12 steps) se resynchronisent naturellement tous les 24 steps (PPCM).'],
-      ['Polyrhythmie','La superposition de plusieurs patterns de longueurs ou vitesses différentes. C\'est le cœur de la musique africaine et afro-américaine.'],
-      ['Euclidien E(k,n)','Un algorithme qui distribue k frappes sur n steps de la façon la plus régulière possible. La plupart des grands rythmes mondiaux sont euclidiens.'],
-      ['Complémentaire','Le négatif d\'un pattern : les X deviennent . et les . deviennent X. Four on the Floor et Off Beat sont complémentaires exacts.'],
-      ['Shift (décalage)','Rotation du pattern : on déplace le point de départ sans changer la structure. Le Son 3:2 est un shift du Son 2:3.'],
-    ];
-    concepts.forEach(([k,v])=>{
-      const li=document.createElement('li');
-      const bk=document.createElement('span');bk.className='bkey';bk.textContent=k;
-      const bv=document.createElement('span');bv.className='bval';bv.textContent=v;
-      li.appendChild(bk);li.appendChild(bv);ul.appendChild(li);
-    });
-    intro.appendChild(p1);intro.appendChild(ul);
-    body.appendChild(intro);
+    const d=document.createElement('div');
+    d.innerHTML=`
+<p class="encyclo-chapo">PoumTchak permet de découvrir les rythmes fondamentaux qui constituent le langage rythmique mondial : des grooves africains aux musiques électroniques, en passant par les Caraïbes et le Brésil… L'objectif est de comprendre comment des structures simples génèrent une richesse infinie. Cette appli permet d'écouter, voir, comprendre, jouer ou composer des rythmiques.</p>
+
+<ul class="encyclo-bullets">
+
+<li><span class="bkey">Groove</span><span class="bval">Un <strong>groove</strong> est une superposition de patterns qui forment ensemble une rythmique cohérente. Dans une section rythmique, chacun joue une cellule répétitive, et c'est leur empilement qui crée le <em>groove</em>. Dans PoumTchak, chaque ligne du groove est appelée une <em>couche</em> et joue un <strong>pattern</strong>.</span></li>
+
+<li><span class="bkey">Pattern</span><span class="bval">Un <strong>pattern</strong> est une cellule rythmique : une séquence de sons et de silences qui se répète en boucle. Chaque pattern a un rôle fonctionnel dans l'ensemble : ancrer le temps, créer la tension, marquer le contretemps, compléter une autre couche… La combinaison de rôles différents est ce qui fait swinguer un groove.</span></li>
+
+<li><span class="bkey">Sons &amp; instruments &nbsp;🔊</span><span class="bval">Chaque couche joue un son paramétrable via le bouton <strong>🔊</strong>. PoumTchak propose trois couches aux fonctions complémentaires : <strong>Grave</strong> (kick, basse, tambour), <strong>Aigu</strong> (snare, guitare, clave), <strong>Noise</strong> (hi-hat, pulsation, shaker). Chaque son peut être réglé en hauteur/timbre et en volume.</span></li>
+
+<li><span class="bkey">Notation en steps &nbsp;⊞ ◎</span><span class="bval">Chaque pattern est représenté comme une grille de cases : <strong>X</strong> = son joué, <strong>.</strong> = silence. Comme un chemin pour la musique, chaque case est un pas / <strong>step</strong> — l'unité de temps de base (ici 1 step = 1 croche). PoumTchak propose deux vues du <em>chemin</em> — <strong>⊞ linéaire</strong> (grille gauche→droite) et <strong>◎ circulaire</strong> (rotation horaire depuis 12h) — pour voir les patterns différemment et mieux saisir leurs symétries.</span></li>
+
+<li><span class="bkey">Tempo &nbsp;BPM</span><span class="bval">Le <strong>tempo</strong> (bouton <strong>BPM</strong>) règle la vitesse des steps en <strong>SPM</strong> (Steps Par Minute). Les équivalences en notation traditionnelle sont affichées : <strong>♩♩</strong> (blanche), <strong>♩</strong> (noire), <strong>♩.</strong> (noire pointée). Les boutons <strong>/2</strong> et <strong>×2</strong> divisent ou doublent le tempo de toutes les couches en restant synchronisés.</span></li>
+
+<li><span class="bkey">Modifier un pattern &nbsp;Mod ▶</span><span class="bval">Chaque pattern est éditable directement en cliquant sur ses steps. Le volet <strong>Mod ▶</strong> donne accès à des transformations globales :</span></li>
+
+<li><span class="bkey">&nbsp;&nbsp;◀ 0 ▶ &nbsp;Décalage</span><span class="bval">Tourne (Rotate) le pattern : déplace le point de départ sans changer les intervalles. En fonction du décalage, les appuis peuvent devenir des levés et les rapports avec les autres patterns sont bouleversés. Le Son 2:3 est un shift du Son 3:2.</span></li>
+
+<li><span class="bkey">&nbsp;&nbsp;⊙ &nbsp;Complémentaire</span><span class="bval">Inverse chaque step : les sons joués deviennent silencieux, les silences deviennent des sons — comme le négatif d'une photo. Le <em>Four on the Floor</em> et l'<em>Off Beat</em> sont complémentaires exacts : superposés, ils forment une pulsation continue.</span></li>
+
+<li><span class="bkey">&nbsp;&nbsp;⇄ &nbsp;Intervertir</span><span class="bval">Échange les deux moitiés du pattern. Sur 8 steps, les steps 1–4 et 5–8 sont permutés. Exemple : le Son 2:3 est une inversion du Son 3:2.</span></li>
+
+<li><span class="bkey">&nbsp;&nbsp;/2 ×2 &nbsp;Vitesse</span><span class="bval">Divise ou double la vitesse de la couche indépendamment des autres, appliqué au prochain cycle pour rester en phase. On dit parfois "jouer à la blanche" ou "à la croche".</span></li>
+
+<li><span class="bkey">&nbsp;&nbsp;✦ &nbsp;Transformations aléatoires</span><span class="bval">Applique une combinaison aléatoire de transformations (décalage, complémentaire, intervertir, vitesse). Bon point de départ pour explorer des variations inattendues d'un pattern connu.</span></li>
+
+</ul>`;
+    body.appendChild(d);
     return;
   }
   if(!key||!ENCYCLO[key]){body.innerHTML='<p class="encyclo-empty">Sélectionne un rythme.</p>';return;}
   const e=ENCYCLO[key];
-  const chapo=document.createElement('p');chapo.className='encyclo-chapo';chapo.textContent=e.chapo;
+  // chapo avec bouton play inline après le 2e mot
+  const chapoDiv=document.createElement('p');chapoDiv.className='encyclo-chapo';
+  const words=e.chapo.split(' ');
+  const before=words.slice(0,2).join(' ')+' ';
+  const after=words.slice(2).join(' ');
+  chapoDiv.appendChild(document.createTextNode(before));
+  const btnPlay=document.createElement('button');btnPlay.className='chapo-play';btnPlay.textContent='▶';
+  btnPlay.title='Écouter ce pattern (2 cycles)';
+  btnPlay.addEventListener('click',()=>{
+    if(playing)return;
+    if(localPlayTimerID||localPlaySchedID){
+      stopLocalPlay();
+      btnPlay.textContent='▶';btnPlay.classList.remove('playing');
+      return;
+    }
+    const r=dict.find(d=>d.encyclo===key);if(!r)return;
+    btnPlay.textContent='■';btnPlay.classList.add('playing');
+    startLocalPlay(r.pattern,()=>{
+      btnPlay.textContent='▶';btnPlay.classList.remove('playing');
+    });
+  });
+  chapoDiv.appendChild(btnPlay);
+  chapoDiv.appendChild(document.createTextNode(after));
   const ul=document.createElement('ul');ul.className='encyclo-bullets';
   e.bullets.forEach(([k,v])=>{
     const li=document.createElement('li');
@@ -1119,21 +1158,19 @@ function renderEncyclo(key){
         if(i>0)bv.appendChild(document.createElement('br'));
         bv.appendChild(document.createTextNode(line));
       });
-    } else {
-      bv.textContent=v;
-    }
+    } else {bv.textContent=v;}
     li.appendChild(bk);li.appendChild(bv);ul.appendChild(li);
   });
-  body.innerHTML='';body.appendChild(chapo);body.appendChild(ul);
+  body.innerHTML='';body.appendChild(chapoDiv);body.appendChild(ul);
 }
 document.getElementById('encyclo-select').addEventListener('change',function(){
   renderEncyclo(this.value);
   // ouvrir le volet si fermé
   const content=document.getElementById('encyclo-content');
-  const btn=document.getElementById('encyclo-btn');
+  
   if(content&&content.classList.contains('closed')){
-    content.classList.replace('closed','opened');
-    if(btn)btn.classList.add('open');
+    toggleEncyclo(true);
+    
   }
 });
 
@@ -1144,11 +1181,13 @@ let localPlaySchedID=null;
 function stopLocalPlay(){
   if(localPlayTimerID){clearTimeout(localPlayTimerID);localPlayTimerID=null;}
   if(localPlaySchedID){clearTimeout(localPlaySchedID);localPlaySchedID=null;}
-  const btn=document.getElementById('btn-local-play');
-  if(btn&&!playing){btn.style.background='none';btn.textContent='▶';btn.disabled=false;btn.style.opacity='1';btn.style.cursor='pointer';}
+  const content=document.getElementById('encyclo-content');
+  const isOpen=content&&content.classList.contains('opened');
+  const btn=document.getElementById('encyclo-volet-btn');
+  if(btn)btn.textContent=isOpen?'lire ▼':'lire ▶';
 }
 
-function startLocalPlay(patternStr,btn){
+function startLocalPlay(patternStr, onStop){
   if(!ac){ac=new(window.AudioContext||window.webkitAudioContext)();}
   const resumeP=ac.resume();
   const go=()=>{
@@ -1156,15 +1195,12 @@ function startLocalPlay(patternStr,btn){
     const spm=parseInt(document.getElementById('bpm').value);
     const beatSec=60/spm;
     const totalSteps=pat.length*2; // 2 cycles
-    const totalDur=beatSec*totalSteps;
-    btn.textContent='■';btn.style.background='#F5C518';
     let step=0;
     function tick(){
       if(playing||step>=totalSteps){stopLocalPlay();return;}
       const si=step%pat.length;
       if(pat[si]==='X'){
         const t=ac.currentTime;
-        // joue sur synthèse Aigu (triangle)
         const o=ac.createOscillator(),g=ac.createGain();
         o.connect(g);g.connect(ac.destination);
         o.frequency.value=state[1].paramVal;o.type='triangle';
@@ -1176,7 +1212,7 @@ function startLocalPlay(patternStr,btn){
       if(step<totalSteps){
         localPlaySchedID=setTimeout(tick,beatSec*1000);
       } else {
-        localPlayTimerID=setTimeout(stopLocalPlay,beatSec*1000);
+        localPlayTimerID=setTimeout(()=>{stopLocalPlay();if(onStop)onStop();},beatSec*1000);
       }
     }
     tick();
@@ -1216,23 +1252,12 @@ function togglePlay(){
     if(!ac){ac=new(window.AudioContext||window.webkitAudioContext)();}
     document.getElementById('btn-play').textContent='Stop';
     document.getElementById('btn-play').classList.add('active');
-    // désactiver bouton local play
-    const blp=document.getElementById('btn-local-play');
-    if(blp){blp.disabled=true;blp.style.opacity='.4';blp.style.cursor='not-allowed';}
-    // resume then start — needed for iOS suspended state
     const resumePromise=ac.resume();
-    if(resumePromise&&resumePromise.then){
-      resumePromise.then(startPlay);
-    } else {
-      startPlay();
-    }
+    if(resumePromise&&resumePromise.then){resumePromise.then(startPlay);}else{startPlay();}
   } else {
     stopPlay();
     document.getElementById('btn-play').textContent='Play';
     document.getElementById('btn-play').classList.remove('active');
-    // réactiver bouton local play
-    const blp=document.getElementById('btn-local-play');
-    if(blp){blp.disabled=false;blp.style.opacity='';blp.style.cursor='';}
   }
 }
 
@@ -1246,7 +1271,7 @@ function openModal(li){
 // ─── COLLAPSIBLES ─────────────────────────────────────────────────────────────
 function makeCollapsible(btnId,contentId,startOpen){
   const btn=document.getElementById(btnId),content=document.getElementById(contentId);
-  if(startOpen){content.classList.replace('closed','opened');btn.classList.add('open');}
+  if(startOpen){toggleEncyclo(true);btn.classList.add('open');}
   btn.addEventListener('click',()=>{
     const open=content.classList.contains('opened');
     content.classList.toggle('opened',!open);content.classList.toggle('closed',open);btn.classList.toggle('open',!open);
@@ -1277,7 +1302,15 @@ document.getElementById('btn-panel-sons').addEventListener('click',()=>openPanel
 document.getElementById('btn-panel-params').addEventListener('click',()=>openPanel('params'));
 // panneau fermé par défaut
 
-makeCollapsible('encyclo-btn','encyclo-content',true);
+// Encyclopédie toggle via encyclo-volet-btn — géré dans renderEncyclo via onclick
+function toggleEncyclo(forceOpen){
+  const content=document.getElementById('encyclo-content');
+  const btn=document.getElementById('encyclo-volet-btn');
+  if(!content)return;
+  const open=forceOpen!==undefined?forceOpen:content.classList.contains('closed');
+  content.classList.toggle('opened',open);content.classList.toggle('closed',!open);
+  if(btn){btn.textContent=open?'lire ▼':'lire ▶';btn.classList.toggle('open',open);}
+}
 
 // ─── EVENTS ───────────────────────────────────────────────────────────────────
 document.getElementById('btn-resync').addEventListener('click',()=>{
@@ -1565,9 +1598,27 @@ function setView(circle){
   document.getElementById('btn-view').textContent=circle?'⊞':'◎';
   document.getElementById('btn-view').title=circle?'Vue linéaire':'Vue circulaire';
 
-  // always cancel current RAF before switching loop type
   cancelAnimationFrame(visualRafID);
   visualRafID=null;
+
+  LAYERS.forEach((layer,li)=>{
+    const bSteps=document.getElementById('steps-btn-'+layer.id);
+    const bModSel=document.getElementById('mod-sel-btn-'+layer.id);
+    const er=document.getElementById('edit-rows-'+layer.id);
+    const menu=er&&er.closest('.layer-top')?.querySelector('.layer-menu');
+    const stepsOuter=er&&er.closest('.layer-top')?.querySelector('.layer-steps-outer');
+
+    if(bSteps)bSteps.style.display=circle?'none':'';
+    if(bModSel)bModSel.style.display=circle?'':'none';
+
+    if(er){
+      if(circle&&menu&&er.parentElement!==menu){
+        menu.appendChild(er);
+      } else if(!circle&&stepsOuter&&er.parentElement!==stepsOuter){
+        stepsOuter.appendChild(er);
+      }
+    }
+  });
 
   if(circle){
     setTimeout(()=>{resizeCanvas();setupCanvasInteraction();},30);
@@ -1575,18 +1626,48 @@ function setView(circle){
     flashStep[0]=flashStep[1]=flashStep[2]=-1;
     const cvReset=document.getElementById('rhythm-canvas');if(cvReset){cvReset.style.marginTop='';cvReset.style.marginBottom='';}
     LAYERS.forEach(l=>{const d=document.getElementById('steps-'+l.id);if(d)d.querySelectorAll('.step').forEach(s=>s.classList.remove('cur'));});
-    // restart circle RAF if playing
     if(playing) visualRafID=requestAnimationFrame(visualLoopCircle);
   } else {
     LAYERS.forEach((_,li)=>{buildStepsDOM(li,false);setTimeout(()=>checkWrap(li),0);});
-    // restart linear RAF if playing
     if(playing) visualRafID=requestAnimationFrame(visualLoop);
   }
 }
 
 document.getElementById('btn-view').addEventListener('click',()=>setView(!circleView));
 
-// resize observer for canvas
+// ─── TX / SX MODE ─────────────────────────────────────────────────────────────
+const isTX=new URLSearchParams(window.location.search).get('mode')==='tx';
+if(isTX){
+  document.getElementById('tx-badge').style.display='inline';
+  document.title='PoumTchak TX';
+}
+// masquer éléments TX-only en mode SX
+document.querySelectorAll('.tx-only').forEach(el=>{
+  el.style.display=isTX?'':'none';
+});
+
+// ─── VOLET ABOUT → géré par l'encyclopédie (_poumtchak) ──────────────────────
+document.getElementById('btn-about').addEventListener('click',()=>{
+  const btn=document.getElementById('btn-about');
+  const es=document.getElementById('encyclo-select');
+  const content=document.getElementById('encyclo-content');
+  // encloBtn remplacé par toggleEncyclo
+  // toggle : si déjà sur _poumtchak et ouvert → fermer
+  const isOpen=content&&content.classList.contains('opened');
+  const isCurrent=es&&es.value==='_poumtchak';
+  if(isOpen&&isCurrent){
+    toggleEncyclo(false);
+    
+    btn.classList.remove('active');
+  } else {
+    if(es){es.value='_poumtchak';renderEncyclo('_poumtchak');}
+    if(content&&content.classList.contains('closed')){
+      toggleEncyclo(true);
+      
+    }
+    btn.classList.add('active');
+  }
+});
 if(window.ResizeObserver){
   new ResizeObserver(()=>{if(circleView)resizeCanvas();}).observe(document.getElementById('layers-wrap'));
 }
@@ -1606,14 +1687,10 @@ if(firstScene){
   if(selSc)[...selSc.options].forEach(o=>{o.selected=(o.value===firstScene.id);});
   if(typeof updateSceneInfoBtn==='function')updateSceneInfoBtn();
 }
-// encyclopédie : intro par défaut, volet FERMÉ
+// encyclopédie : _poumtchak par défaut, volet fermé
 const es=document.getElementById('encyclo-select');
-if(es){es.value='_intro';renderEncyclo('_intro');}
-const encycloContent=document.getElementById('encyclo-content');
-const encycloBtn2=document.getElementById('encyclo-btn');
-if(encycloContent){encycloContent.classList.remove('opened');encycloContent.classList.add('closed');}
-if(encycloBtn2)encycloBtn2.classList.remove('open');
-
+if(es){es.value='_poumtchak';renderEncyclo('_poumtchak');}
+toggleEncyclo(false);
 </script>
 </body>
 </html>
