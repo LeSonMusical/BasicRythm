@@ -76,9 +76,9 @@ body{font-family:system-ui,-apple-system,sans-serif;font-size:12px;background:#f
 .btn-info-ico:hover{background:#e8e5e0}
 .btn-info-ico.active{background:#d0cec7;border-color:#888;color:#1a1a18}
 /* SCÈNE / RYTHMIQUE */
-.scene-bar{display:flex;align-items:center;gap:5px;padding:.3rem .1rem;border-bottom:1px solid #e0ddd8;margin-bottom:4px}
-.scene-bar select{font-size:10px;flex:1;min-width:0;padding:1px 3px;border:1px solid #ccc;border-radius:4px;background:#fff;color:#1a1a18}
-.scene-bar-label{font-size:10px;font-weight:500;color:#888;flex-shrink:0;letter-spacing:.03em}
+.scene-bar{display:flex;align-items:center;gap:5px;padding:.3rem .5rem;border-bottom:1px solid #e0ddd8;margin-bottom:4px;background:#faf3e0;border-left:3px solid #C8961A;border-radius:4px}
+.scene-bar select{font-size:10px;flex:1;min-width:0;padding:1px 3px;border:1px solid #d4b86a;border-radius:4px;background:#fff;color:#1a1a18}
+.scene-bar-label{font-size:10px;font-weight:600;color:#8B6914;flex-shrink:0;letter-spacing:.03em}
 .btn-scene-ico{cursor:pointer;font-size:13px;background:none;border:none;padding:1px 3px;line-height:1;opacity:.55;flex-shrink:0}
 .btn-scene-ico:hover{opacity:1}
 
@@ -254,7 +254,7 @@ body.view-circle #hdivider-after-layers{margin:0}
     </div>
   </div>
   <div class="hdivider" style="margin:.3rem 0"></div>
-  <div class="scene-bar" id="scene-bar"></div>
+  <div class="scene-bar" id="scene-bar" style="margin-left:.6rem"></div>
   <div class="rhythm-section" id="layers-wrap">
     <div id="layers"></div>
     <div id="circle-view">
@@ -303,6 +303,7 @@ const DICT=[
   {id:"pulse4", name:"Pulse (4:4)",        length:4,  pattern:"XXXX",       encyclo:false},
   {id:"sync4",  name:"Double Up (2:4)",    length:4,  pattern:"..XX",       encyclo:false},
   {id:"silence",name:"Silence",            length:4,  pattern:"....",       encyclo:false},
+  {id:"_salsa_low",name:"Tresillo (2)",   length:8,  pattern:"..X..X..",  encyclo:false},
   {id:"tres",   name:"Tresillo",           length:8,  pattern:"X..X..X.",   encyclo:"tres"},
   {id:"cinq",   name:"Cinquillo",          length:8,  pattern:"X.XX.XX.",   encyclo:"cinq"},
   {id:"hab",    name:"Habanera",           length:8,  pattern:"X..XX.X.",   encyclo:"hab"},
@@ -353,14 +354,19 @@ const ENCYCLO={
 // ─── SCÈNES / RYTHMIQUES ──────────────────────────────────────────────────────
 let scenes=[
   {id:'salsa',    name:'Salsa',      custom:false, layers:[
-    {patId:'son32', shift:0, halfOn:false, doubleOn:false, muted:false},
-    {patId:'tres',  shift:0, halfOn:false, doubleOn:false, muted:false},
-    {patId:'tumbao',shift:0, halfOn:false, doubleOn:false, muted:true},
+    {patId:'_salsa_low', shift:0, halfOn:false, doubleOn:false, muted:false},
+    {patId:'son32',  shift:0, halfOn:false, doubleOn:false, muted:false},
+    {patId:'cascara',shift:0, halfOn:false, doubleOn:false, muted:true},
   ]},
   {id:'bossanova',name:'Bossa Nova', custom:false, layers:[
-    {patId:'sync4', shift:1, halfOn:false, doubleOn:false, muted:false},
-    {patId:'bossa', shift:0, halfOn:false, doubleOn:false, muted:false},
-    {patId:'tumbao',shift:0, halfOn:false, doubleOn:false, muted:true},
+    {patId:'sync4',  shift:1, halfOn:false, doubleOn:false, muted:false},
+    {patId:'bossa',  shift:0, halfOn:false, doubleOn:false, muted:false},
+    {patId:'tumbao', shift:0, halfOn:false, doubleOn:false, muted:true},
+  ]},
+  {id:'techno',   name:'Techno',     custom:false, layers:[
+    {patId:'fl4',    shift:0, halfOn:false, doubleOn:false, muted:false},
+    {patId:'tres',   shift:0, halfOn:false, doubleOn:false, muted:true},
+    {patId:'offbeat',shift:0, halfOn:false, doubleOn:false, muted:false},
   ]},
 ];
 
@@ -464,7 +470,7 @@ function buildSceneBar(){
 }
 
 // clés encyclo par scène (pour le bouton i scène)
-const SCENE_ENCYCLO={salsa:'son32', bossanova:'bossa'};
+const SCENE_ENCYCLO={salsa:'son32', bossanova:'bossa', techno:'fl4'};
 
 function updateSceneInfoBtn(){
   const sel=document.getElementById('scene-select');
@@ -966,9 +972,8 @@ function buildRhythmLayers(){
       btnEdit.classList.toggle('active',!hidden);
     });
 
-    // add mute + dice + i + edit à selRow, editRows au menu
+    // add mute + i + edit à selRow (dé retiré), editRows au menu
     selRow.insertBefore(btnMuteSq, selRow.firstChild);
-    selRow.appendChild(btnDice);
     selRow.appendChild(btnInfo);
     selRow.appendChild(btnEdit);
     menu.appendChild(editRows);
@@ -1036,6 +1041,10 @@ function buildRhythmSelect(selEl,includeCustom){
 function buildEncycloSelect(){
   const sel=document.getElementById('encyclo-select');if(!sel)return;
   const curVal=sel.value;sel.innerHTML='';
+  // entrée intro en tête
+  const oIntro=document.createElement('option');oIntro.value='_intro';oIntro.textContent='Encyclopédie du Rythme';
+  sel.appendChild(oIntro);
+  const sep0=document.createElement('option');sep0.disabled=true;sep0.textContent='─ ─ ─ ─ ─';sep0.style.color='#ccc';sel.appendChild(sep0);
   let first=true;
   GROUPS.forEach(g=>{
     const items=g.ids.filter(id=>{const r=dict.find(d=>d.id===id);return r&&r.encyclo;});
@@ -1049,20 +1058,20 @@ function buildEncycloSelect(){
     });
   });
   if(curVal&&[...sel.options].some(o=>o.value===curVal))sel.value=curVal;
-  renderEncyclo(sel.value||[...sel.options].find(o=>!o.disabled)?.value);
+  else sel.value='_intro';
+  renderEncyclo(sel.value);
 }
 function renderEncyclo(key){
   const body=document.getElementById('encyclo-body');if(!body)return;
   // mettre à jour état bouton local play dans header
   const btnLP=document.getElementById('btn-local-play');
   if(btnLP){
-    const hasPattern=!!(key&&dict.find(d=>d.encyclo===key));
+    const hasPattern=!!(key&&key!=='_intro'&&dict.find(d=>d.encyclo===key));
     const disabled=playing||!hasPattern;
     btnLP.disabled=disabled;
     btnLP.style.opacity=disabled?'.35':'1';
     btnLP.style.cursor=disabled?'not-allowed':'pointer';
     btnLP.style.background=localPlaySchedID?'#F5C518':'none';
-    // rebind click avec nouvelle key
     btnLP.onclick=()=>{
       if(playing||!hasPattern)return;
       if(localPlayTimerID||localPlaySchedID){stopLocalPlay();return;}
@@ -1070,6 +1079,32 @@ function renderEncyclo(key){
       if(!r)return;
       startLocalPlay(r.pattern,btnLP);
     };
+  }
+  // page d'intro
+  if(key==='_intro'){
+    body.innerHTML='';
+    const intro=document.createElement('div');
+    const p1=document.createElement('p');p1.className='encyclo-chapo';
+    p1.textContent="Cette encyclopédie rassemble les rythmes fondamentaux qui constituent le langage rythmique mondial — des grooves africains aux musiques électroniques, en passant par les Caraïbes et le Brésil. Chaque fiche contextualise un pattern : son origine géographique et culturelle, sa logique interne, sa sensation physique, ses usages et ses relations avec les autres rythmes. L'objectif n'est pas de tout mémoriser, mais de comprendre comment des structures simples génèrent une richesse infinie — et de pouvoir les reconnaître, jouer et transformer.";
+    const ul=document.createElement('ul');ul.className='encyclo-bullets';
+    const concepts=[
+      ['Step (subdivision)','L\'unité de base du temps dans l\'appli. 1 step = 1 croche (une noire = 2 steps). Le tempo en SPM (Steps Par Minute) indique combien de subdivisions s\'écoulent en une minute.'],
+      ['Pattern','Une séquence de frappes (X) et de silences (.) qui se répète en boucle. Chaque couche joue son pattern indépendamment.'],
+      ['Cycle','Un tour complet du pattern. Deux patterns de longueurs différentes (ex. 8 et 12 steps) se resynchronisent naturellement tous les 24 steps (PPCM).'],
+      ['Polyrhythmie','La superposition de plusieurs patterns de longueurs ou vitesses différentes. C\'est le cœur de la musique africaine et afro-américaine.'],
+      ['Euclidien E(k,n)','Un algorithme qui distribue k frappes sur n steps de la façon la plus régulière possible. La plupart des grands rythmes mondiaux sont euclidiens.'],
+      ['Complémentaire','Le négatif d\'un pattern : les X deviennent . et les . deviennent X. Four on the Floor et Off Beat sont complémentaires exacts.'],
+      ['Shift (décalage)','Rotation du pattern : on déplace le point de départ sans changer la structure. Le Son 3:2 est un shift du Son 2:3.'],
+    ];
+    concepts.forEach(([k,v])=>{
+      const li=document.createElement('li');
+      const bk=document.createElement('span');bk.className='bkey';bk.textContent=k;
+      const bv=document.createElement('span');bv.className='bval';bv.textContent=v;
+      li.appendChild(bk);li.appendChild(bv);ul.appendChild(li);
+    });
+    intro.appendChild(p1);intro.appendChild(ul);
+    body.appendChild(intro);
+    return;
   }
   if(!key||!ENCYCLO[key]){body.innerHTML='<p class="encyclo-empty">Sélectionne un rythme.</p>';return;}
   const e=ENCYCLO[key];
@@ -1562,17 +1597,18 @@ buildRhythmLayers();
 buildSoundLayers();
 buildEncycloSelect();
 buildSceneBar();
-// onboarding : mute visuel Noise seulement
-LAYERS.forEach((layer,li)=>{
-  if(li===2){
-    const steps=document.getElementById('steps-'+layer.id);
-    if(steps)steps.classList.add('muted');
-  }
-});
-// encyclopédie : rendu initial mais volet FERMÉ
+// démarrer sur la première scène
+const firstScene=scenes[0];
+if(firstScene){
+  applyScene(firstScene.id);
+  buildSoundLayers();
+  const selSc=document.getElementById('scene-select');
+  if(selSc)[...selSc.options].forEach(o=>{o.selected=(o.value===firstScene.id);});
+  if(typeof updateSceneInfoBtn==='function')updateSceneInfoBtn();
+}
+// encyclopédie : intro par défaut, volet FERMÉ
 const es=document.getElementById('encyclo-select');
-if(es){const firstVal=[...es.options].find(o=>!o.disabled)?.value;if(firstVal)renderEncyclo(firstVal);}
-// s'assurer que le volet est fermé
+if(es){es.value='_intro';renderEncyclo('_intro');}
 const encycloContent=document.getElementById('encyclo-content');
 const encycloBtn2=document.getElementById('encyclo-btn');
 if(encycloContent){encycloContent.classList.remove('opened');encycloContent.classList.add('closed');}
