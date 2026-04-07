@@ -10,8 +10,8 @@
 .encyclo-wrap,.encyclo-chapo,.encyclo-bullets{user-select:text;-webkit-user-select:text}
 input,textarea{user-select:text;-webkit-user-select:text}
 
-body{font-family:system-ui,-apple-system,sans-serif;font-size:12px;background:#f5f4f0;color:#1a1a18;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:1rem}
-.frame{border:1px solid #d0cec7;border-radius:12px;padding:.75rem .85rem;background:#fff;width:100%;max-width:900px}
+body{font-family:system-ui,-apple-system,sans-serif;font-size:12px;background:#f5f4f0;color:#1a1a18;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:1rem;overflow-x:hidden;width:100%}
+.frame{border:1px solid #d0cec7;border-radius:12px;padding:.75rem .85rem;background:#fff;width:100%;max-width:900px;min-width:0}
 /* === HEADER / LIGNE 1 === */
 .app-header{display:flex;align-items:center;justify-content:space-between;padding:.3rem .1rem;margin-bottom:0}
 .app-header-left{display:flex;align-items:center;gap:4px}
@@ -465,6 +465,17 @@ function applyScene(sceneId){
   LAYERS.forEach((_,li)=>{
     setTimeout(()=>checkWrap(li),0);
   });
+  // resync : si en lecture, repartir du step 0 sur toutes les couches
+  if(playing){
+    clearTimeout(schedTimerID);
+    const now=getAC().currentTime;
+    LAYERS.forEach((_,li)=>{
+      state[li].stepPos=0;
+      state[li].nextStepTime=now;
+      state[li].startTime=now;
+    });
+    scheduler();
+  }
 }
 
 function buildSceneSelect(sel){
@@ -899,7 +910,7 @@ function buildRhythmLayers(){
       state[li].muted=!state[li].muted;
       applyMuteVisual(state[li].muted);
     });
-    if(state[li].muted)setTimeout(()=>applyMuteVisual(true),0);
+    // applyMuteVisual appelé après construction complète (fin du forEach)
 
 
     // ── UN SEUL editRows — déplacé dans menu (circulaire) ou stepsOuter (linéaire) ──
@@ -1027,6 +1038,8 @@ function buildRhythmLayers(){
     buildStepsDOM(li,false);
     setTimeout(()=>{checkWrap(li);attachObserver(li);},0);
     updateCtrlBtns(li);
+    // appliquer l'état mute visuel maintenant que tous les boutons sont dans le DOM
+    if(state[li].muted)applyMuteVisual(true);
   });
 }
 
@@ -1213,7 +1226,7 @@ function stopLocalPlay(){
 
 function startLocalPlay(patternStr, onStop){
   if(!ac){ac=new(window.AudioContext||window.webkitAudioContext)();}
-  const resumeP=ac.resume();
+  ac.resume(); // fire-and-forget — iOS 18
   const go=()=>{
     const pat=patternStr.split('');
     const spm=parseInt(document.getElementById('bpm').value);
@@ -1241,7 +1254,7 @@ function startLocalPlay(patternStr, onStop){
     }
     tick();
   };
-  if(resumeP&&resumeP.then){resumeP.then(go);}else{go();}
+  go();
 }
 
 // ─── PLAYBACK ─────────────────────────────────────────────────────────────────
@@ -1272,12 +1285,13 @@ function stopPlay(){
 
 function togglePlay(){
   if(!playing){
-    stopLocalPlay(); // couper local play si actif
+    stopLocalPlay();
+    // iOS 18 : créer et resume l'AC dans le handler synchrone
     if(!ac){ac=new(window.AudioContext||window.webkitAudioContext)();}
+    ac.resume(); // fire-and-forget — pas de .then (iOS 18 coupe le user gesture sinon)
     document.getElementById('btn-play').textContent='Stop';
     document.getElementById('btn-play').classList.add('active');
-    const resumePromise=ac.resume();
-    if(resumePromise&&resumePromise.then){resumePromise.then(startPlay);}else{startPlay();}
+    startPlay();
   } else {
     stopPlay();
     document.getElementById('btn-play').textContent='Play';
